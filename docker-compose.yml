@@ -1,0 +1,25 @@
+services:
+  gms-proj-postgres:
+    container_name: gms-proj-postgres
+    platform: linux/amd64 #for platform error on Apple M1 chips
+    restart: unless-stopped
+    env_file: .env
+    image: postgres:16.2
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - gms-proj-data:/var/lib/postgresql/data
+    networks:
+      - gms-proj-net
+
+volumes:
+  gms-proj-data:
+
+networks:
+  gms-proj-net:
+    name: gms-proj-net
+    external: true
