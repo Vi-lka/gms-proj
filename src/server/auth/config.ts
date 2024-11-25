@@ -2,20 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import { type Provider } from "next-auth/providers";
 import Yandex from "next-auth/providers/yandex";
 import { env } from "~/env";
-
-import { db } from "~/server/db";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "~/server/db/schema";
-
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -42,16 +32,15 @@ const providers: Provider[] = [
   }),
 ]
 
-export const providerMap = providers
-  .map((provider) => {
-    if (typeof provider === "function") {
-      const providerData = provider()
-      return { id: providerData.id, name: providerData.name }
-    } else {
-      return { id: provider.id, name: provider.name }
-    }
-  })
-  .filter((provider) => provider.id !== "credentials")
+export const providerMap = providers.map((provider) => {
+  if (typeof provider === "function") {
+    const providerData = provider()
+    return { id: providerData.id, name: providerData.name }
+  } else {
+    return { id: provider.id, name: provider.name }
+  }
+})
+.filter((provider) => provider.id !== "credentials")
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -61,23 +50,20 @@ export const providerMap = providers
 export const authConfig = {
   secret: env.AUTH_SECRET,
   providers,
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
-  session: { strategy: "database" },
   // pages: {
     // signIn: "/sign-in"
   // },
   callbacks: {
     // async jwt({ token, user }) {
-    //   if(user) token.role = (user as any).role
+    //   if (user) {
+    //     token.role = (user as any).role
+    //     token.id = user.id
+    //   }
     //   return token
     // },
     // async session({ session, token }) {
     //   session.user.role = token.role as "admin" | "user"
+    //   session.user.id = token.id as string
     //   return session
     // },
     async session({ session, user }) {
@@ -87,6 +73,7 @@ export const authConfig = {
         user: {
           id: user.id,
           name: session.user.name,
+          email: session.user.email,
           image: session.user.image,
           role: session.user.role,
         },
