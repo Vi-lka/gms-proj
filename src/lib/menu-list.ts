@@ -71,12 +71,27 @@ export function getMenuList(pathname: string): Group[] {
       ]
     },
     {
-      groupLabel: "Settings",
+      groupLabel: "Настройки",
       menus: [
+        // {
+        //   href: "/dashboard/users",
+        //   label: "Пользователи",
+        //   icon: Users
+        // },
         {
-          href: "/users",
-          label: "Users",
-          icon: Users
+          href: "",
+          label: "Пользователи",
+          icon: Users,
+          submenus: [
+            {
+              href: "/dashboard/users",
+              label: "Все Пользователи"
+            },
+            {
+              href: "/dashboard/sessions",
+              label: "Сессии"
+            }
+          ]
         },
         {
           href: "/account",

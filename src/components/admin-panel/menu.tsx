@@ -24,6 +24,13 @@ export function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
 
+  const isActive = (href: string) => {
+    if ((href === "/dashboard") && pathname.endsWith("/dashboard")) return true;
+    if ((href === "/dashboard") && !pathname.endsWith("/dashboard")) return false;
+    if (pathname.startsWith(href)) return true;
+    return false;
+  }
+
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
       <nav className="mt-8 h-full w-full">
@@ -60,7 +67,7 @@ export function Menu({ isOpen }: MenuProps) {
                             <Button
                               variant={
                                 (active === undefined &&
-                                  pathname.startsWith(href)) ||
+                                  isActive(href)) ||
                                 active
                                   ? "secondary"
                                   : "ghost"

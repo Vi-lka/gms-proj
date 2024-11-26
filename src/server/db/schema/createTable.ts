@@ -5,6 +5,6 @@ import { pgTableCreator } from "drizzle-orm/pg-core";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-const createTable = pgTableCreator((name) => `vr-control_${name}`);
+const createTable = pgTableCreator((name) => `gms_proj_${name}`);
 
 export default createTable
