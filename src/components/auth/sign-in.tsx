@@ -7,6 +7,7 @@ import { IconByName, Icons } from '~/components/icons';
 import GoBack from '~/components/navigation/go-back';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
+import revalidateTag from '~/server/actions/revalidateTag';
 
 interface SignInFormProps extends React.HTMLAttributes<HTMLDivElement> {
   providers: {
@@ -46,6 +47,8 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
     } finally {
       setIsLoading(false)
     }
+    revalidateTag("users")
+    revalidateTag("users-role-counts")
   }
 
   return (

@@ -10,6 +10,8 @@ import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { DataTableFacetedFilter } from "~/components/data-table/data-table-faceted-filter"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
+import DataTableSearchInput from "./data-table-search-input"
+import { useSearchParams } from "next/navigation"
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,7 +48,7 @@ export function DataTableToolbar<TData>({
   className,
   ...props
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
+  const isFiltered = (table.getState().columnFilters.length > 0)
 
   // Memoize computation of searchableColumns and filterableColumns
   const { searchableColumns, filterableColumns } = React.useMemo(() => {
@@ -69,20 +71,11 @@ export function DataTableToolbar<TData>({
           searchableColumns.map(
             (column) =>
               table.getColumn(column.id ? String(column.id) : "") && (
-                <Input
+                <DataTableSearchInput
                   key={String(column.id)}
+                  table={table}
+                  columnId={column.id}
                   placeholder={column.placeholder}
-                  value={
-                    (table
-                      .getColumn(String(column.id))
-                      ?.getFilterValue() as string) ?? ""
-                  }
-                  onChange={(event) =>
-                    table
-                      .getColumn(String(column.id))
-                      ?.setFilterValue(event.target.value)
-                  }
-                  className="h-8 w-40 lg:w-64"
                 />
               )
           )}

@@ -2,10 +2,17 @@ import type { Row, ColumnSort } from "@tanstack/react-table"
 import type { z } from "zod"
 import type { filterSchema } from "../parsers"
 import type { DataTableConfig } from "../config/data-table"
-import type { roleEnum } from "~/server/db/schema"
+import type { roleEnum, Session } from "~/server/db/schema"
 import type { SQL } from "drizzle-orm"
 
 export type UserRole = typeof roleEnum.enumValues[number]
+
+export interface SessionWithUser extends Session {
+  name: string | null;
+  email: string;
+  role: UserRole
+}
+
 
 export type Prettify<T> = {
   [K in keyof T]: T[K]
@@ -14,6 +21,10 @@ export type Prettify<T> = {
 export type StringKeyOf<TData> = Extract<keyof TData, string>
 
 export type SearchParams = Record<string, string | string[] | undefined>;
+
+export interface PageProps {
+  searchParams: Promise<SearchParams>
+}
 
 export interface Option {
   label: string

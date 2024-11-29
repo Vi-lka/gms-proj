@@ -7,9 +7,9 @@ import {
     parseAsStringEnum,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type User, users } from "~/server/db/schema";
+import { type Session, type User, users } from "~/server/db/schema";
 
-export const searchParamsUsersCache = createSearchParamsCache({
+export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<User>().withDefault([
@@ -21,4 +21,22 @@ export const searchParamsUsersCache = createSearchParamsCache({
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
-})
+}
+
+export const searchParamsUsersCache = createSearchParamsCache(searchParamsUsers)
+
+export const searchParamsSessions = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<Session>().withDefault([
+    { id: "userId", desc: false }
+  ]),
+  userId: parseAsString.withDefault(""),
+  name: parseAsString.withDefault(""),
+  role: parseAsArrayOf(z.enum(users.role.enumValues)).withDefault([]),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+}
+
+export const searchParamsSessionsCache = createSearchParamsCache(searchParamsSessions)

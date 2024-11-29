@@ -5,7 +5,7 @@ import {
   Bookmark,
   SquarePen,
   LayoutGrid,
-  LucideIcon
+  type LucideIcon
 } from "lucide-react";
 
 type Submenu = {
@@ -27,6 +27,7 @@ type Group = {
   menus: Menu[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getMenuList(pathname: string): Group[] {
   return [
     {
@@ -88,7 +89,7 @@ export function getMenuList(pathname: string): Group[] {
               label: "Все Пользователи"
             },
             {
-              href: "/dashboard/sessions",
+              href: "/dashboard/users/sessions",
               label: "Сессии"
             }
           ]

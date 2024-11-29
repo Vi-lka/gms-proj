@@ -106,3 +106,4 @@ export const verificationTokens = createTable(
 
 // Types
 export type User = typeof users.$inferSelect
+export type Session = typeof sessions.$inferSelect

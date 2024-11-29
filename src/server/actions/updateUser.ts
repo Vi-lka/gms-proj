@@ -1,15 +1,26 @@
 "use server"
 
-import { revalidateTag, unstable_noStore } from "next/cache"
+import { revalidateTag, unstable_noStore as noStore } from "next/cache"
 import { type UpdateUserSchema } from "~/lib/validations/users"
 import { db } from "../db"
 import { users } from "../db/schema"
 import { eq } from "drizzle-orm"
 import { takeFirstOrThrow } from "../db/utils"
 import { getErrorMessage } from "~/lib/handle-error"
+import { auth } from "../auth"
 
 export async function updateUser(input: UpdateUserSchema & { id: string }) {
-    unstable_noStore()
+    noStore();
+
+    const session = await auth();
+    if (session?.user.role !== "admin") {
+      const err = new Error("No access")
+      return {
+        data: null,
+        error: getErrorMessage(err)
+      }
+    }
+
     try {
       const data = await db
         .update(users)

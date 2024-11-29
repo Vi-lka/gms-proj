@@ -1,23 +1,20 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React from 'react'
 import { ContentLayout } from '~/components/admin-panel/content-layout'
 import UsersTable from '~/components/admin-panel/tables/users/users-table'
-import { DataTableSkeleton } from '~/components/skeletons/DataTableSkeleton'
+import { DataTableSkeleton } from '~/components/data-table/data-table-skeleton'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 import { getValidFilters } from '~/lib/data-table-func'
-import { type SearchParams } from '~/lib/types'
+import type { PageProps } from '~/lib/types'
 import { searchParamsUsersCache } from '~/lib/validations/search-params'
 import { auth } from '~/server/auth'
 import { getUserRolesCounts, getUsers } from '~/server/queries/users'
 
-interface UsersPageProps {
-  searchParams: Promise<SearchParams>
-}
-
-export default async function UsersPage(props: UsersPageProps) {
+export default async function UsersPage(props: PageProps) {
   const session = await auth();
 
-  if (!session) return null;
+  if (!session) redirect("/dashboard");
 
   const searchParams = await props.searchParams
   const search = searchParamsUsersCache.parse(searchParams)
@@ -25,11 +22,8 @@ export default async function UsersPage(props: UsersPageProps) {
   const validFilters = getValidFilters(search.filters)
 
   const promises = Promise.all([
-    getUsers(
-      { ...search, filters: validFilters },
-      session.user.role
-    ),
-    getUserRolesCounts(session.user.role)
+    getUsers({ ...search, filters: validFilters }),
+    getUserRolesCounts()
   ])
 
   return (

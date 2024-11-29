@@ -6,22 +6,23 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { type DataTableRowAction } from "~/lib/types";
-import { users, type User } from "~/server/db/schema";
+import type { DataTableRowAction, SessionWithUser } from "~/lib/types";
+import { type Session, sessions } from "~/server/db/schema";
 import { toast } from "sonner"
 import { getErrorMessage } from "~/lib/handle-error";
 import { updateUser } from "~/server/actions/updateUser";
+import { formatDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<User> | null>
+    React.SetStateAction<DataTableRowAction<SessionWithUser> | null>
   >
 }
 
 export function getColumns({
   // setRowAction,
-}: GetColumnsProps): ColumnDef<User>[] {
+}: GetColumnsProps): ColumnDef<SessionWithUser>[] {
   return [
     {
       id: "select",
@@ -50,24 +51,24 @@ export function getColumns({
       enableHiding: false,
     },
     {
-      accessorKey: "id",
+      accessorKey: "userId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" />
+        <DataTableColumnHeader column={column} title="User ID" />
       ),
       cell: ({ row }) => (
         <div
           onClick={()=> {
-            void navigator.clipboard.writeText(row.getValue("id"))
+            void navigator.clipboard.writeText(row.getValue("userId"))
             toast.success('ID скопирован')
           }}
         >
           <TooltipProvider>
             <Tooltip delayDuration={150}>
               <TooltipTrigger className="w-36 truncate">
-                {row.getValue("id")}
+                {row.getValue("userId")}
               </TooltipTrigger>
               <TooltipContent className="p-3">
-                {row.getValue("id")}
+                {row.getValue("userId")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -117,66 +118,73 @@ export function getColumns({
       },
     },
     {
-      id: "actions",
-      cell: function Cell({ row }) {
-        const [isUpdatePending, startUpdateTransition] = React.useTransition()
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="flex size-8 p-0 data-[state=open]:bg-muted"
-              >
-                <Ellipsis className="size-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              {/* <DropdownMenuItem
-                onSelect={() => setRowAction({ row, type: "update" })}
-              >
-                Edit
-              </DropdownMenuItem> */}
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Роль</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={row.original.role}
-                    onValueChange={(value) => {
-                      startUpdateTransition(() => {
-                        toast.promise(
-                          updateUser({
-                            id: row.original.id,
-                            role: value as User["role"],
-                          }),
-                          {
-                            loading: "Обновляем...",
-                            success: "Роль обновлена",
-                            error: (err) => getErrorMessage(err),
-                          }
-                        )
-                      })
-                    }}
-                  >
-                    {users.role.enumValues.map((role) => (
-                      <DropdownMenuRadioItem
-                        key={role}
-                        value={role}
-                        className="capitalize"
-                        disabled={isUpdatePending}
-                      >
-                        {role}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
-      size: 40,
+      accessorKey: "expires",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Истекает" />
+      ),
+      cell: ({ cell }) => formatDate(cell.getValue() as Date),
     },
+    // {
+    //   id: "actions",
+    //   cell: function Cell({ row }) {
+    //     const [isUpdatePending, startUpdateTransition] = React.useTransition()
+
+    //     return (
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger asChild>
+    //           <Button
+    //             aria-label="Open menu"
+    //             variant="ghost"
+    //             className="flex size-8 p-0 data-[state=open]:bg-muted"
+    //           >
+    //             <Ellipsis className="size-4" aria-hidden="true" />
+    //           </Button>
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent align="end" className="w-40">
+    //           {/* <DropdownMenuItem
+    //             onSelect={() => setRowAction({ row, type: "update" })}
+    //           >
+    //             Edit
+    //           </DropdownMenuItem> */}
+    //           <DropdownMenuSub>
+    //             <DropdownMenuSubTrigger>Роль</DropdownMenuSubTrigger>
+    //             <DropdownMenuSubContent>
+    //               <DropdownMenuRadioGroup
+    //                 value={row.original.user.role}
+    //                 onValueChange={(value) => {
+    //                   startUpdateTransition(() => {
+    //                     toast.promise(
+    //                       updateUser({
+    //                         id: row.original.,
+    //                         role: value as User["role"],
+    //                       }),
+    //                       {
+    //                         loading: "Обновляем...",
+    //                         success: "Роль обновлена",
+    //                         error: (err) => getErrorMessage(err),
+    //                       }
+    //                     )
+    //                   })
+    //                 }}
+    //               >
+    //                 {users.role.enumValues.map((role) => (
+    //                   <DropdownMenuRadioItem
+    //                     key={role}
+    //                     value={role}
+    //                     className="capitalize"
+    //                     disabled={isUpdatePending}
+    //                   >
+    //                     {role}
+    //                   </DropdownMenuRadioItem>
+    //                 ))}
+    //               </DropdownMenuRadioGroup>
+    //             </DropdownMenuSubContent>
+    //           </DropdownMenuSub>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     )
+    //   },
+    //   size: 40,
+    // },
   ]
 }

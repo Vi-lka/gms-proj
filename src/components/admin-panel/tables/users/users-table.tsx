@@ -1,14 +1,15 @@
 "use client"
 
 import React from 'react'
-import { type DataTableAdvancedFilterField, type DataTableRowAction } from '~/lib/types'
+import type { DataTableFilterField, DataTableRowAction } from '~/lib/types'
 import { users, type User } from '~/server/db/schema'
-import { type getUserRolesCounts, type getUsers } from '~/server/queries/users'
+import type { getUserRolesCounts, getUsers } from '~/server/queries/users'
 import { getColumns } from './users-table-columns'
 import { toSentenceCase } from '~/lib/utils'
 import { useDataTable } from '~/hooks/use-data-table'
 import { DataTable } from '~/components/data-table/data-table'
-import { DataTableAdvancedToolbar } from '~/components/data-table/data-table-advanced-toolbar'
+import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
+import { useSearchParams } from 'next/navigation'
 
 
 interface UsersTableProps {
@@ -21,30 +22,75 @@ interface UsersTableProps {
 }
 
 export default function UsersTable({ promises }: UsersTableProps) {
+  const searchParams = useSearchParams();
   const [{ data, pageCount }, roleCounts] = React.use(promises)
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
+  const [, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const advancedFilterFields: DataTableAdvancedFilterField<User>[] = [
+  // const filterFields: DataTableFilterField<User>[] = searchParams.has("id") ?
+  // [
+  //   {
+  //     id: "name",
+  //     label: "Имя",
+  //     placeholder: "Поиск по имени...",
+  //   },  
+  //   {
+  //     id: "id",
+  //     label: "ID",
+  //     placeholder: "ID...",
+  //   },
+  //   {
+  //     id: "role",
+  //     label: "Роль",
+  //     options: users.role.enumValues.map((role) => ({
+  //       label: toSentenceCase(role),
+  //       value: role,
+  //       count: roleCounts[role],
+  //     })),
+  //   }
+  // ]
+  // :
+  // [
+  //   {
+  //     id: "name",
+  //     label: "Имя",
+  //     placeholder: "Поиск по имени...",
+  //   },
+  //   {
+  //     id: "role",
+  //     label: "Роль",
+  //     options: users.role.enumValues.map((role) => ({
+  //       label: toSentenceCase(role),
+  //       value: role,
+  //       count: roleCounts[role],
+  //     })),
+  //   }
+  // ]
+
+  const filterFields: DataTableFilterField<User>[] = [
     {
       id: "name",
       label: "Имя",
-      type: "text",
+      placeholder: "Поиск по имени...",
+    },
+    {
+      id: "id",
+      label: "ID",
+      placeholder: "Поиск по ID...",
     },
     {
       id: "role",
       label: "Роль",
-      type: "multi-select",
       options: users.role.enumValues.map((role) => ({
         label: toSentenceCase(role),
         value: role,
         count: roleCounts[role],
-      })),
+      }))
     }
   ]
 
@@ -52,7 +98,8 @@ export default function UsersTable({ promises }: UsersTableProps) {
     data,
     columns,
     pageCount,
-    enableAdvancedFilter: true,
+    filterFields,
+    enableAdvancedFilter: false,
     initialState: {
       sorting: [{ id: "id", desc: true }],
       columnPinning: { right: ["actions"] },
@@ -69,26 +116,10 @@ export default function UsersTable({ promises }: UsersTableProps) {
         table={table}
         // floatingBar={<UsersTableFloatingBar table={table} />}
       >
-        <DataTableAdvancedToolbar
-          table={table}
-          filterFields={advancedFilterFields}
-          shallow={false}
-        >
+        <DataTableToolbar table={table} filterFields={filterFields}>
           {/* <UsersTableToolbarActions table={table} /> */}
-        </DataTableAdvancedToolbar>
+        </DataTableToolbar>
       </DataTable>
-      {/* <UpdateTaskSheet
-        open={rowAction?.type === "update"}
-        onOpenChange={() => setRowAction(null)}
-        task={rowAction?.row.original ?? null}
-      /> */}
-      {/* <DeleteUserDialog
-        open={rowAction?.type === "delete"}
-        onOpenChange={() => setRowAction(null)}
-        tasks={rowAction?.row.original ? [rowAction?.row.original] : []}
-        showTrigger={false}
-        onSuccess={() => rowAction?.row.toggleSelected(false)}
-      /> */}
     </>
   )
 }
