@@ -12,6 +12,7 @@ import {
   ilike,
   inArray,
   lt,
+  or,
 } from "drizzle-orm"
 import { db } from "../db";
 import { auth } from "../auth";
@@ -29,8 +30,10 @@ export async function getUsers(
       const offset = (input.page - 1) * input.perPage
 
       const where = and(
-          input.id ? ilike(users.id, `%${input.id}%`) : undefined,
-          input.name ? ilike(users.name, `%${input.name}%`) : undefined,
+          input.name ? or(
+            ilike(users.name, `%${input.name}%`),
+            ilike(users.id, `%${input.name}%`)
+          ) : undefined,
           input.role.length > 0
             ? inArray(users.role, input.role)
             : undefined,
@@ -144,8 +147,8 @@ export async function getSessions(
       const where = and(
         gt(sessions.expires, currentDate),
         input.userId ? ilike(sessions.userId, `%${input.userId}%`) : undefined,
-        input.name 
-          ? inArray(
+        input.name ? or(
+          inArray(
             sessions.userId,
             db
               .select({ id: users.id })
@@ -155,8 +158,9 @@ export async function getSessions(
                   ilike(users.name, `%${input.name}%`),
                 )
               )
-          )
-          : undefined,
+          ),
+          ilike(sessions.userId, `%${input.name}%`)
+        ) : undefined,
         input.role.length > 0
           ? inArray(
             sessions.userId,

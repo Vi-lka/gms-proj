@@ -1,16 +1,10 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis } from "lucide-react";
 import React from "react";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import type { DataTableRowAction, SessionWithUser } from "~/lib/types";
-import { type Session, sessions } from "~/server/db/schema";
 import { toast } from "sonner"
-import { getErrorMessage } from "~/lib/handle-error";
-import { updateUser } from "~/server/actions/updateUser";
 import { formatDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
@@ -124,67 +118,5 @@ export function getColumns({
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date),
     },
-    // {
-    //   id: "actions",
-    //   cell: function Cell({ row }) {
-    //     const [isUpdatePending, startUpdateTransition] = React.useTransition()
-
-    //     return (
-    //       <DropdownMenu>
-    //         <DropdownMenuTrigger asChild>
-    //           <Button
-    //             aria-label="Open menu"
-    //             variant="ghost"
-    //             className="flex size-8 p-0 data-[state=open]:bg-muted"
-    //           >
-    //             <Ellipsis className="size-4" aria-hidden="true" />
-    //           </Button>
-    //         </DropdownMenuTrigger>
-    //         <DropdownMenuContent align="end" className="w-40">
-    //           {/* <DropdownMenuItem
-    //             onSelect={() => setRowAction({ row, type: "update" })}
-    //           >
-    //             Edit
-    //           </DropdownMenuItem> */}
-    //           <DropdownMenuSub>
-    //             <DropdownMenuSubTrigger>Роль</DropdownMenuSubTrigger>
-    //             <DropdownMenuSubContent>
-    //               <DropdownMenuRadioGroup
-    //                 value={row.original.user.role}
-    //                 onValueChange={(value) => {
-    //                   startUpdateTransition(() => {
-    //                     toast.promise(
-    //                       updateUser({
-    //                         id: row.original.,
-    //                         role: value as User["role"],
-    //                       }),
-    //                       {
-    //                         loading: "Обновляем...",
-    //                         success: "Роль обновлена",
-    //                         error: (err) => getErrorMessage(err),
-    //                       }
-    //                     )
-    //                   })
-    //                 }}
-    //               >
-    //                 {users.role.enumValues.map((role) => (
-    //                   <DropdownMenuRadioItem
-    //                     key={role}
-    //                     value={role}
-    //                     className="capitalize"
-    //                     disabled={isUpdatePending}
-    //                   >
-    //                     {role}
-    //                   </DropdownMenuRadioItem>
-    //                 ))}
-    //               </DropdownMenuRadioGroup>
-    //             </DropdownMenuSubContent>
-    //           </DropdownMenuSub>
-    //         </DropdownMenuContent>
-    //       </DropdownMenu>
-    //     )
-    //   },
-    //   size: 40,
-    // },
   ]
 }

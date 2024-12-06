@@ -26,6 +26,7 @@ export const env = createEnv({
       .enum(["true", "false"])
       .default("true")
       .optional(),
+    CONTROL_KEY: z.string(),
   },
 
   /**
@@ -53,6 +54,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     IS_VERCEL: process.env.IS_VERCEL,
+    CONTROL_KEY: process.env.CONTROL_KEY
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -33,12 +33,7 @@ export default function SessionsTable({ promises }: SessionsTableProps) {
     {
       id: "name",
       label: "Имя",
-      placeholder: "Поиск по имени...",
-    },
-    {
-      id: "userId",
-      label: "ID",
-      placeholder: "Поиск по ID...",
+      placeholder: "Поиск по имени или ID...",
     },
     {
       id: "role",

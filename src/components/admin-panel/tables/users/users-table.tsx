@@ -9,8 +9,6 @@ import { toSentenceCase } from '~/lib/utils'
 import { useDataTable } from '~/hooks/use-data-table'
 import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
-import { useSearchParams } from 'next/navigation'
-
 
 interface UsersTableProps {
   promises: Promise<
@@ -22,7 +20,6 @@ interface UsersTableProps {
 }
 
 export default function UsersTable({ promises }: UsersTableProps) {
-  const searchParams = useSearchParams();
   const [{ data, pageCount }, roleCounts] = React.use(promises)
 
   const [, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
@@ -32,56 +29,11 @@ export default function UsersTable({ promises }: UsersTableProps) {
     [setRowAction]
   )
 
-  // const filterFields: DataTableFilterField<User>[] = searchParams.has("id") ?
-  // [
-  //   {
-  //     id: "name",
-  //     label: "Имя",
-  //     placeholder: "Поиск по имени...",
-  //   },  
-  //   {
-  //     id: "id",
-  //     label: "ID",
-  //     placeholder: "ID...",
-  //   },
-  //   {
-  //     id: "role",
-  //     label: "Роль",
-  //     options: users.role.enumValues.map((role) => ({
-  //       label: toSentenceCase(role),
-  //       value: role,
-  //       count: roleCounts[role],
-  //     })),
-  //   }
-  // ]
-  // :
-  // [
-  //   {
-  //     id: "name",
-  //     label: "Имя",
-  //     placeholder: "Поиск по имени...",
-  //   },
-  //   {
-  //     id: "role",
-  //     label: "Роль",
-  //     options: users.role.enumValues.map((role) => ({
-  //       label: toSentenceCase(role),
-  //       value: role,
-  //       count: roleCounts[role],
-  //     })),
-  //   }
-  // ]
-
   const filterFields: DataTableFilterField<User>[] = [
     {
       id: "name",
       label: "Имя",
-      placeholder: "Поиск по имени...",
-    },
-    {
-      id: "id",
-      label: "ID",
-      placeholder: "Поиск по ID...",
+      placeholder: "Поиск по имени или ID...",
     },
     {
       id: "role",
