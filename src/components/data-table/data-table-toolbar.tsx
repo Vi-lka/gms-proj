@@ -7,11 +7,9 @@ import { X } from "lucide-react"
 
 import { cn } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
 import { DataTableFacetedFilter } from "~/components/data-table/data-table-faceted-filter"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import DataTableSearchInput from "./data-table-search-input"
-import { useSearchParams } from "next/navigation"
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {

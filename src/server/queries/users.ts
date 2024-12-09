@@ -1,7 +1,7 @@
 import "server-only"
 
 import { unstable_cache } from "~/lib/unstable-cache";
-import { GetSessionsSchema, type GetUsersSchema } from "~/lib/validations/users";
+import { type GetSessionsSchema, type GetUsersSchema } from "~/lib/validations/users";
 import { sessions, type User, users } from "../db/schema";
 import {
   gt,
@@ -11,7 +11,6 @@ import {
   and,
   ilike,
   inArray,
-  lt,
   or,
 } from "drizzle-orm"
 import { db } from "../db";
@@ -138,7 +137,6 @@ export async function getSessions(
   }
 
   const currentDate = new Date()
-  console.log(currentDate)
 
   const fetchData = async () => {
     try {
@@ -250,7 +248,6 @@ export async function getSessionRolesCounts() {
   }
 
   const currentDate = new Date()
-  console.log(currentDate)
 
   const where = and(
     inArray(

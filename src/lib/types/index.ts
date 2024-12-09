@@ -5,6 +5,8 @@ import type { DataTableConfig } from "../config/data-table"
 import type { roleEnum, Session } from "~/server/db/schema"
 import type { SQL } from "drizzle-orm"
 
+export * from "./map"
+
 export type UserRole = typeof roleEnum.enumValues[number]
 
 export interface SessionWithUser extends Session {
