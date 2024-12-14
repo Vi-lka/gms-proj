@@ -5,14 +5,12 @@ import { Loader } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import ClusterSelect from '~/components/inputs/cluster-select'
-import InputField from '~/components/inputs/simple/input-field'
-import TextareaField from '~/components/inputs/simple/textarea-field'
+import InputField from '~/components/forms/inputs/simple/input-field'
+import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos'
-import { DEFAULT_ITEM_SIZE } from '~/lib/intersections/get-intersections'
 import { createCompanySchema, type CreateMapItemSchema, type CreateCompanySchema } from '~/lib/validations/forms'
 import { createCompany } from '~/server/actions/companies'
 
@@ -23,9 +21,7 @@ export default function CreateCompanyForm({
   mapItem: CreateMapItemSchema,
   onOpenChange:((open: boolean) => void) | undefined
 }) {
-  // TODO: return for DB
   const revertMapItem = useRevertStageEllementPos(
-    { width: DEFAULT_ITEM_SIZE.width, height: DEFAULT_ITEM_SIZE.height },
     { x: mapItem.xPos, y: mapItem.yPos }
   )
 
@@ -35,8 +31,7 @@ export default function CreateCompanyForm({
     resolver: zodResolver(createCompanySchema),
     defaultValues: {
       name: "",
-      description: "",
-      clusterId: ""
+      description: ""
     },
     mode: "onChange"
   })
@@ -78,13 +73,7 @@ export default function CreateCompanyForm({
           form={form}
           name="description"
           label="Описание"
-          placeholder="Краткое описание Компании"
-        />
-        <ClusterSelect 
-          form={form} 
-          name="clusterId"
-          label="Кластер"
-          placeholder="Выберите Кластер"
+          placeholder="Краткое описание..."
         />
         <SheetFooter className="gap-2 pt-2 sm:space-x-0">
           <SheetClose asChild>

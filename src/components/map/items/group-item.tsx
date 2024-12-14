@@ -9,13 +9,14 @@ import { type IntersectionGroupT } from '~/lib/types'
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
 import getGroupAverage from '~/lib/intersections/get-group-average'
 import { useStageEllementPos } from '~/hooks/use-stage-ellement-pos'
-import Konva from 'konva'
 import { cn } from '~/lib/utils'
 
 export default function GroupItem({
   data,
+  className
 }: {
   data: IntersectionGroupT,
+  className?: string,
 }) {
 
   const ref = useRef<HTMLButtonElement>(null);
@@ -46,7 +47,8 @@ export default function GroupItem({
     {x, y}
   )
 
-  const handleScaleTo = () => {
+  const handleScaleTo = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
     if (stageRef && ref.current) {
       const box = ref.current.getClientRects();
 
@@ -138,7 +140,8 @@ export default function GroupItem({
             "absolute -translate-x-1/2 -translate-y-1/2", 
             "p-3 aspect-square rounded-full",
             "ring-2 ring-primary ring-offset-1 ring-offset-accent",
-            "hover:bg-accent hover:text-accent-foreground duration-300"
+            "hover:bg-accent hover:text-accent-foreground duration-300",
+            className
           )}
           onClick={handleScaleTo}
         >

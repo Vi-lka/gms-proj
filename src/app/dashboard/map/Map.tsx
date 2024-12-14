@@ -9,11 +9,16 @@ import useElementDimensions from '~/hooks/use-ellement-dimensions'
 import { useSetAtom } from 'jotai'
 import { mapContainerDimensions } from '~/lib/atoms/main'
 
-const MainStageAdmin = dynamic(() => import('~/components/map/main-stage-admin'), {
+const MapStage = dynamic(() => import('~/components/map/map-stage'), {
   ssr: false,
 });
-
-const MapAdminToolbar = dynamic(() => import('~/components/map/toolbar/map-admin-toolbar'), {
+const MapToolbarAdmin = dynamic(() => import('~/components/map/toolbar/map-toolbar-admin'), {
+  ssr: false,
+});
+const MapItemsActionsAdmin = dynamic(() => import('~/components/map/actions/map-items-actions-admin'), {
+  ssr: false,
+});
+const MapItemsAdmin = dynamic(() => import('~/components/map/map-items-admin'), {
   ssr: false,
 });
 
@@ -29,17 +34,19 @@ interface MapProps {
 export default function Map({ promises }: MapProps) {
   const { dimensions, ref } = useElementDimensions();
   const setContainerDimensions = useSetAtom(mapContainerDimensions)
+  const [selectedItem, setSelectedItem] = React.useState<MapItemT | null>(null);
 
   React.useEffect(() => {
     if (dimensions) setContainerDimensions(dimensions)
   }, [dimensions, setContainerDimensions])
 
-  const [{ data: mapData }, { data, total }] = React.use(promises)
+  const [{ data: mapData }, { data }] = React.use(promises)
 
   const itemsData: MapItemT[] = React.useMemo(
     () => data.map((item) => ({
       id: item.id,
-      names: item.companies.map(company => company.name),
+      companies: item.companies,
+      cluster: item.cluster,
       x: item.xPos,
       y: item.yPos,
       width: DEFAULT_ITEM_SIZE.width,
@@ -50,9 +57,24 @@ export default function Map({ promises }: MapProps) {
 
   return (
     <div className='w-full h-full flex flex-col gap-2 flex-grow'>
-      <MapAdminToolbar />
-      <div ref={ref} className='w-full h-full flex-grow border rounded-xl overflow-hidden'>
-        <MainStageAdmin items={itemsData} mapData={mapData} className='w-full' />
+      <MapToolbarAdmin />
+      <div ref={ref} className='w-full h-full flex-grow bg-muted border rounded-xl overflow-hidden'>
+        <MapStage
+          mapData={mapData}
+          actions={
+            <MapItemsActionsAdmin 
+              selectedItem={selectedItem}
+              setSelectedItem={(setSelectedItem)}
+            />
+          }
+          className='w-full'
+        >
+          <MapItemsAdmin 
+            items={itemsData} 
+            selectedItem={selectedItem}
+            handleClick={(item) => setSelectedItem(item)}
+          />
+        </MapStage>
       </div>
     </div>
   )

@@ -42,7 +42,6 @@ export const clusters = createTable(
       .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
-    image: varchar("image", { length: 255 }),
   },
   (cluster) => ({
     nameIndex: index("cluster_name_idx").on(cluster.name),

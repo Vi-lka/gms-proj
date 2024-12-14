@@ -8,7 +8,10 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ["var(--font-geist-sans)", ...fontFamily.sans]
+  			sans: [
+  				'var(--font-geist-sans)',
+                    ...fontFamily.sans
+                ]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -45,6 +48,10 @@ export default {
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			yellow: {
+  				DEFAULT: 'hsl(var(--yellow))',
+  				foreground: 'hsl(var(--yellow-foreground))'
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',

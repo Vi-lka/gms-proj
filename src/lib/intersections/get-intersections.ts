@@ -1,9 +1,10 @@
 import { type MapGroupT, type MapItemT } from "../types";
+import { combineArraysWithCommonElements } from "../utils";
 import haveIntersection from "./have-intersection";
 
 export const DEFAULT_ITEM_SIZE = {
-  width: 100,
-  height: 100
+  width: 80,
+  height: 60
 }
 
 export default function getIntersections(data: MapItemT[], scale: number) {
@@ -53,12 +54,14 @@ export default function getIntersections(data: MapItemT[], scale: number) {
       singleItems.push(item.current)
     }
   })
-  const set  = new Set(intersectionsArrs.map(item => JSON.stringify(item)));
-  const uniqIntersections = Array.from(set).map(item => JSON.parse(item) as MapItemT[])
+  const setArrs  = new Set(intersectionsArrs.map(item => JSON.stringify(item)));
+  const uniqIntersections = Array.from(setArrs).map(item => JSON.parse(item) as MapItemT[])
   intersectionItems.push(...uniqIntersections)
 
+  const intersectionGroups = combineArraysWithCommonElements(intersectionItems)
+
   // Get groups for render 
-  intersectionItems.forEach(item => {
+  intersectionGroups.forEach(item => {
     dataGroups.push({intersection: true, items: item})
   })
   singleItems.forEach(item => {

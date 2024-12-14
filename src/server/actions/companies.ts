@@ -1,12 +1,13 @@
 "use server"
 
 import { unstable_noStore as noStore, revalidateTag } from "next/cache"
-import { type CreateMapItemSchema, type CreateCompanySchema, type CreateClusterSchema } from "~/lib/validations/forms"
+import { type CreateMapItemSchema, type CreateCompanySchema, type UpdateCompanySchema, type CompanyToClusterSchema } from "~/lib/validations/forms"
 import { db } from "../db"
 import { auth } from "../auth";
 import { getErrorMessage } from "~/lib/handle-error";
-import { clusters, companies, mapItems } from "../db/schema";
+import { clusters, companies, Company, mapItems } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
+import { eq } from "drizzle-orm";
 
 export async function createCompany({ 
   input,
@@ -64,13 +65,7 @@ export async function createCompany({
   }
 }
 
-export async function createCluster({
-  input,
-  mapItem
-}: {
-  input: CreateClusterSchema,
-  mapItem: CreateMapItemSchema
-}) {
+export async function updateCompany(input: UpdateCompanySchema) {
   noStore()
 
   const session = await auth();
@@ -83,18 +78,55 @@ export async function createCluster({
   }
 
   try {
-    const result = await db.transaction(async (tx) => {
-      const newMapItem = await tx
-        .insert(mapItems)
-        .values({
-          description: mapItem.description,
-          xPos: mapItem.xPos,
-          yPos: mapItem.yPos
-        })
-        .returning()
-        .then(takeFirstOrThrow)
+    const result = await db
+      .update(companies)
+      .set({
+        name: input.name,
+        description: input.description,
+      })
+      .where(eq(companies.id, input.id))
+      .returning()
+      .then(takeFirstOrThrow)
 
-      const clusterRes = await tx
+    revalidateTag("map_items")
+
+    return {
+      data: result,
+      error: null,
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
+}
+
+export async function companyToCluster(
+  input: CompanyToClusterSchema,
+  oldCompany: UpdateCompanySchema
+) {
+  noStore()
+
+  const session = await auth();
+  if (session?.user.role !== "admin") {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    const deleteOldCompany = !input.companies.some(inputCompany => 
+      inputCompany.id === oldCompany.id
+    )
+    const newCompaniesInput = input.companies.filter(inputCompany => 
+      !inputCompany.id
+    )
+
+    const result = await db.transaction(async (tx) => {
+      const newCluster = await tx
         .insert(clusters)
         .values({
           name: input.name,
@@ -103,15 +135,50 @@ export async function createCluster({
         .returning()
         .then(takeFirstOrThrow)
 
-      const companiesInput = input.companies.map(company => ({
-        ...company,
-        clusterId: clusterRes.id,
-        mapItemId: newMapItem.id,
-      }))
+      let updatedCompany: Company
 
-      await tx
-        .insert(companies)
-        .values(companiesInput)
+      if (deleteOldCompany) {
+        updatedCompany = await tx
+          .delete(companies)
+          .where(eq(companies.id, oldCompany.id))
+          .returning()
+          .then(takeFirstOrThrow)
+      } else {
+        const oldCompanyData = input.companies.find(company => company.id === oldCompany.id) as UpdateCompanySchema
+        updatedCompany = await tx
+          .update(companies)
+          .set({
+            name: oldCompanyData.name,
+            description: oldCompanyData.description,
+            clusterId: newCluster.id,
+          })
+          .where(eq(companies.id, oldCompanyData.id))
+          .returning()
+          .then(takeFirstOrThrow)
+      }
+
+      const updatedMapItem = await tx
+        .update(mapItems)
+        .set({
+          clusterId: newCluster.id
+        })
+        .where(eq(mapItems.id, updatedCompany.mapItemId!))
+        .returning()
+        .then(takeFirstOrThrow)
+
+      const newCompanies = newCompaniesInput.map(company => (
+        {
+          name: company.name,
+          description: company.description,
+          clusterId: newCluster.id,
+          mapItemId: updatedMapItem.id,
+        }
+      ))
+      if (newCompanies.length > 0) {
+        await tx
+          .insert(companies)
+          .values(newCompanies)
+      }
 
       revalidateTag("map_items")
 

@@ -16,6 +16,7 @@ function Toaster({ ...props }: ToasterProps) {
         classNames: {
           toast:
             "group toast group-[.toaster]:!bg-background group-[.toaster]:!text-foreground group-[.toaster]:!border-border group-[.toaster]:!shadow-lg",
+          error: "group-[.toaster]:!bg-destructive group-[.toaster]:!text-destructive-foreground",
           description: "group-[.toast]:!text-muted-foreground",
           actionButton:
             "group-[.toast]:!bg-primary group-[.toast]:!text-primary-foreground group-[.toast]:!py-4",

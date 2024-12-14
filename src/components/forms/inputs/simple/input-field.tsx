@@ -9,6 +9,7 @@ export default function InputField<TData extends FieldValues>({
   name,
   label,
   placeholder,
+  disabled,
   className
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +17,7 @@ export default function InputField<TData extends FieldValues>({
   name: Path<TData>,
   label?: React.ReactNode,
   placeholder?: string,
+  disabled?: boolean,
   className?: string,
 }) {
   return (

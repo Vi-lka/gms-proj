@@ -1,6 +1,15 @@
 export type MapItemT = {
   id: string,
-  names: string[];
+  companies: {
+    id: string; 
+    name: string;
+    description: string | null;
+  }[];
+  cluster: {
+    id: string;
+    name: string;
+    description: string | null;
+  } | null;
   x: number;
   y: number;
   width?: number;

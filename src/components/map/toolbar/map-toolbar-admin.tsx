@@ -9,7 +9,7 @@ import AddEllementButton from './add-ellement/add-ellement-button'
 
 type MapAdminToolbarProps = React.HTMLAttributes<HTMLDivElement>
 
-export default function MapAdminToolbar({
+export default function MapToolbarAdmin({
   className,
   ...props
 }: MapAdminToolbarProps) {

@@ -5,8 +5,6 @@ import Konva from 'konva';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { mapContainerDimensions, stageAtom, stageRefAtom } from '~/lib/atoms/main';
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth';
-import getIntersections from '~/lib/intersections/get-intersections';
-import { type MapItemT } from '~/lib/types';
 import type { 
   KonvaEventObject, 
   NodeConfig as KonvaNodeConfig, 
@@ -16,17 +14,17 @@ import { cn } from '~/lib/utils';
 import { Layer, Stage } from 'react-konva';
 import { type MapData } from '~/server/db/schema';
 import MapMainImage from './map-main-image';
-import MapItem from './items/map-item';
 
-
-export default function MainStageAdmin({
-  items,
+export default function MapStage({
   mapData,
   className,
+  children,
+  actions
 }: {
-  items: MapItemT[],
   mapData: MapData | undefined,
   className?: string,
+  children: React.ReactNode,
+  actions?: React.ReactNode
 }) {
   Konva.hitOnDragEnabled = true
 
@@ -61,17 +59,6 @@ export default function MainStageAdmin({
     w425: 15,
     minw: 20,
   })
-  const scaleForIntersections = valueFromWindowWidth({
-    windowW,
-    w1024: stage.scale,
-    w425: 0.4*stage.scale,
-    minw: 0.3*stage.scale,
-  })
-
-  const intersections = React.useMemo(
-    () => getIntersections(items, scaleForIntersections),
-    [items, scaleForIntersections]
-  );
 
   const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
@@ -270,25 +257,24 @@ export default function MainStageAdmin({
 
 
   return (
-    <Stage
-      ref={ref}
-      width={windowW}
-      height={windowH}
-      draggable
-      dragBoundFunc={handleDragBound}
-      onWheel={handleWheel}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      className={cn("overflow-hidden relative", className)}
-    >
-      <Layer id='main-image'>
-        <MapMainImage data={mapData} />
-      </Layer>
-      <Layer>
-        {intersections.map((item, indx) => (
-          <MapItem key={indx} data={item} />
-        ))}
-      </Layer>
-    </Stage>
+    <>
+      <Stage
+        ref={ref}
+        width={windowW}
+        height={windowH}
+        draggable
+        dragBoundFunc={handleDragBound}
+        onWheel={handleWheel}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className={cn("overflow-hidden relative", className)}
+      >
+        <Layer id='main-image'>
+          <MapMainImage data={mapData} />
+        </Layer>
+        {children}
+      </Stage>
+      {actions}
+    </>
   )
 }

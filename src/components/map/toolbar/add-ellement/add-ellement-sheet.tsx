@@ -5,9 +5,9 @@ import React from 'react'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { type CreateMapItemSchema } from '~/lib/validations/forms'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import CreateCompanyForm from './create-company-form'
-import CreateClusterForm from './create-cluster-form'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import CreateCompanyForm from '~/components/forms/create/create-company-form'
+import CreateClusterForm from '~/components/forms/create/create-cluster-form'
 
 
 interface AddEllementSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
