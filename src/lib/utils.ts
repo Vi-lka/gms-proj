@@ -27,6 +27,32 @@ export function toSentenceCase(str: string) {
     .trim()
 }
 
+export function idToSentenceCase(str: string) {
+  switch (str) {
+    case "id":
+      return "ID";
+    case "name":
+      return "Название";
+    case "email":
+      return "Email";
+    case "role":
+      return "Роль";
+    case "companyId":
+      return "ID Компании";
+    case "companyName":
+      return "Компания";  
+    case "clusterId":
+      return "ID Кластера";
+    case "clusterName":
+      return "Кластер";
+    case "expires":
+      return "Истекает";
+  
+    default:
+      return toSentenceCase(str)
+  }
+}
+
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
  */

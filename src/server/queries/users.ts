@@ -12,9 +12,11 @@ import {
   ilike,
   inArray,
   or,
+  type SQL,
 } from "drizzle-orm"
 import { db } from "../db";
 import { auth } from "../auth";
+import { getRelationOrderBy, orderData } from "../db/utils";
 
 export async function getUsers(
   input: GetUsersSchema,
@@ -80,7 +82,7 @@ export async function getUsers(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 3600, tags: ["users"] }
+    { revalidate: 60, tags: ["users"] }
   )()
 
   return result
@@ -121,7 +123,7 @@ export async function getUserRolesCounts() {
   const result = await unstable_cache(
     fetchData,
     ["user-roles-counts"],
-    { revalidate: 3600, tags: ["users", "user-roles-counts"] }
+    { revalidate: 60, tags: ["users", "user-roles-counts"] }
   )()
 
   return result
@@ -174,12 +176,7 @@ export async function getSessions(
           : undefined,
       )
 
-      const orderBy =
-        input.sort.length > 0
-          ? input.sort.map((item) =>
-              item.desc ? desc(sessions[item.id]) : asc(sessions[item.id])
-            )
-          : [asc(sessions.userId)]
+      const { orderBy } = getRelationOrderBy(input.sort, sessions, sessions.userId)
 
       const { data, total } = await db.transaction(async (tx) => {
 
@@ -224,8 +221,10 @@ export async function getSessions(
         role: item.user.role
       }))
 
+      const sortedData = orderData(input.sort, transformData)
+
       const pageCount = Math.ceil(total / input.perPage)
-      return { data: transformData, pageCount }
+      return { data: sortedData, pageCount }
     } catch (err) {
       console.error(err)
       return { data: [], pageCount: 0 }

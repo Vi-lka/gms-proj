@@ -43,7 +43,7 @@ export default function UpdateCompanyForm({
     })
   }
 
-  const saveDisabled = isPending || !form.formState.isValid || !form.formState.isDirty
+  const saveDisabled = isPending || !form.formState.isValid
 
   return (
     <Form {...form}>

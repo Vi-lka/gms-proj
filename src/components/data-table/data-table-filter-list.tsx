@@ -68,15 +68,15 @@ import {
 interface DataTableFilterListProps<TData> {
   table: Table<TData>
   filterFields: DataTableAdvancedFilterField<TData>[]
-  debounceMs: number
+  debounceMs?: number
   shallow?: boolean
 }
 
 export function DataTableFilterList<TData>({
   table,
   filterFields,
-  debounceMs,
-  shallow,
+  debounceMs = 300,
+  shallow = false,
 }: DataTableFilterListProps<TData>) {
   const id = React.useId()
   const [filters, setFilters] = useQueryState(

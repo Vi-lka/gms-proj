@@ -5,7 +5,7 @@ import { type CreateMapItemSchema, type CreateCompanySchema, type UpdateCompanyS
 import { db } from "../db"
 import { auth } from "../auth";
 import { getErrorMessage } from "~/lib/handle-error";
-import { clusters, companies, Company, mapItems } from "../db/schema";
+import { clusters, companies, mapItems, type Company } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq } from "drizzle-orm";
 

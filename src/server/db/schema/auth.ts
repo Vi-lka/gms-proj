@@ -107,3 +107,9 @@ export const verificationTokens = createTable(
 // Types
 export type User = typeof users.$inferSelect
 export type Session = typeof sessions.$inferSelect
+
+export interface SessionExtend extends Session {
+  name: User["name"],
+  email: User["email"],
+  role: User["role"]
+}

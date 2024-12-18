@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { z } from "zod";
 import {
     createSearchParamsCache,
@@ -7,7 +8,7 @@ import {
     parseAsStringEnum,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type Session, type User, users } from "~/server/db/schema";
+import { type FieldsExtend, type SessionExtend, type User, users } from "~/server/db/schema";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -22,13 +23,12 @@ export const searchParamsUsers = {
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
-
 export const searchParamsUsersCache = createSearchParamsCache(searchParamsUsers)
 
 export const searchParamsSessions = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<Session>().withDefault([
+  sort: getSortingStateParser<SessionExtend>().withDefault([
     { id: "userId", desc: false }
   ]),
   userId: parseAsString.withDefault(""),
@@ -38,5 +38,23 @@ export const searchParamsSessions = {
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
-
 export const searchParamsSessionsCache = createSearchParamsCache(searchParamsSessions)
+
+export const searchParamsFields = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<FieldsExtend>().withDefault([
+    { id: "id", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  name: parseAsString.withDefault(""),
+  companyId: parseAsString.withDefault(""),
+  companyName: parseAsString.withDefault(""),
+  clusterId: parseAsString.withDefault(""),
+  clusterName: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
+}
+export const searchParamsFieldsCache = createSearchParamsCache(searchParamsFields)
+

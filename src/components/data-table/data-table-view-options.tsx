@@ -4,7 +4,7 @@ import * as React from "react"
 import type { Table } from "@tanstack/react-table"
 import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 
-import { cn, toSentenceCase } from "~/lib/utils"
+import { cn, idToSentenceCase, toSentenceCase } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
 import {
   Command,
@@ -71,7 +71,7 @@ export function DataTableViewOptions<TData>({
                       }
                     >
                       <span className="truncate">
-                        {toSentenceCase(column.id)}
+                        {idToSentenceCase(column.id)}
                       </span>
                       <Check
                         className={cn(

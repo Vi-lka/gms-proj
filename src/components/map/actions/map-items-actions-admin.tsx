@@ -7,6 +7,12 @@ import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { type MapItemT } from '~/lib/types'
 import UpdateEllementSheet from './update-ellement-sheet'
+import DeleteEllementDialog from './delete-ellement-dialog'
+import dynamic from 'next/dynamic'
+
+const MoveEllementPortal = dynamic(() => import('./move-ellement-portal'), {
+  ssr: false,
+});
 
 type ItemAction = "update" | "delete" | "move" | null
 
@@ -31,10 +37,10 @@ export default function MapItemsActionsAdmin({
           setItemAction("update")
         }
         if (event.key === 'Shift') {
-          console.log("SHIFT")
+          setItemAction("move")
         }
         if (event.key === "Delete") {
-          console.log("DELETE")
+          setItemAction("delete")
         }
       }
     }
@@ -43,7 +49,7 @@ export default function MapItemsActionsAdmin({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [itemAction, selectedItem, setSelectedItem])
 
-  function onOpenSheetChange(open: boolean) {
+  function onOpenChange(open: boolean) {
     if (!open) setItemAction(null)
   }
 
@@ -54,12 +60,27 @@ export default function MapItemsActionsAdmin({
 
   if (!selectedItem) return null
 
+  if (itemAction === "move") return (
+    <MoveEllementPortal
+      id={selectedItem.id}
+      open={itemAction === "move"}
+      onOpenChange={onOpenChange}
+      onFormSubmit={onFormSubmit}
+    />
+  )
+
   return (
     <>
       <UpdateEllementSheet 
         item={selectedItem}
         open={itemAction === "update"}
-        onOpenChange={onOpenSheetChange}
+        onOpenChange={onOpenChange}
+        onFormSubmit={onFormSubmit}
+      />
+      <DeleteEllementDialog 
+        item={selectedItem}
+        open={itemAction === "delete"}
+        onOpenChange={onOpenChange}
         onFormSubmit={onFormSubmit}
       />
       <Portal>
@@ -91,7 +112,7 @@ export default function MapItemsActionsAdmin({
                       <Button
                         size="icon"
                         className="size-8 hover:border"
-                        // onClick={() => }
+                        onClick={() => setItemAction("move")}
                       >
                         <Move className="size-4 shrink-0" aria-hidden="true" />
                       </Button>
@@ -112,7 +133,7 @@ export default function MapItemsActionsAdmin({
                         variant="destructive"
                         size="icon"
                         className="size-8 hover:border"
-                        // onClick={() => }
+                        onClick={() => setItemAction("delete")}
                       >
                         <Trash2 className="size-4 shrink-0" aria-hidden="true" />
                       </Button>

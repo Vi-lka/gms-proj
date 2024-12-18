@@ -1,10 +1,15 @@
 import {
+  asc,
+  desc,
   not,
   sql,
+  SQLWrapper,
+  TableConfig,
   type AnyColumn,
   type SQL,
 } from "drizzle-orm"
-import { type PgColumn } from "drizzle-orm/pg-core"
+import { PgTableWithColumns, type PgColumn } from "drizzle-orm/pg-core"
+import { ExtendedColumnSort, ExtendedSortingState } from "~/lib/types"
 
 /**
  * Takes the first item from an array.
@@ -107,18 +112,71 @@ export function updateInManySql<TData extends MustBeInObject>({
   }, {}) as Record<keyof TData, SQL<unknown>>
 
   return result;
+}
 
-  // const sqlChunks: SQL[] = [];
+export function getTableOrderBy<IData, TData extends TableConfig>(
+  item: ExtendedColumnSort<IData>, 
+  table: PgTableWithColumns<TData>,
+  notRelated?: boolean
+) {
+  if (item.id in table) {
+    if (item.desc) return desc(table[item.id])
+    else return asc(table[item.id])
+  } else {
+    if (notRelated) return item
+  }
+}
 
-  // sqlChunks.push(sql`(case`);
+export function getRelationOrderBy<SData, TData extends TableConfig>(
+  sort: ExtendedSortingState<SData>,
+  table: PgTableWithColumns<TData>,
+  defaultColumn: AnyColumn | SQLWrapper
+) {
+  const orderByUnClear = sort.length > 0
+    ? sort.map((item) => getTableOrderBy(item, table))
+    : [asc(defaultColumn)]
+  const orderBy = orderByUnClear.filter((item): item is SQL<unknown> => !!item)
 
-  // for (const input of inputs) {
-  //   sqlChunks.push(sql`when ${id} = ${input.id} then ${input[inputKey]}`);
-  // }
+  const relationOrderBy = sort
+    .map((item) => getTableOrderBy(item, table, true))
+    .filter((item): item is ExtendedColumnSort<SData> => !!item)
 
-  // sqlChunks.push(sql`end)`);
+  return { orderBy, relationOrderBy }
+}
 
-  // const finalSql: SQL = sql.join(sqlChunks, sql.raw(' '));
+export function orderData<TData extends object>(
+  sort: ExtendedSortingState<TData>,
+  data: TData[]
+) {
+  return data.sort(fieldSorter(sort))
+}
 
-  // return finalSql
+function fieldSorter<TData extends object>(
+  sort: ExtendedSortingState<TData>,
+) {
+  const dir: number[] = []
+  const length = sort.length
+  
+  const fields = sort.map(function(itm, indx) {
+    if (itm.desc) {
+      dir[indx] = -1;
+    } else {
+      dir[indx] = 1;
+    }
+    return itm;
+  });
+
+  return function (a: TData, b: TData) {
+    for (let i = 0; i < length; i++) {
+      const field = fields[i]!.id;
+      if (typeof a[field] === "string" && typeof b[field] === "string") {
+        if (a[field].localeCompare(b[field]) > 0) return dir[i]!;
+        if (a[field].localeCompare(b[field]) < 0) return -(dir[i]!);
+      } else {
+        if (a[field] > b[field]) return dir[i]!;
+        if (a[field] < b[field]) return -(dir[i]!);  
+      }
+    }
+    return 0;
+  };
 }

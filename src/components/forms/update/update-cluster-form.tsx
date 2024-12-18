@@ -29,8 +29,6 @@ export default function UpdateClusterForm({
 
   function onSubmit(input: UpdateClusterSchema) {
     startTransition(async () => {
-      // Don`t know why, but return from handleSubmit is not returning companies array(((
-      // const input = form.getValues()
       const { data, error } = await updateCluster(input, cluster.companies)
 
       if (error) {
@@ -46,7 +44,7 @@ export default function UpdateClusterForm({
     })
   }
 
-  const saveDisabled = isPending || !form.formState.isValid || !form.formState.isDirty
+  const saveDisabled = isPending || !form.formState.isValid
 
 
   return (

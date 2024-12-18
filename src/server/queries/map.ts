@@ -39,7 +39,7 @@ export async function getMap() {
   const result = await unstable_cache(
     fetchData,
     ["map"],
-    { revalidate: 3600, tags: ["map"] }
+    { revalidate: 60, tags: ["map"] }
   )()
 
   return result
@@ -102,7 +102,7 @@ export async function getMapItems() {
     fetchData,
     // [JSON.stringify(input)],
     ["map_items"],
-    { revalidate: 3600, tags: ["map_items"] }
+    { revalidate: 60, tags: ["map_items"] }
   )()
 
   return result

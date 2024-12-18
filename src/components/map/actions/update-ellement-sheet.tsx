@@ -36,7 +36,7 @@ interface UpdateEllementSheetProps extends React.ComponentPropsWithRef<typeof Sh
   onFormSubmit: (() => void) | undefined
 }
   
-export default function UpdateEllementSheet({ item, ...props }: UpdateEllementSheetProps) {
+export default function UpdateEllementSheet({ item, onFormSubmit, ...props }: UpdateEllementSheetProps) {
   const [companyToCluster, setCompanyToCluster] = React.useState(false)
 
   const isCluster = !!item.cluster
@@ -75,20 +75,20 @@ export default function UpdateEllementSheet({ item, ...props }: UpdateEllementSh
             ? (
               <CompanyToClusterForm 
                 company={itemData.data}
-                onFormSubmit={props.onFormSubmit}
+                onFormSubmit={onFormSubmit}
               />
             )
             : itemData.type === "cluster"
               ? (
                 <UpdateClusterForm 
                   cluster={itemData.data}
-                  onFormSubmit={props.onFormSubmit}
+                  onFormSubmit={onFormSubmit}
                 />
               )
               : (
                 <UpdateCompanyForm
                   company={itemData.data}
-                  onFormSubmit={props.onFormSubmit}
+                  onFormSubmit={onFormSubmit}
                 />
               )
           }

@@ -1,26 +1,8 @@
-import { boolean, customType, index, text, varchar } from "drizzle-orm/pg-core";
+import { boolean, index, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { relations } from "drizzle-orm";
-
-export type NumericConfig = {
-	precision?: number
-	scale?: number
-}
-
-export const numericCasted = customType<{
-	data: number
-	driverData: string
-	config: NumericConfig
-}>({
-	dataType: (config) => {
-		if (config?.precision && config?.scale) {
-			return `numeric(${config.precision}, ${config.scale})`
-		}
-		return 'numeric'
-	},
-	fromDriver: (value: string) => Number.parseFloat(value), // note: precision loss for very large/small digits so area to refactor if needed
-	toDriver: (value: number) => value.toString(),
-})
+import { numericCasted } from ".";
+import { fields } from "./fields";
 
 export const mapData = createTable("map_data", {
   id: varchar("id", { length: 255 })
@@ -69,9 +51,10 @@ export const companies = createTable(
     nameIndex: index("company_name_idx").on(company.name),
   })
 );
-export const companiesRelations = relations(companies, ({ one }) => ({
+export const companiesRelations = relations(companies, ({ one, many }) => ({
   cluster: one(clusters, { fields: [companies.clusterId], references: [clusters.id] }),
   mapItem: one(mapItems, { fields: [companies.mapItemId], references: [mapItems.id] }),
+  fields: many(fields)
 }));
 
 export const mapItems = createTable(
@@ -98,3 +81,8 @@ export type MapData = typeof mapData.$inferSelect
 export type MapItem = typeof mapItems.$inferSelect
 export type Company = typeof companies.$inferSelect
 export type Cluster = typeof clusters.$inferSelect
+
+export interface CompanyExtend extends Company {
+  cluster: Cluster | null
+}
+

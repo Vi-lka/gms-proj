@@ -18,7 +18,7 @@ import { useQueryState } from "nuqs"
 
 import { dataTableConfig } from "~/lib/config/data-table"
 import { getSortingStateParser } from "~/lib/parsers"
-import { cn, toSentenceCase } from "~/lib/utils"
+import { cn, idToSentenceCase, toSentenceCase } from "~/lib/utils"
 import { useDebouncedCallback } from "~/hooks/use-debounced-callback"
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
@@ -47,17 +47,18 @@ import {
   SortableDragHandle,
   SortableItem,
 } from "~/components/ui/sortable"
+import { revalidateTag } from "next/cache"
 
 interface DataTableSortListProps<TData> {
   table: Table<TData>
-  debounceMs: number
+  debounceMs?: number
   shallow?: boolean
 }
 
 export function DataTableSortList<TData>({
   table,
-  debounceMs,
-  shallow,
+  debounceMs = 300,
+  shallow = false,
 }: DataTableSortListProps<TData>) {
   const id = React.useId()
 
@@ -94,7 +95,7 @@ export function DataTableSortList<TData>({
         )
         .map((column) => ({
           id: column.id,
-          label: toSentenceCase(column.id),
+          label: idToSentenceCase(column.id),
           selected: false,
         })),
     [sorting, table]
@@ -189,9 +190,9 @@ export function DataTableSortList<TData>({
             <h4 className="font-medium leading-none">Sort by</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="font-medium leading-none">No sorting applied</h4>
+              <h4 className="font-medium leading-none">Сортировка не применяется</h4>
               <p className="text-sm text-muted-foreground">
-                Add sorting to organize your results.
+                Добавьте сортировку, чтобы упорядочить результаты.
               </p>
             </div>
           )}
@@ -217,7 +218,7 @@ export function DataTableSortList<TData>({
                             aria-controls={fieldListboxId}
                           >
                             <span className="truncate">
-                              {toSentenceCase(sort.id)}
+                              {idToSentenceCase(sort.id)}
                             </span>
                             <div className="ml-auto flex items-center gap-1">
                               {initialSorting.length === 1 &&
@@ -344,7 +345,8 @@ export function DataTableSortList<TData>({
               size="sm"
               className="h-[1.85rem] rounded"
               onClick={addSort}
-              disabled={sorting.length >= sortableColumns.length}
+              // disabled={sorting.length >= sortableColumns.length}
+              disabled={sortableColumns.length === 0}
             >
               Add sort
             </Button>

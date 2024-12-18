@@ -46,7 +46,7 @@ export default function CompanyToClusterForm({
     })
   }
 
-  const saveDisabled = isPending || !form.formState.isValid || !form.formState.isDirty
+  const saveDisabled = isPending || !form.formState.isValid
 
   return (
     <Form {...form}>

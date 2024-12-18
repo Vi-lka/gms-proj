@@ -67,7 +67,7 @@ export type Filter<TData> = Prettify<
 
 export interface DataTableRowAction<TData> {
   row: Row<TData>
-  type: "update" | "delete"
+  type: "create" | "update" | "delete"
 }
 
 export interface QueryBuilderOpts {

@@ -58,3 +58,21 @@ export const createMapItemSchema = z.object({
   yPos: z.number()
 })
 export type CreateMapItemSchema = z.infer<typeof createMapItemSchema>
+
+
+
+// FIELD
+export const createFieldSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().nullable(),
+  companyId: z.string().min(1, "Выберите компанию")
+})
+export type CreateFieldSchema = z.infer<typeof createFieldSchema>
+
+export const updateFieldSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().nullable(),
+  companyId: z.string().min(1, "Выберите компанию")
+})
+export type UpdateFieldSchema = z.infer<typeof updateFieldSchema>
