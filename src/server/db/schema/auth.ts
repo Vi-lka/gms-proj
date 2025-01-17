@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   index,
   integer,
@@ -27,10 +27,6 @@ export const users = createTable("user", {
   image: varchar("image", { length: 255 }),
   role: roleEnum("role").notNull(),
 });
-  
-export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
-}));
   
 export const accounts = createTable(
   "account",
@@ -61,10 +57,6 @@ export const accounts = createTable(
   })
 );
 
-export const accountsRelations = relations(accounts, ({ one }) => ({
-  user: one(users, { fields: [accounts.userId], references: [users.id] }),
-}));
-
 export const sessions = createTable(
   "session",
   {
@@ -83,10 +75,6 @@ export const sessions = createTable(
     userIdIdx: index("session_user_id_idx").on(session.userId),
   })
 );
-
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-  user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
 
 export const verificationTokens = createTable(
   "verification_token",

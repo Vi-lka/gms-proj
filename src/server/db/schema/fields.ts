@@ -1,6 +1,5 @@
 import { date, index, pgEnum, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
-import { relations } from "drizzle-orm";
 import { type Cluster, companies, type Company } from "./map";
 import { numericCasted } from ".";
 
@@ -20,10 +19,6 @@ export const fields = createTable(
     nameIndex: index("field_name_idx").on(field.name),
   })
 )
-export const fieldsRelations = relations(fields, ({ one, many }) => ({
-  company: one(companies, { fields: [fields.companyId], references: [companies.id] }),
-  licensedAreas: many(licensedAreas)
-}));
 
 export const licensedAreas = createTable(
   "licensed_areas",
@@ -41,10 +36,6 @@ export const licensedAreas = createTable(
     nameIndex: index("licensed_area_name_idx").on(licensedArea.name),
   })
 )
-export const licensedAreasRelations = relations(licensedAreas, ({ one, many }) => ({
-  field: one(fields, { fields: [licensedAreas.fieldId], references: [fields.id] }),
-  data: many(areasData),
-}));
 
 export const approxEnum = pgEnum('approx', ['>', '<']);
 
@@ -171,10 +162,6 @@ export const areasData = createTable(
     analysisPlaceIndex: index("areas_data_analysis_place_inx").on(areaData.analysisPlace),
   })
 )
-export const areasDataRelations = relations(areasData, ({ one }) => ({
-  area: one(licensedAreas, { fields: [areasData.areaId], references: [licensedAreas.id] }),
-}));
-
 
 
 // Types
