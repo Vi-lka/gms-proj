@@ -57,7 +57,7 @@ export const accounts = createTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index("account_user_id_idx").on(account.userId),
+    userIdIdx: index("account_users_id_idx").on(account.userId),
   })
 );
 
