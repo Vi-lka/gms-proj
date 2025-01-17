@@ -8,7 +8,6 @@ import { db } from "../db";
 import { areasData } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq, inArray } from "drizzle-orm";
-import { deleteDateTime } from "~/lib/utils";
 
 export async function createAreasData(input: CreateAreasDataSchema) {
   noStore()
