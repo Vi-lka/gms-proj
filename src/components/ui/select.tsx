@@ -12,10 +12,16 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
+type SelectTriggerExtendT = {
+  icon?: React.ReactNode
+}
+
+type SelectTriggerT = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & SelectTriggerExtendT;
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  SelectTriggerT
+>(({ className, children, icon, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -26,7 +32,10 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
+      {icon !== undefined
+        ? icon
+        : <ChevronDown className="h-4 w-4 opacity-50" />
+      }
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))

@@ -9,7 +9,8 @@ export default function TextareaField<TData extends FieldValues>({
   name,
   label,
   placeholder,
-  className
+  className,
+  classNameInput
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<TData, any, undefined>,
@@ -17,18 +18,21 @@ export default function TextareaField<TData extends FieldValues>({
   label?: React.ReactNode,
   placeholder?: string,
   className?: string,
+  classNameInput?: string,
 }) {
   return (
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
+      render={({ field: {value, ...other} }) => (
         <FormItem className={cn("", className)}>
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Textarea
               placeholder={placeholder}
-              {...field}
+              value={value ?? ""}
+              className={classNameInput}
+              {...other}
             />
           </FormControl>
           <FormMessage />

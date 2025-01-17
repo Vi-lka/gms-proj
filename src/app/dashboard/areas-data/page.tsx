@@ -2,32 +2,31 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import React from 'react'
 import { ContentLayout } from '~/components/admin-panel/content-layout';
-import SessionsTable from '~/components/admin-panel/tables/users/sessions-table';
+import AreasDataTable from '~/components/admin-panel/tables/areas-data/areas-data-table';
 import { DataTableSkeleton } from '~/components/data-table/data-table-skeleton';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb';
 import { getValidFilters } from '~/lib/data-table-func';
-import type { PageProps } from '~/lib/types'
-import { searchParamsSessionsCache } from '~/lib/validations/search-params';
+import { type PageProps } from '~/lib/types';
+import { searchAreasDataCache } from '~/lib/validations/search-params';
 import { auth } from '~/server/auth';
-import { getSessionRolesCounts, getSessions } from '~/server/queries/users';
+import { getAreasData } from '~/server/queries/area-data';
 
-export default async function SessionsPage(props: PageProps) {
+export default async function AreasDataPage(props: PageProps) {
   const session = await auth();
 
   if (!session) redirect("/dashboard");
 
   const searchParams = await props.searchParams
-  const search = searchParamsSessionsCache.parse(searchParams)
+  const search = searchAreasDataCache.parse(searchParams)
 
   const validFilters = getValidFilters(search.filters)
 
   const promises = Promise.all([
-    getSessions({ ...search, filters: validFilters }),
-    getSessionRolesCounts()
+    getAreasData({ ...search, filters: validFilters }),
   ])
 
   return (
-    <ContentLayout title="Сессии">
+    <ContentLayout title="Данные ЛУ">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -43,17 +42,11 @@ export default async function SessionsPage(props: PageProps) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard/users">Пользователи</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Сессии</BreadcrumbPage>
+            <BreadcrumbPage>Данные ЛУ</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col flex-grow">
         <React.Suspense
           fallback={
             <DataTableSkeleton
@@ -65,7 +58,7 @@ export default async function SessionsPage(props: PageProps) {
             />
           }
         >
-          <SessionsTable promises={promises} />
+          <AreasDataTable promises={promises} />
         </React.Suspense>
       </div>
     </ContentLayout>

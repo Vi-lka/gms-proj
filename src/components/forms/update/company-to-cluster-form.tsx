@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Form } from '~/components/ui/form'
 import { companyToClusterSchema, type CompanyToClusterSchema, type UpdateCompanySchema } from '~/lib/validations/forms'
-import { companyToCluster } from '~/server/actions/companies'
+// import { companyToCluster } from '~/server/actions/companies'
 import InputField from '../inputs/simple/input-field'
 import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
@@ -33,12 +33,12 @@ export default function CompanyToClusterForm({
 
   function onSubmit(input: CompanyToClusterSchema) {
     startTransition(async () => {
-      const { error } = await companyToCluster(input, company)
+      // const { error } = await companyToCluster(input, company)
 
-      if (error) {
-        toast.error(error)
-        return
-      }
+      // if (error) {
+      //   toast.error(error)
+      //   return
+      // }
 
       form.reset()
       onFormSubmit?.()

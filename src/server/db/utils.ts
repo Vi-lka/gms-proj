@@ -151,7 +151,7 @@ export function orderData<TData extends object>(
   return data.sort(fieldSorter(sort))
 }
 
-function fieldSorter<TData extends object>(
+export function fieldSorter<TData extends object>(
   sort: ExtendedSortingState<TData>,
 ) {
   const dir: number[] = []
@@ -179,4 +179,13 @@ function fieldSorter<TData extends object>(
     }
     return 0;
   };
+}
+
+export function intervalToString(
+  start: number | string | null, 
+  end: number | string | null
+): string {
+  if (!start) return ""
+  if (!end) return start.toString()
+  return `${start} - ${end}`
 }

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Check, Database, Map, Plus, X } from 'lucide-react'
-import { type CreateMapItemSchema } from '~/lib/validations/forms'
+import { type MapItemSchema } from '~/lib/validations/forms'
 import { useAtomValue } from 'jotai'
 import { mapContainerDimensions, stageAtom, stageRefAtom } from '~/lib/atoms/main'
 import Konva from 'konva'
@@ -23,7 +23,7 @@ export default function AddEllementButton({
   const stageRef = useAtomValue(stageRefAtom)
 
   const [addEllement, setAddEllement] = React.useState(false)
-  const [mapItem, setMapItem] = React.useState<CreateMapItemSchema | null>(null)
+  const [mapItem, setMapItem] = React.useState<MapItemSchema | null>(null)
   const [openAddEllementSheet, setOpenAddEllementSheet] = React.useState(false)
 
   const scale = valueFromWindowWidth({

@@ -1,4 +1,4 @@
-import { boolean, index, text, varchar } from "drizzle-orm/pg-core";
+import { boolean, index, primaryKey, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { relations } from "drizzle-orm";
 import { numericCasted } from ".";
@@ -29,8 +29,9 @@ export const clusters = createTable(
     nameIndex: index("cluster_name_idx").on(cluster.name),
   })
 );
-export const clustersRelations = relations(clusters, ({ many }) => ({
-  companies: many(companies)
+export const clustersRelations = relations(clusters, ({ one, many }) => ({
+  companies: many(companies),
+  mapItem: one(mapItems)
 }));
 
 export const companies = createTable(
@@ -44,16 +45,20 @@ export const companies = createTable(
     description: text("description"),
     clusterId: varchar("clusters_id", { length: 255 })
       .references(() => clusters.id),
-    mapItemId: varchar("map_item_id", { length: 255 })
-      .references(() => mapItems.id)
+    // mapItemId: varchar("map_item_id", { length: 255 })
+    //   .references(() => mapItems.id)
   },
   (company) => ({
     nameIndex: index("company_name_idx").on(company.name),
   })
 );
 export const companiesRelations = relations(companies, ({ one, many }) => ({
-  cluster: one(clusters, { fields: [companies.clusterId], references: [clusters.id] }),
-  mapItem: one(mapItems, { fields: [companies.mapItemId], references: [mapItems.id] }),
+  cluster: one(clusters, { 
+    fields: [companies.clusterId], 
+    references: [clusters.id] 
+  }),
+  companiesToMapItems: many(companiesToMapItems),
+  // mapItem: one(mapItems, { fields: [companies.mapItemId], references: [mapItems.id] }),
   fields: many(fields)
 }));
 
@@ -72,8 +77,38 @@ export const mapItems = createTable(
   }
 );
 export const mapItemsRelations = relations(mapItems, ({ one, many }) => ({
-  cluster: one(clusters, { fields: [mapItems.clusterId], references: [clusters.id] }),
-  companies: many(companies),
+  cluster: one(clusters, { 
+    fields: [mapItems.clusterId], 
+    references: [clusters.id] 
+  }),
+  companiesToMapItems: many(companiesToMapItems),
+  // companies: many(companies),
+}));
+
+export const companiesToMapItems = createTable(
+  'companies_to_map_items',
+  {
+    companyId: varchar("company_id", { length: 255 })
+      .notNull()
+      .references(() => companies.id),
+    mapItemId: varchar('map_item_id', { length: 255 })
+      .notNull()
+      .references(() => mapItems.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.companyId, t.mapItemId] }),
+  }),
+);
+
+export const companiesToMapItemsRelations = relations(companiesToMapItems, ({ one }) => ({
+  company: one(companies, {
+    fields: [companiesToMapItems.companyId],
+    references: [companies.id],
+  }),
+  mapItem: one(mapItems, {
+    fields: [companiesToMapItems.mapItemId],
+    references: [mapItems.id],
+  }),
 }));
 
 // Types

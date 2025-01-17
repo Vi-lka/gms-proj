@@ -3,11 +3,13 @@ import { type Path, type UseFormReturn, type FieldValues, type PathValue } from 
 import { type CompanySchema } from '~/lib/validations/forms'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion'
 import { Button } from '../../ui/button'
-import { Delete, Plus } from 'lucide-react'
+import { Delete, Plus, X } from 'lucide-react'
 import { FormLabel } from '../../ui/form'
 import { cn } from '~/lib/utils'
 import { Input } from '../../ui/input'
 import { Textarea } from '../../ui/textarea'
+import CompanySelect from './company-select'
+import { Separator } from '~/components/ui/separator'
 
 export default function CompaniesInput<TData extends FieldValues>({
   form,
@@ -41,11 +43,15 @@ export default function CompaniesInput<TData extends FieldValues>({
             onValueChange={(value) => setAccordionValue(value)}
             className='mb-2'
           >
-            {companies.map((company, indx) => (
+            {companies.map((company, indx) => {
+              const hasCompany = !!(form.getValues(`${name}[${indx}].companyId` as Path<TData>))
+              const title = hasCompany ? form.getValues(`${name}[${indx}].companyId` as Path<TData>) : company.name
+
+              return (
               <AccordionItem key={indx} value={`${indx}`} className='border-b-2'>
                 <AccordionTrigger className='py-2 justify-end'>
                   <div className='flex w-full flex-1 items-center justify-between gap-3'>
-                    <p className='flex-1 text-left text-base'>{company.name}</p>
+                    <p className='flex-1 text-left text-base truncate min-w-0 w-0'>{title}</p>
                     <Button
                       type='button'
                       asChild
@@ -65,6 +71,34 @@ export default function CompaniesInput<TData extends FieldValues>({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className='flex flex-col gap-2 border-2 border-b-0 border-boder rounded-t-xl p-3'>
+                  <div className='flex items-end gap-1 mt-2'>
+                    <CompanySelect
+                      form={form}
+                      name={`${name}[${indx}].companyId` as Path<TData>}
+                      label="Выберите Компанию"
+                      onOpenChange={() => form.clearErrors()}
+                      className='flex-1'
+                    />
+                    {hasCompany && (
+                      <Button
+                        variant="outline"
+                        onClick={() => form.setValue(
+                          `${name}[${indx}].companyId` as Path<TData>, 
+                          null as PathValue<TData, Path<TData>>,
+                          {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                        )}
+                        className='px-1'
+                      >
+                        <X/>
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Separator className="flex-1" />
+                    <span className="text-muted-foreground">Или</span>
+                    <Separator className="flex-1" />
+                  </div>
+
                   <div className='w-full'>
                     <FormLabel>Название</FormLabel>
                     <Input
@@ -94,7 +128,7 @@ export default function CompaniesInput<TData extends FieldValues>({
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            ))}
+            )})}
           </Accordion>
         )
         : null

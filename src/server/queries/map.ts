@@ -3,6 +3,7 @@ import "server-only"
 import { unstable_cache } from "~/lib/unstable-cache";
 import { auth } from "../auth";
 import { db } from "../db";
+import { inArray } from "drizzle-orm";
 
 export async function getMap() {
   const session = await auth();
@@ -70,7 +71,11 @@ export async function getMapItems() {
           .query.mapItems.findMany({
             with: {
               cluster: true,
-              companies: true
+              companiesToMapItems: {
+                with: {
+                  company: true
+                }
+              }
             },
             // where: 
           })
@@ -79,7 +84,15 @@ export async function getMapItems() {
           .query.mapItems.findMany({
             with: {
               cluster: true,
-              companies: true
+              companiesToMapItems: {
+                columns: {
+                  companyId: false,
+                  mapItemId: false,
+                },
+                with: {
+                  company: true
+                }
+              }
             },
             // where: 
           }).then(data => data.length)

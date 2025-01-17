@@ -54,7 +54,10 @@ export default function SessionsTable({ promises }: SessionsTableProps) {
     enableAdvancedFilter: false,
     initialState: {
       sorting: [{ id: "userId", desc: true }],
-      columnPinning: { right: ["actions"] },
+      columnPinning: { 
+        right: ["actions"],
+        left: ["select"]
+      },
     },
     getRowId: (originalRow, index) => `${originalRow.userId}-${index}`,
     shallow: false,

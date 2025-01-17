@@ -1,7 +1,7 @@
 "use server"
 
 import { unstable_noStore as noStore, revalidateTag } from "next/cache"
-import { type UpdateClusterSchema, type CreateClusterSchema, type CreateMapItemSchema, type CompanySchema, type UpdateCompanySchema } from "~/lib/validations/forms";
+import { type UpdateClusterSchema, type CreateClusterSchema, type MapItemSchema, type CompanySchema, type UpdateCompanySchema } from "~/lib/validations/forms";
 import { auth } from "../auth";
 import { getErrorMessage } from "~/lib/handle-error";
 import { db } from "../db";
@@ -14,7 +14,7 @@ export async function createCluster({
   mapItem
 }: {
   input: CreateClusterSchema,
-  mapItem: CreateMapItemSchema
+  mapItem: MapItemSchema
 }) {
   noStore()
 

@@ -16,15 +16,17 @@ interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  titleNode?: React.ReactNode
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
+  titleNode,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort() && !column.getCanHide()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn(className)}>{titleNode ?? title}</div>
   }
 
   const ascValue = `${column.id}-asc`
@@ -57,7 +59,7 @@ export function DataTableColumnHeader<TData, TValue>({
           }
           className="-ml-3 h-8 w-fit border-none text-xs hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent [&>svg:last-child]:hidden"
         >
-          {title}
+          {titleNode ?? title}
           <SelectIcon asChild>
             {column.getCanSort() && column.getIsSorted() === "desc" ? (
               <ArrowDown className="ml-2.5 size-4" aria-hidden="true" />

@@ -24,11 +24,16 @@ export default function InputField<TData extends FieldValues>({
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
+      render={({ field: {value, ...other} }) => (
         <FormItem className={cn("", className)}>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            <Input 
+              placeholder={placeholder} 
+              disabled={disabled}
+              value={value ?? ""}
+              {...other}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

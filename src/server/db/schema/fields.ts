@@ -14,7 +14,7 @@ export const fields = createTable(
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
     companyId: varchar("company_id", { length: 255 })
-      .references(() => companies.id).notNull(),
+      .references(() => companies.id, {onDelete: 'cascade'}).notNull(),
   },
   (field) => ({
     nameIndex: index("field_name_idx").on(field.name),
@@ -35,7 +35,7 @@ export const licensedAreas = createTable(
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
     fieldId: varchar("field_id", { length: 255 })
-      .references(() => fields.id).notNull(),
+      .references(() => fields.id, {onDelete: 'cascade'}).notNull(),
   },
   (licensedArea) => ({
     nameIndex: index("licensed_area_name_idx").on(licensedArea.name),
@@ -56,7 +56,7 @@ export const areasData = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     areaId: varchar("area_id", { length: 255 })
-      .references(() => licensedAreas.id).notNull(),
+      .references(() => licensedAreas.id, {onDelete: 'cascade'}).notNull(),
     bush: text("bush"),
     hole: text("hole"),
     plast: text("plast"),
@@ -183,10 +183,20 @@ export type LicensedAreas = typeof licensedAreas.$inferSelect
 export type AreasData = typeof areasData.$inferSelect
 
 export interface LicensedAreasExtend extends LicensedAreas {
-  data: AreasData[]
+  fieldName: Fields["name"],
+  companyId: Company["id"],
+  companyName: Company["name"],
 }
 export interface FieldsExtend extends Fields {
   companyName: Company["name"],
   clusterId: Cluster["id"] | null,
   clusterName: Cluster["name"] | null,
+}
+export interface AreasDataExtend extends AreasData {
+  areaName: LicensedAreas["name"],
+  fieldId: Fields["id"],
+  fieldName: Fields["name"],
+  companyId: Company["id"],
+  companyName: Company["name"],
+  occurrenceInterval: string | null
 }

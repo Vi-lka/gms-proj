@@ -3,15 +3,15 @@
 
 import React from 'react'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '~/components/ui/sheet'
-import { type CreateMapItemSchema } from '~/lib/validations/forms'
+import { type MapItemSchema } from '~/lib/validations/forms'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { ScrollArea } from '~/components/ui/scroll-area'
-import CreateCompanyForm from '~/components/forms/create/create-company-form'
 import CreateClusterForm from '~/components/forms/create/create-cluster-form'
+import CreateMapItemForm from '~/components/forms/create/create-map-item-form'
 
 
 interface AddEllementSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
-  mapItem: CreateMapItemSchema | null
+  mapItem: MapItemSchema | null
 }
 
 export default function AddEllementSheet({ mapItem, ...props }: AddEllementSheetProps) {
@@ -32,7 +32,7 @@ export default function AddEllementSheet({ mapItem, ...props }: AddEllementSheet
               <TabsTrigger value="cluster">Кластер</TabsTrigger>
             </TabsList>
             <TabsContent value="company">
-              <CreateCompanyForm mapItem={mapItem} onOpenChange={props.onOpenChange} />
+              <CreateMapItemForm mapItem={mapItem} onOpenChange={props.onOpenChange} />
             </TabsContent>
             <TabsContent value="cluster">
               <CreateClusterForm mapItem={mapItem} onOpenChange={props.onOpenChange} />

@@ -32,7 +32,7 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => (
-        <div className="max-w-fit">
+        <div className="max-w-fit pr-2">
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -43,6 +43,7 @@ export function getColumns({
       ),
       enableSorting: false,
       enableHiding: false,
+      size: 20
     },
     {
       accessorKey: "userId",

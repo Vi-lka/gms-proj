@@ -8,7 +8,7 @@ import {
     parseAsStringEnum,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type FieldsExtend, type SessionExtend, type User, users } from "~/server/db/schema";
+import { type AreasDataExtend, type FieldsExtend, type LicensedAreasExtend, type SessionExtend, type User, users } from "~/server/db/schema";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -57,4 +57,41 @@ export const searchParamsFields = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
 }
 export const searchParamsFieldsCache = createSearchParamsCache(searchParamsFields)
+
+export const searchLicensedAreas = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<LicensedAreasExtend>().withDefault([
+    { id: "id", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  name: parseAsString.withDefault(""),
+  fieldId: parseAsString.withDefault(""),
+  fieldName: parseAsString.withDefault(""),
+  companyId: parseAsString.withDefault(""),
+  companyName: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+}
+export const searchLicensedAreasCache = createSearchParamsCache(searchLicensedAreas)
+
+export const searchAreasData = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<AreasDataExtend>().withDefault([
+    { id: "id", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  areaName: parseAsString.withDefault(""),
+  areaId: parseAsString.withDefault(""),
+  fieldId: parseAsString.withDefault(""),
+  fieldName: parseAsString.withDefault(""),
+  companyId: parseAsString.withDefault(""),
+  companyName: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
+}
+export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
 

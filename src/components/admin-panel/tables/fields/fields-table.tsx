@@ -45,7 +45,10 @@ export default function FieldsTable({ promises }: FieldsTableProps) {
     filterFields,
     enableAdvancedFilter: false,
     initialState: {
-      columnPinning: { right: ["actions"] },
+      columnPinning: { 
+        right: ["actions"],
+        left: ["select"]
+      },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,

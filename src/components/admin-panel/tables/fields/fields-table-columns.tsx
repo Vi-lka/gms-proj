@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
 import { type FieldsExtend } from "~/server/db/schema";
@@ -34,7 +34,7 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => (
-        <div className="max-w-fit">
+        <div className="max-w-fit pr-2">
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -45,6 +45,7 @@ export function getColumns({
       ),
       enableSorting: false,
       enableHiding: false,
+      size: 20
     },
     {
       accessorKey: "id",

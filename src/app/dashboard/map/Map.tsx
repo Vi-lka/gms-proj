@@ -45,7 +45,7 @@ export default function Map({ promises }: MapProps) {
   const itemsData: MapItemT[] = React.useMemo(
     () => data.map((item) => ({
       id: item.id,
-      companies: item.companies,
+      companies: item.companiesToMapItems.map(ctmi => ctmi.company),
       cluster: item.cluster,
       x: item.xPos,
       y: item.yPos,

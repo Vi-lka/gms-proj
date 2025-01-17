@@ -1,0 +1,115 @@
+"use server"
+
+import { unstable_noStore as noStore, revalidateTag } from "next/cache"
+import { auth } from "../auth";
+import { getErrorMessage } from "~/lib/handle-error";
+import { db } from "../db";
+import { licensedAreas } from "../db/schema";
+import { eq, inArray } from "drizzle-orm";
+import { type UpdateLicensedAreaSchema, type CreateLicensedAreaSchema } from "~/lib/validations/forms";
+import { takeFirstOrThrow } from "../db/utils";
+
+export async function createLicensedArea(input: CreateLicensedAreaSchema) {
+  noStore()
+  
+  const session = await auth();
+  if (session?.user.role !== "admin") {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    await db
+      .insert(licensedAreas)
+      .values(input)
+      .returning()
+      .then(takeFirstOrThrow)
+
+    revalidateTag("map_items")
+    revalidateTag("fields")
+
+    return {
+      data: null,
+      error: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
+}
+
+export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
+  noStore()
+  
+  const session = await auth();
+  if (session?.user.role !== "admin") {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    const result = await db
+      .update(licensedAreas)
+      .set({
+        name: input.name,
+        description: input.description,
+        fieldId: input.fieldId,
+      })
+      .where(eq(licensedAreas.id, input.id))
+      .returning()
+      .then(takeFirstOrThrow)
+
+    revalidateTag("map_items")
+    revalidateTag("fields")
+
+    return {
+      data: result,
+      error: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
+}
+
+export async function deleteLicensedAreas(ids: string[]) {
+  noStore()
+  
+  const session = await auth();
+  if (session?.user.role !== "admin") {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    await db
+      .delete(licensedAreas)
+      .where(inArray(licensedAreas.id, ids))
+
+    revalidateTag("map_items")
+    revalidateTag("fields")
+
+    return {
+      data: null,
+      error: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
+}

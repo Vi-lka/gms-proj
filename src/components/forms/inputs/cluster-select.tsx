@@ -15,6 +15,8 @@ export default function ClusterSelect<TData extends FieldValues>({
   name,
   label,
   placeholder,
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  onOpenChange,
   className
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,6 +24,7 @@ export default function ClusterSelect<TData extends FieldValues>({
   name: Path<TData>,
   label?: React.ReactNode,
   placeholder?: string,
+  onOpenChange?(open: boolean): void
   className?: string,
 }) {
   const { data, error, isLoading } = useSWR<Cluster[], Error>("/api/clusters");
@@ -47,6 +50,8 @@ export default function ClusterSelect<TData extends FieldValues>({
           <Select
             onValueChange={field.onChange}
             defaultValue={field.value}
+            onOpenChange={onOpenChange}
+            {...field}
           >
             <FormControl>
               <SelectTrigger>

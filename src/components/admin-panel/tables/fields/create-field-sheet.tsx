@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader, Plus } from 'lucide-react'
 import React from 'react'

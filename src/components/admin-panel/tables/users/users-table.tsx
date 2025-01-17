@@ -54,7 +54,10 @@ export default function UsersTable({ promises }: UsersTableProps) {
     enableAdvancedFilter: false,
     initialState: {
       sorting: [{ id: "id", desc: true }],
-      columnPinning: { right: ["actions"] },
+      columnPinning: { 
+        right: ["actions"],
+        left: ["select"]
+      },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,

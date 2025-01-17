@@ -1,13 +1,12 @@
 import {
-  Tag,
   Users,
-  Settings,
-  Bookmark,
-  SquarePen,
   LayoutGrid,
   type LucideIcon,
   Map,
-  Database
+  LandPlot,
+  Pickaxe,
+  Database,
+  Cookie
 } from "lucide-react";
 
 type Submenu = {
@@ -44,32 +43,47 @@ export function getMenuList(pathname: string): Group[] {
       ]
     },
     {
-      groupLabel: "Содержание",
+      groupLabel: "Карты",
       menus: [
         {
           href: "/dashboard/map",
-          label: "Карта",
+          label: "Карта - Главная",
           icon: Map,
         },
+      ]
+    },
+    {
+      groupLabel: "Данные",
+      menus: [
         {
           href: "/dashboard/fields",
           label: "Месторождения",
-          icon: Database,
+          icon: Pickaxe,
         },
         {
-          href: "",
+          href: "/dashboard/licensed-areas",
+          label: "Лицензионные участки",
+          icon: LandPlot,
+        },
+        {
+          href: "/dashboard/areas-data",
+          label: "Данные ЛУ",
+          icon: Database,
+        },
+      ]
+    },
+    {
+      groupLabel: "Пользователи",
+      menus: [
+        {
+          href: "/dashboard/users",
           label: "Пользователи",
-          icon: Users,
-          submenus: [
-            {
-              href: "/dashboard/users",
-              label: "Все Пользователи"
-            },
-            {
-              href: "/dashboard/users/sessions",
-              label: "Сессии"
-            }
-          ]
+          icon: Users
+        },
+        {
+          href: "/dashboard/sessions",
+          label: "Сессии",
+          icon: Cookie
         },
       ]
     }

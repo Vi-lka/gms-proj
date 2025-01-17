@@ -18,7 +18,7 @@ import { useQueryState } from "nuqs"
 
 import { dataTableConfig } from "~/lib/config/data-table"
 import { getSortingStateParser } from "~/lib/parsers"
-import { cn, idToSentenceCase, toSentenceCase } from "~/lib/utils"
+import { cn, idToSentenceCase } from "~/lib/utils"
 import { useDebouncedCallback } from "~/hooks/use-debounced-callback"
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
@@ -47,7 +47,6 @@ import {
   SortableDragHandle,
   SortableItem,
 } from "~/components/ui/sortable"
-import { revalidateTag } from "next/cache"
 
 interface DataTableSortListProps<TData> {
   table: Table<TData>

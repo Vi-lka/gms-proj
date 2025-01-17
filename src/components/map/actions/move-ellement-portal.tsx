@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/comp
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos';
 import { mapContainerDimensions, stageAtom, stageRefAtom } from '~/lib/atoms/main';
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth';
-import { type CreateMapItemSchema } from '~/lib/validations/forms';
+import { type MapItemSchema } from '~/lib/validations/forms';
 import { moveMapItem } from '~/server/actions/mapItems';
 
 interface MoveEllementPortalProps extends React.ComponentPropsWithRef<typeof Portal> {
@@ -36,7 +36,7 @@ export default function MoveEllementPortal({
   const stage = useAtomValue(stageAtom)
   const stageRef = useAtomValue(stageRefAtom)
 
-  const [mapItem, setMapItem] = React.useState<CreateMapItemSchema | null>(null)
+  const [mapItem, setMapItem] = React.useState<MapItemSchema | null>(null)
 
   const revertMapItem = useRevertStageEllementPos(
     { x: mapItem?.xPos ?? 0, y: mapItem?.yPos ?? 0 }

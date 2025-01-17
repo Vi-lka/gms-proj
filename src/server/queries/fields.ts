@@ -1,6 +1,6 @@
 import { type GetFieldsSchema } from "~/lib/validations/fields";
 import { auth } from "../auth";
-import { and, count, ilike, inArray, or } from "drizzle-orm";
+import { and, count, eq, ilike, inArray, or } from "drizzle-orm";
 import { clusters, companies, fields } from "../db/schema";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { db } from "../db";
@@ -47,6 +47,32 @@ export async function getFields(
                 )
             )
           ) : undefined,
+          input.companyId ? (
+            inArray(
+              fields.companyId,
+              db
+                .select({ id: companies.id })
+                .from(companies)
+                .where(eq(companies.id, input.companyId))
+            )
+          ) : undefined,
+          input.clusterId ? (
+            inArray(
+              fields.companyId,
+              db
+                .select({ id: companies.id })
+                .from(companies)
+                .where(
+                    inArray(
+                      companies.clusterId,
+                      db
+                        .select({ id: clusters.id })
+                        .from(clusters)
+                        .where(eq(clusters.id, input.clusterId))
+                    ),
+                )
+            )
+          ) : undefined
         )
 
       const { orderBy } = getRelationOrderBy(input.sort, fields, fields.id)

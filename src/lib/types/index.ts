@@ -1,9 +1,10 @@
 import type { Row, ColumnSort } from "@tanstack/react-table"
-import type { z } from "zod"
+import { z } from "zod"
 import type { filterSchema } from "../parsers"
 import type { DataTableConfig } from "../config/data-table"
 import type { roleEnum, Session } from "~/server/db/schema"
 import type { SQL } from "drizzle-orm"
+import { approxEnum } from "~/server/db/schema/fields"
 
 export * from "./map"
 
@@ -76,3 +77,6 @@ export interface QueryBuilderOpts {
   distinct?: boolean
   nullish?: boolean
 }
+
+export const approxEnumSchema = z.enum(approxEnum.enumValues);
+export type ApproxEnumT = z.infer<typeof approxEnumSchema>

@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader } from 'lucide-react'
+import { Loader, X } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -10,16 +10,18 @@ import InputField from '~/components/forms/inputs/simple/input-field'
 import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
+import { Separator } from '~/components/ui/separator'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos'
-import { createClusterSchema, type CreateMapItemSchema, type CreateClusterSchema } from '~/lib/validations/forms'
-import { createCluster } from '~/server/actions/clusters'
+import { createMapItemClusterSchema, type MapItemSchema, type CreateMapItemClusterSchema } from '~/lib/validations/forms'
+import { createMapItemCluster } from '~/server/actions/mapItems'
+import ClusterSelect from '../inputs/cluster-select'
 
 export default function CreateClusterForm({
   mapItem,
   onOpenChange,
 }: {
-  mapItem: CreateMapItemSchema,
+  mapItem: MapItemSchema,
   onOpenChange:((open: boolean) => void) | undefined
 }) {
   const revertMapItem = useRevertStageEllementPos(
@@ -28,21 +30,23 @@ export default function CreateClusterForm({
 
   const [isPending, startTransition] = React.useTransition()
 
-  const form = useForm<CreateClusterSchema>({
-    resolver: zodResolver(createClusterSchema),
+  const form = useForm<CreateMapItemClusterSchema>({
+    resolver: zodResolver(createMapItemClusterSchema),
     defaultValues: {
       name: "",
       description: "",
-      companies: []
+      clusterId: null,
+      companiesInput: []
     },
     mode: "onChange"
   })
 
-  function onSubmit(input: CreateClusterSchema) {
+  function onSubmit(input: CreateMapItemClusterSchema) {
     startTransition(async () => {
-      const { error } = await createCluster({
-        input,
-        mapItem: {xPos: revertMapItem.pos.x, yPos: revertMapItem.pos.y, description: mapItem.description}
+      const { error } = await createMapItemCluster({
+        ...input,
+        xPos: revertMapItem.pos.x,
+        yPos: revertMapItem.pos.y
       })
 
       if (error) {
@@ -56,6 +60,8 @@ export default function CreateClusterForm({
     })
   }
 
+  const hasCluster = !!form.getValues("clusterId")
+
   const saveDisabled = isPending || !form.formState.isValid
 
   return (
@@ -64,6 +70,33 @@ export default function CreateClusterForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
+        <div className='flex items-end gap-1 mt-2'>
+          <ClusterSelect
+            form={form}
+            name="clusterId"
+            label="Выберите Кластер"
+            onOpenChange={() => form.clearErrors()}
+            className='flex-1'
+          />
+          {hasCluster && (
+            <Button
+              variant="outline"
+              onClick={() => form.setValue(
+                "clusterId",
+                null, 
+                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+              )}
+              className='px-1'
+            >
+              <X/>
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <Separator className="flex-1" />
+          <span className="text-muted-foreground">Или</span>
+          <Separator className="flex-1" />
+        </div>
         <InputField 
           form={form}
           name="name"
@@ -78,7 +111,7 @@ export default function CreateClusterForm({
         />
         <CompaniesInput 
           form={form}
-          name="companies"
+          name="companiesInput"
           label="Компании"
           isPending={isPending}
         />

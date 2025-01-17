@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { type ApproxEnumT } from "./types"
+import translateData from "./static/translate-data"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -7,7 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(
   date: Date | string | number,
-  opts: Intl.DateTimeFormatOptions = {}
+  opts: Intl.DateTimeFormatOptions = {
+    timeZone: "GMT"
+  }
 ) {
   return new Intl.DateTimeFormat("ru-RU", {
     month: opts.month ?? "long",
@@ -15,6 +19,15 @@ export function formatDate(
     year: opts.year ?? "numeric",
     ...opts,
   }).format(new Date(date))
+}
+
+export function formatApproxNumber(
+  number: number | null, 
+  approx: ApproxEnumT | null
+) {
+  if (!number) return null
+  if (!approx) return number
+  return `${approx}${number}`
 }
 
 export function toSentenceCase(str: string) {
@@ -28,29 +41,9 @@ export function toSentenceCase(str: string) {
 }
 
 export function idToSentenceCase(str: string) {
-  switch (str) {
-    case "id":
-      return "ID";
-    case "name":
-      return "Название";
-    case "email":
-      return "Email";
-    case "role":
-      return "Роль";
-    case "companyId":
-      return "ID Компании";
-    case "companyName":
-      return "Компания";  
-    case "clusterId":
-      return "ID Кластера";
-    case "clusterName":
-      return "Кластер";
-    case "expires":
-      return "Истекает";
-  
-    default:
-      return toSentenceCase(str)
-  }
+  const entries = Object.entries(translateData)
+  const finded = entries.find(entry => entry[0] === str)?.[1] ?? toSentenceCase(str)
+  return finded
 }
 
 /**
