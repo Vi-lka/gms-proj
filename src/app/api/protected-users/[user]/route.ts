@@ -5,8 +5,6 @@ import { db } from "~/server/db"
 import { roleEnum, users } from "~/server/db/schema"
 import { takeFirstOrThrow } from "~/server/db/utils"
 
-export const dynamic = 'force-dynamic'
-
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ user: string }> }

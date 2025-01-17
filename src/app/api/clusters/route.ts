@@ -2,8 +2,6 @@ import { type NextRequest } from "next/server";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
-export const dynamic = 'force-dynamic'
-
 export async function GET(request: NextRequest) {
   const session = await auth();
   if (session?.user.role !== "admin") {
