@@ -76,6 +76,7 @@ export default function CreateClusterForm({
             name="clusterId"
             label="Выберите Кластер"
             onOpenChange={() => form.clearErrors()}
+            hasMapItem={false}
             className='flex-1'
           />
           {hasCluster && (

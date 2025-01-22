@@ -38,7 +38,7 @@ export const companies = createTable(
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
     clusterId: varchar("clusters_id", { length: 255 })
-      .references(() => clusters.id),
+      .references(() => clusters.id, {onDelete: 'set null'}),
     // mapItemId: varchar("map_item_id", { length: 255 })
     //   .references(() => mapItems.id)
   },
@@ -66,11 +66,11 @@ export const companiesToMapItems = createTable(
   'companies_to_map_items',
   {
     companyId: varchar("company_id", { length: 255 })
-      .notNull()
-      .references(() => companies.id),
+      .references(() => companies.id, {onDelete: 'cascade'})
+      .notNull(),
     mapItemId: varchar('map_item_id', { length: 255 })
-      .notNull()
-      .references(() => mapItems.id),
+      .references(() => mapItems.id, {onDelete: 'cascade'})
+      .notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.companyId, t.mapItemId] }),

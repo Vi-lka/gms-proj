@@ -10,13 +10,18 @@ import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
-import { Loader } from 'lucide-react'
+import { Loader, X } from 'lucide-react'
+import ClusterSelect from '../inputs/cluster-select'
+import { Separator } from '~/components/ui/separator'
+import { companyToCluster } from '~/server/actions/mapItems'
 
 export default function CompanyToClusterForm({
   company,
+  mapItemId,
   onFormSubmit
 }: {
-  company: UpdateCompanySchema
+  company: UpdateCompanySchema,
+  mapItemId: string,
   onFormSubmit:(() => void) | undefined
 })  {
   const [isPending, startTransition] = React.useTransition()
@@ -26,25 +31,29 @@ export default function CompanyToClusterForm({
     defaultValues: {
       name: "",
       description: "",
-      companies: [company]
+      mapItemId,
+      clusterId: null,
+      companiesInput: [company]
     },
     mode: "onChange"
   })
 
   function onSubmit(input: CompanyToClusterSchema) {
     startTransition(async () => {
-      // const { error } = await companyToCluster(input, company)
+      const { error } = await companyToCluster(input, company)
 
-      // if (error) {
-      //   toast.error(error)
-      //   return
-      // }
+      if (error) {
+        toast.error(error)
+        return
+      }
 
       form.reset()
       onFormSubmit?.()
       toast.success("Кластер добавлен!")
     })
   }
+
+  const hasCluster = !!form.getValues("clusterId")
 
   const saveDisabled = isPending || !form.formState.isValid
 
@@ -54,6 +63,34 @@ export default function CompanyToClusterForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
+        <div className='flex items-end gap-1'>
+          <ClusterSelect
+            form={form}
+            name="clusterId"
+            label="Выберите Кластер"
+            onOpenChange={() => form.clearErrors()}
+            hasMapItem={false}
+            className='flex-1'
+          />
+          {hasCluster && (
+            <Button
+              variant="outline"
+              onClick={() => form.setValue(
+                "clusterId",
+                null, 
+                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+              )}
+              className='px-1'
+            >
+              <X/>
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <Separator className="flex-1" />
+          <span className="text-muted-foreground">Или</span>
+          <Separator className="flex-1" />
+        </div>
         <InputField 
           form={form}
           name="name"
@@ -68,7 +105,7 @@ export default function CompanyToClusterForm({
         />
         <CompaniesInput 
           form={form}
-          name="companies"
+          name="companiesInput"
           label="Компании"
           isPending={isPending}
         />

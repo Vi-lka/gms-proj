@@ -30,9 +30,6 @@ export default function DeleteEllementDialog({ item, onFormSubmit, ...props }: D
     })
   }
 
-  const companiesNames = item.companies.map(company => `"${company.name}"`)
-  const companiesNamesStr = companiesNames.join(', ')
-
   return (
     <Credenza {...props}>
       <CredenzaContent>
@@ -40,13 +37,8 @@ export default function DeleteEllementDialog({ item, onFormSubmit, ...props }: D
           <CredenzaTitle>Вы абсолютно уверены?</CredenzaTitle>
           <CredenzaDescription>
             Это действие невозможно отменить. Это приведет к удалению элемента из карты.
-            Все Компании и Кластеры, которые были привязаны к этому элементу, будут удалены.
           </CredenzaDescription>
         </CredenzaHeader>
-          <div className='px-6 py-2'>
-            {item.cluster && (<p>Кластер: {`"${item.cluster.name}"`}</p>)}    
-            {companiesNames.length > 0 && (<p>Компании: {companiesNamesStr}</p>)}
-          </div>
         <CredenzaFooter>
           <CredenzaClose asChild>
             <Button type="button" variant="outline">

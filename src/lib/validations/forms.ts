@@ -23,13 +23,6 @@ export const updateCompanySchema = z.object({
 })
 export type UpdateCompanySchema = z.infer<typeof updateCompanySchema>
 
-export const companyToClusterSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  companies: companySchema.array().min(1, { message: "Должна быть хотя бы 1 компания" })
-})
-export type CompanyToClusterSchema = z.infer<typeof companyToClusterSchema>
-
 
 
 
@@ -62,7 +55,7 @@ export type MapItemSchema = z.infer<typeof MapItemSchema>
 
 export const createMapItemSchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   companyId: z.string().nullable().optional()
 }).or(
   z.object({
@@ -87,7 +80,7 @@ export type CreateMapItemSchema = z.infer<typeof createMapItemSchema>
 export const createMapItemClusterSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  companiesInput: createMapItemSchema.array().min(1, { message: "Должна быть хотя бы 1 компания" }),
+  companiesInput: createMapItemSchema.array().min(2, { message: "Должно быть хотя бы 2 компании" }),
   clusterId: z.string().nullable().optional()
 }).or(
   z.object({
@@ -98,6 +91,23 @@ export const createMapItemClusterSchema = z.object({
   })
 )
 export type CreateMapItemClusterSchema = z.infer<typeof createMapItemClusterSchema>
+
+export const companyToClusterSchema = z.object({
+  mapItemId: z.string(),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  companiesInput: createMapItemSchema.array().min(2, { message: "Должно быть хотя бы 2 компании" }),
+  clusterId: z.string().nullable().optional()
+}).or(
+  z.object({
+    mapItemId: z.string(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    companiesInput: createMapItemSchema.array().min(1, { message: "Должно быть хотя бы 1 компании" }),
+    clusterId: z.string().min(1, "Выберите Кластер")
+  })
+)
+export type CompanyToClusterSchema = z.infer<typeof companyToClusterSchema>
 
 
 

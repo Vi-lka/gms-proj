@@ -2,10 +2,12 @@
 import { z } from "zod";
 import {
     createSearchParamsCache,
+    createLoader,
     parseAsArrayOf,
     parseAsInteger,
     parseAsString,
     parseAsStringEnum,
+    parseAsBoolean,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
 import { type AreasDataExtend, type FieldsExtend, type LicensedAreasExtend, type SessionExtend, type User, users } from "~/server/db/schema";
@@ -94,4 +96,11 @@ export const searchAreasData = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
 }
 export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
+
+
+// API Routes
+export const searchClustersApi = {
+  hasMapItem: parseAsBoolean.withDefault(false)
+}
+export const searchClustersApiLoader = createLoader(searchClustersApi)
 
