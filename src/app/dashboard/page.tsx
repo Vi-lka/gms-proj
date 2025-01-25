@@ -22,7 +22,7 @@ export default async function DashboardPage(props: {
   if (!session?.user) return <SignInForm providers={providers} callbackUrl={searchParams.callbackUrl} />
 
   if (session.user.role === "admin") return (
-    <ContentLayout title="Dashboard">
+    <ContentLayout title="Панель">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -32,7 +32,7 @@ export default async function DashboardPage(props: {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+            <BreadcrumbPage>Панель</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

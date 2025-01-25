@@ -37,10 +37,6 @@ export const companies = createTable(
       .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
-    clusterId: varchar("clusters_id", { length: 255 })
-      .references(() => clusters.id, {onDelete: 'set null'}),
-    // mapItemId: varchar("map_item_id", { length: 255 })
-    //   .references(() => mapItems.id)
   },
   (company) => ({
     nameIndex: index("company_name_idx").on(company.name),
@@ -56,7 +52,7 @@ export const mapItems = createTable(
       .$defaultFn(() => crypto.randomUUID()),
     description: text("description"),
     clusterId: varchar("clusters_id", { length: 255 })
-      .references(() => clusters.id),
+      .references(() => clusters.id, { onDelete: "cascade" }),
     xPos: numericCasted("x_pos", { precision: 100, scale: 20 }).notNull(),
     yPos: numericCasted("y_pos", { precision: 100, scale: 20 }).notNull(),
   }

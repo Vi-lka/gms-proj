@@ -163,7 +163,6 @@ export const areasData = createTable(
   })
 )
 
-
 // Types
 export type Fields = typeof fields.$inferSelect
 export type LicensedAreas = typeof licensedAreas.$inferSelect

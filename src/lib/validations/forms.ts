@@ -38,7 +38,7 @@ export const updateClusterSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   description: z.string().nullable(),
-  companies: companySchema.array().min(1, { message: "Должна быть хотя бы 1 компания" })
+  companies: updateCompanySchema.array().min(1, { message: "Должна быть хотя бы 1 компания" })
 })
 export type UpdateClusterSchema = z.infer<typeof updateClusterSchema>
 
@@ -56,58 +56,39 @@ export type MapItemSchema = z.infer<typeof MapItemSchema>
 export const createMapItemSchema = z.object({
   name: z.string().min(1),
   description: z.string().nullable(),
-  companyId: z.string().nullable().optional()
+  id: z.string().nullable().optional()
 }).or(
   z.object({
     name: z.string().optional(),
     description: z.string().optional(),
-    companyId: z.string().min(1, "Выберите компанию")
+    id: z.string().min(1, "Выберите компанию")
   })
 )
-// .superRefine(({ name, companyId }, ctx) => {
-//   if ((companyId !== undefined) && (companyId !== null)) {
-//     return 
-//   } else if (name && name?.length < 1) {
-//     ctx.addIssue({
-//       code: "custom",
-//       message: "Строка должна содержать хотя бы 1 символ",
-//       path: ['name']
-//     });
-//   }
-// })
 export type CreateMapItemSchema = z.infer<typeof createMapItemSchema>
 
 export const createMapItemClusterSchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   companiesInput: createMapItemSchema.array().min(2, { message: "Должно быть хотя бы 2 компании" }),
-  clusterId: z.string().nullable().optional()
-}).or(
-  z.object({
-    name: z.string().optional(),
-    description: z.string().optional(),
-    companiesInput: createMapItemSchema.array().optional(),
-    clusterId: z.string().min(1, "Выберите Кластер")
-  })
-)
+})
 export type CreateMapItemClusterSchema = z.infer<typeof createMapItemClusterSchema>
 
 export const companyToClusterSchema = z.object({
   mapItemId: z.string(),
   name: z.string().min(1),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   companiesInput: createMapItemSchema.array().min(2, { message: "Должно быть хотя бы 2 компании" }),
-  clusterId: z.string().nullable().optional()
-}).or(
-  z.object({
-    mapItemId: z.string(),
-    name: z.string().optional(),
-    description: z.string().optional(),
-    companiesInput: createMapItemSchema.array().min(1, { message: "Должно быть хотя бы 1 компании" }),
-    clusterId: z.string().min(1, "Выберите Кластер")
-  })
-)
+})
 export type CompanyToClusterSchema = z.infer<typeof companyToClusterSchema>
+
+export const updateMapItemClusterSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  description: z.string().nullable(),
+  companiesInput: createMapItemSchema.array().min(2, { message: "Должно быть хотя бы 2 компании" }),
+  mapItemId: z.string(),
+})
+export type UpdateMapItemClusterSchema = z.infer<typeof updateMapItemClusterSchema>
 
 
 

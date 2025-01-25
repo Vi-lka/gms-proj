@@ -44,8 +44,8 @@ export default function CompaniesInput<TData extends FieldValues>({
             className='mb-2'
           >
             {companies.map((company, indx) => {
-              const hasCompany = !!(form.getValues(`${name}[${indx}].companyId` as Path<TData>))
-              const title = hasCompany ? form.getValues(`${name}[${indx}].companyId` as Path<TData>) : company.name
+              const hasCompany = !!(form.getValues(`${name}[${indx}].id` as Path<TData>))
+              const title = hasCompany ? form.getValues(`${name}[${indx}].id` as Path<TData>) : company.name
 
               return (
               <AccordionItem key={indx} value={`${indx}`} className='border-b-2'>
@@ -74,7 +74,7 @@ export default function CompaniesInput<TData extends FieldValues>({
                   <div className='flex items-end gap-1 mt-2'>
                     <CompanySelect
                       form={form}
-                      name={`${name}[${indx}].companyId` as Path<TData>}
+                      name={`${name}[${indx}].id` as Path<TData>}
                       label="Выберите Компанию"
                       onOpenChange={() => form.clearErrors()}
                       className='flex-1'
@@ -83,7 +83,7 @@ export default function CompaniesInput<TData extends FieldValues>({
                       <Button
                         variant="outline"
                         onClick={() => form.setValue(
-                          `${name}[${indx}].companyId` as Path<TData>, 
+                          `${name}[${indx}].id` as Path<TData>, 
                           null as PathValue<TData, Path<TData>>,
                           {shouldDirty: true, shouldTouch: true, shouldValidate: true}
                         )}
@@ -93,39 +93,45 @@ export default function CompaniesInput<TData extends FieldValues>({
                       </Button>
                     )}
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Separator className="flex-1" />
-                    <span className="text-muted-foreground">Или</span>
-                    <Separator className="flex-1" />
-                  </div>
+                  {!hasCompany && (
+                    <>
+                      <div className="flex items-center gap-4">
+                        <Separator className="flex-1" />
+                        <span className="text-muted-foreground">Или</span>
+                        <Separator className="flex-1" />
+                      </div>
 
-                  <div className='w-full'>
-                    <FormLabel>Название</FormLabel>
-                    <Input
-                      value={form.getValues(`${name}[${indx}].name` as Path<TData>) as string}
-                      placeholder="Компания..."
-                      disabled={form.formState.isSubmitting || isPending}
-                      onChange={(e) => form.setValue(
-                        `${name}[${indx}].name` as Path<TData>, 
-                        e.target.value as PathValue<TData, Path<TData>>,
-                        {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-                      )}
-                    />
-                  </div>
+                      <p className='font-medium mb-2'>Создать Компанию</p>
 
-                  <div className='w-full'>
-                    <FormLabel>Описание</FormLabel>
-                    <Textarea
-                      value={form.getValues(`${name}[${indx}].description` as Path<TData>)}
-                      placeholder="Краткое описание..."
-                      disabled={form.formState.isSubmitting || isPending}
-                      onChange={(e) => form.setValue(
-                        `${name}[${indx}].description` as Path<TData>, 
-                        e.target.value as PathValue<TData, Path<TData>>,
-                        {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-                      )}
-                    />
-                  </div>
+                      <div className='w-full'>
+                        <FormLabel>Название</FormLabel>
+                        <Input
+                          value={form.getValues(`${name}[${indx}].name` as Path<TData>) as string}
+                          placeholder="Компания..."
+                          disabled={form.formState.isSubmitting || isPending}
+                          onChange={(e) => form.setValue(
+                            `${name}[${indx}].name` as Path<TData>, 
+                            e.target.value as PathValue<TData, Path<TData>>,
+                            {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                          )}
+                        />
+                      </div>
+                        
+                      <div className='w-full'>
+                        <FormLabel>Описание</FormLabel>
+                        <Textarea
+                          value={form.getValues(`${name}[${indx}].description` as Path<TData>) ?? ""}
+                          placeholder="Краткое описание..."
+                          disabled={form.formState.isSubmitting || isPending}
+                          onChange={(e) => form.setValue(
+                            `${name}[${indx}].description` as Path<TData>, 
+                            e.target.value as PathValue<TData, Path<TData>>,
+                            {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                          )}
+                        />
+                      </div>
+                    </>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             )})}

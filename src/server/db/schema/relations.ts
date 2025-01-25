@@ -13,18 +13,12 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
-export const clustersRelations = relations(clusters, ({ one, many }) => ({
-  companies: many(companies),
+export const clustersRelations = relations(clusters, ({ one }) => ({
   mapItem: one(mapItems)
 }));
 
-export const companiesRelations = relations(companies, ({ one, many }) => ({
-  cluster: one(clusters, { 
-    fields: [companies.clusterId], 
-    references: [clusters.id] 
-  }),
+export const companiesRelations = relations(companies, ({ many }) => ({
   companiesToMapItems: many(companiesToMapItems),
-  // mapItem: one(mapItems, { fields: [companies.mapItemId], references: [mapItems.id] }),
   fields: many(fields)
 }));
 
@@ -34,7 +28,6 @@ export const mapItemsRelations = relations(mapItems, ({ one, many }) => ({
     references: [clusters.id] 
   }),
   companiesToMapItems: many(companiesToMapItems),
-  // companies: many(companies),
 }));
 
 export const companiesToMapItemsRelations = relations(companiesToMapItems, ({ one }) => ({

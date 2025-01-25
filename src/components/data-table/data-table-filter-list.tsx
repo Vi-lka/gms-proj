@@ -637,9 +637,9 @@ export function DataTableFilterList<TData>({
                         }
                       >
                         <Command>
-                          <CommandInput placeholder="Search fields..." />
+                          <CommandInput placeholder="Поиск полей..." />
                           <CommandList>
-                            <CommandEmpty>No fields found.</CommandEmpty>
+                            <CommandEmpty>Поля не найдены.</CommandEmpty>
                             <CommandGroup>
                               {filterFields.map((field) => (
                                 <CommandItem
@@ -749,7 +749,7 @@ export function DataTableFilterList<TData>({
               className="h-[1.85rem] rounded"
               onClick={addFilter}
             >
-              Add filter
+              Добавить
             </Button>
             {filters.length > 0 ? (
               <Button
@@ -761,7 +761,7 @@ export function DataTableFilterList<TData>({
                   void setJoinOperator("and")
                 }}
               >
-                Reset filters
+                Сбросить
               </Button>
             ) : null}
           </div>

@@ -6,8 +6,8 @@ import { auth } from "../auth";
 import { getErrorMessage } from "~/lib/handle-error";
 import { db } from "../db";
 import { clusters, companies, companiesToMapItems, mapItems } from "../db/schema";
-import { eq } from "drizzle-orm";
-import { CompanyToClusterSchema, UpdateCompanySchema, type CreateMapItemClusterSchema, type CreateMapItemSchema } from "~/lib/validations/forms";
+import { and, eq, inArray } from "drizzle-orm";
+import { type CompanyToClusterSchema, type UpdateCompanySchema, type CreateMapItemClusterSchema, type CreateMapItemSchema, UpdateClusterSchema, type UpdateMapItemClusterSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
 
 type CreateMapItemT = {
@@ -23,7 +23,7 @@ type CreateMapItemClusterT = {
 export async function createMapItem({
   name,
   description,
-  companyId,
+  id: companyId,
   xPos,
   yPos
 }: CreateMapItemT) {
@@ -98,7 +98,6 @@ export async function createMapItemCluster({
   name,
   companiesInput,
   description,
-  clusterId,
 }: CreateMapItemClusterT) {
   noStore()
 
@@ -113,80 +112,48 @@ export async function createMapItemCluster({
 
   try {
     const result = await db.transaction(async (tx) => {
-      if (clusterId && clusterId.length > 0) {
-        const newMapItem = await tx
-          .insert(mapItems)
-          .values({
-            clusterId,
-            xPos,
-            yPos,
-          })
-          .returning()
-          .then(takeFirstOrThrow)
-
-        const companiesInCluster = await tx
-          .select({ id: companies.id })
-          .from(companies)
-          .where(eq(companies.clusterId, clusterId))
-
-        await tx
-          .insert(companiesToMapItems)
-          .values(companiesInCluster.map(comp => ({
-            companyId: comp.id,
-            mapItemId: newMapItem.id
-          })))
-      } else {
-        const newCluster = await tx
-          .insert(clusters)
-          .values({
-            name: name!,
-            description: description,
-          })
-          .returning()
-          .then(takeFirstOrThrow)
-
-        const newMapItem = await tx
-          .insert(mapItems)
-          .values({
-            clusterId: newCluster.id,
-            xPos,
-            yPos,
-          })
-          .returning()
-          .then(takeFirstOrThrow)
-
-        const companiesIds = companiesInput!.map(async input => {
-          if (input.companyId && input.companyId.length > 0) {
-            await tx
-              .update(companies)
-              .set({
-                clusterId: newCluster.id,
-              })
-              .where(eq(companies.id, input.companyId))
-            return input.companyId
-          } else {
-            const newCompany = await tx
-              .insert(companies)
-              .values({
-                name: input.name!,
-                description: input.description,
-                clusterId: newCluster.id
-              })
-              .returning()
-              .then(takeFirstOrThrow)
-
-            return newCompany.id
-          }
+      const newCluster = await tx
+        .insert(clusters)
+        .values({
+          name: name,
+          description: description,
         })
-        const companiesIdsRes = await Promise.all(companiesIds)
+        .returning()
+        .then(takeFirstOrThrow)
 
-        await tx
-          .insert(companiesToMapItems)
-          .values(companiesIdsRes.map(compId => ({
-            companyId: compId,
-            mapItemId: newMapItem.id
-          })))
-      }
+      const newMapItem = await tx
+        .insert(mapItems)
+        .values({
+          clusterId: newCluster.id,
+          xPos,
+          yPos,
+        })
+        .returning()
+        .then(takeFirstOrThrow)
+
+      const companiesIds = companiesInput.map(async compInput => {
+        if (compInput.id && compInput.id.length > 0) {
+          return compInput.id
+        } else {
+          const newCompany = await tx
+            .insert(companies)
+            .values({
+              name: compInput.name!,
+              description: compInput.description,
+            })
+            .returning()
+            .then(takeFirstOrThrow)
+          return newCompany.id
+        }
+      })
+      const companiesIdsRes = await Promise.all(companiesIds)
+
+      await tx
+        .insert(companiesToMapItems)
+        .values(companiesIdsRes.map(compId => ({
+          companyId: compId,
+          mapItemId: newMapItem.id
+        })))
 
       revalidateTag("map_items")
 
@@ -222,89 +189,50 @@ export async function companyToCluster(
 
   try {
     const deleteOldCompany = !input.companiesInput.some(inputCompany => 
-      inputCompany.companyId === oldCompany.id
+      inputCompany.id === oldCompany.id
     )
     const newCompaniesInput = input.companiesInput.filter(inputCompany => 
-      inputCompany.companyId !== oldCompany.id
+      inputCompany.id !== oldCompany.id
     )
 
     const result = await db.transaction(async (tx) => {
-      let clusterId = ""
-
-      // if cluster selected
-      if (input.clusterId && input.clusterId.length > 0) {
-        clusterId = input.clusterId
-
-        // connect companies in cluster to map item
-        const companiesInCluster = await tx
-          .select({ id: companies.id })
-          .from(companies)
-          .where(eq(companies.clusterId, input.clusterId))
-        await tx
-          .insert(companiesToMapItems)
-          .values(companiesInCluster.map(comp => ({
-            companyId: comp.id,
-            mapItemId: input.mapItemId
-          })))
-      } else {
-        // create new cluster
-        const newCluster = await tx
-          .insert(clusters)
-          .values({
-            name: input.name!,
-            description: input.description,
-          })
-          .returning()
-          .then(takeFirstOrThrow)
-
-        clusterId = newCluster.id
-      }
+      const newCluster = await tx
+        .insert(clusters)
+        .values({
+          name: input.name,
+          description: input.description,
+        })
+        .returning()
+        .then(takeFirstOrThrow)
 
       // connect map item to cluster
       await tx
         .update(mapItems)
         .set({
-          clusterId
+          clusterId: newCluster.id
         })
+        .where(eq(mapItems.id, input.mapItemId))
 
       // handle old company
       if (deleteOldCompany) {
         await tx
           .delete(companiesToMapItems)
-          .where(eq(companiesToMapItems.companyId, oldCompany.id))
-      } else {
-        const oldCompanyData = input.companiesInput.find(company => company.companyId === oldCompany.id) as UpdateCompanySchema
-        await tx
-          .update(companies)
-          .set({
-            name: oldCompanyData.name,
-            description: oldCompanyData.description,
-            clusterId,
-          })
-          .where(eq(companies.id, oldCompanyData.id))
-          .returning()
-          .then(takeFirstOrThrow)
+          .where(and(
+            eq(companiesToMapItems.companyId, oldCompany.id),
+            eq(companiesToMapItems.mapItemId, input.mapItemId)
+          ))
       }
 
       // handle new companies
       const companiesIds = newCompaniesInput.map(async company => {
-        if (company.companyId) {
-          // connect company to cluster
-          await tx
-            .update(companies)
-            .set({
-              clusterId
-            })
-            .where(eq(companies.id, company.companyId))
-          return company.companyId
+        if (company.id) {
+          return company.id
         } else {
-          // create new company
           const newCompany = await tx
             .insert(companies)
             .values({
               name: company.name!,
               description: company.description,
-              clusterId
             })
             .returning()
             .then(takeFirstOrThrow)
@@ -330,6 +258,91 @@ export async function companyToCluster(
     })
 
     return result
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
+}
+
+export async function updateMapItemCluster(
+  input: UpdateMapItemClusterSchema,
+  oldCompanies: UpdateCompanySchema[]
+) {
+  noStore()
+
+  const session = await auth();
+  if (session?.user.role !== "admin") {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    const companiesToDelete = oldCompanies.filter(oldCompany => 
+      !input.companiesInput.some(inputCompany => inputCompany.id === oldCompany.id)
+    )
+
+    const companiesWithId = input.companiesInput.filter(inputCompany => inputCompany.id) as UpdateCompanySchema[]
+    const companiesToAdd = companiesWithId.filter(comp => !oldCompanies.some(oldCompany => oldCompany.id === comp.id))
+
+    const companiesToCreate = input.companiesInput.filter(inputCompany => !inputCompany.id)
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(clusters)
+        .set({
+          name: input.name,
+          description: input.description,
+        })
+        .where(eq(clusters.id, input.id))
+        .returning()
+        .then(takeFirstOrThrow)
+
+      if (companiesToDelete.length > 0) {
+        await tx
+          .delete(companiesToMapItems)
+          .where(and(
+            inArray(companiesToMapItems.companyId, companiesToDelete.map(company => company.id)),
+            eq(companiesToMapItems.mapItemId, input.mapItemId)
+          ))
+      } 
+
+      if (companiesToAdd.length > 0) {
+        await tx
+          .insert(companiesToMapItems)
+          .values(companiesToAdd.map(comp => ({
+            companyId: comp.id,
+            mapItemId: input.mapItemId,
+          })))
+      }
+      
+      if (companiesToCreate.length > 0) {
+        const newCompanies = await tx
+          .insert(companies)
+          .values(companiesToCreate.map(comp => ({
+            name: comp.name!,
+            description: comp.description,
+          })))
+          .returning()
+        await tx
+          .insert(companiesToMapItems)
+          .values(newCompanies.map(comp => ({
+            companyId: comp.id,
+            mapItemId: input.mapItemId,
+          })))
+      }
+    })
+
+    revalidateTag("map_items")
+
+    return {
+      data: null,
+      error: null,
+    }
   } catch (err) {
     return {
       data: null,
@@ -405,6 +418,14 @@ export async function deleteMapItem(
       await tx
         .delete(mapItems)
         .where(eq(mapItems.id, item.id))
+        .returning()
+        .then(takeFirstOrThrow)
+
+      if (item.cluster) {
+        await tx
+          .delete(clusters)
+          .where(eq(clusters.id, item.cluster.id))
+      }
     })
 
     revalidateTag("map_items")

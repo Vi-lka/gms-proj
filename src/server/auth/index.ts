@@ -4,6 +4,7 @@ import { cache } from "react";
 import { db } from "~/server/db";
 import {
   accounts,
+  authenticators,
   sessions,
   users,
   verificationTokens,
@@ -17,6 +18,7 @@ const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth({
       accountsTable: accounts,
       sessionsTable: sessions,
       verificationTokensTable: verificationTokens,
+      authenticatorsTable: authenticators
     }),
     session: { strategy: "database" },
     ...authConfig

@@ -83,6 +83,7 @@ export default function UpdateEllementSheet({ item, onFormSubmit, ...props }: Up
               ? (
                 <UpdateClusterForm 
                   cluster={itemData.data}
+                  mapItemId={item.id}
                   onFormSubmit={onFormSubmit}
                 />
               )

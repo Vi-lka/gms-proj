@@ -3,33 +3,41 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Form } from '~/components/ui/form'
-import { updateClusterSchema, type UpdateClusterSchema } from '~/lib/validations/forms'
-import { updateCluster } from '~/server/actions/clusters'
+import { updateMapItemClusterSchema, type UpdateMapItemClusterSchema, type UpdateClusterSchema } from '~/lib/validations/forms'
 import InputField from '../inputs/simple/input-field'
 import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
 import { Loader } from 'lucide-react'
+import { updateMapItemCluster } from '~/server/actions/mapItems'
 
 export default function UpdateClusterForm({
   cluster,
+  mapItemId,
   onFormSubmit
 }: {
-  cluster: UpdateClusterSchema
+  cluster: UpdateClusterSchema,
+  mapItemId: string,
   onFormSubmit:(() => void) | undefined
 }) {
   const [isPending, startTransition] = React.useTransition()
 
-  const form = useForm<UpdateClusterSchema>({
-    resolver: zodResolver(updateClusterSchema),
-    defaultValues: cluster,
+  const form = useForm<UpdateMapItemClusterSchema>({
+    resolver: zodResolver(updateMapItemClusterSchema),
+    defaultValues: {
+      id: cluster.id,
+      name: cluster.name,
+      description: cluster.description,
+      companiesInput: cluster.companies,
+      mapItemId
+    },
     mode: "onChange"
   })
 
-  function onSubmit(input: UpdateClusterSchema) {
+  function onSubmit(input: UpdateMapItemClusterSchema) {
     startTransition(async () => {
-      const { data, error } = await updateCluster(input, cluster.companies)
+      const { data, error } = await updateMapItemCluster(input, cluster.companies)
 
       if (error) {
         toast.error(error)
@@ -67,7 +75,7 @@ export default function UpdateClusterForm({
         />
         <CompaniesInput 
           form={form}
-          name="companies"
+          name="companiesInput"
           label="Компании"
           isPending={isPending}
         />

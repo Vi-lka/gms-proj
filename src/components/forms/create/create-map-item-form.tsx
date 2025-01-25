@@ -34,7 +34,6 @@ export default function CreateMapItemForm({
     defaultValues: {
       name: "",
       description: "",
-      companyId: null
     },
     mode: "onChange"
   })
@@ -59,7 +58,7 @@ export default function CreateMapItemForm({
     })
   }
 
-  const hasCompany = !!form.getValues("companyId")
+  const hasCompany = !!form.getValues("id")
 
   const saveDisabled = isPending || !form.formState.isValid
 
@@ -72,7 +71,7 @@ export default function CreateMapItemForm({
         <div className='flex items-end gap-1 mt-2'>
           <CompanySelect
             form={form}
-            name="companyId"
+            name="id"
             label="Выберите Компанию"
             onOpenChange={() => form.clearErrors()}
             className='flex-1'
@@ -81,7 +80,7 @@ export default function CreateMapItemForm({
             <Button
               variant="outline"
               onClick={() => form.setValue(
-                "companyId", 
+                "id", 
                 null, 
                 {shouldDirty: true, shouldTouch: true, shouldValidate: true}
               )}

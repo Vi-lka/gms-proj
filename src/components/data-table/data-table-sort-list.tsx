@@ -165,7 +165,7 @@ export function DataTableSortList<TData>({
             aria-controls={`${id}-sort-dialog`}
           >
             <ArrowDownUp className="size-3" aria-hidden="true" />
-            Sort
+            Сорт.
             {uniqueSorting.length > 0 && (
               <Badge
                 variant="secondary"
@@ -186,7 +186,7 @@ export function DataTableSortList<TData>({
           )}
         >
           {uniqueSorting.length > 0 ? (
-            <h4 className="font-medium leading-none">Sort by</h4>
+            <h4 className="font-medium leading-none">Сортировать по</h4>
           ) : (
             <div className="flex flex-col gap-1">
               <h4 className="font-medium leading-none">Сортировка не применяется</h4>
@@ -226,7 +226,7 @@ export function DataTableSortList<TData>({
                                   variant="secondary"
                                   className="h-[1.125rem] rounded px-1 font-mono text-[0.65rem] font-normal"
                                 >
-                                  Default
+                                  По умолчанию
                                 </Badge>
                               ) : null}
                               <ChevronsUpDown
@@ -244,9 +244,9 @@ export function DataTableSortList<TData>({
                           }
                         >
                           <Command>
-                            <CommandInput placeholder="Search fields..." />
+                            <CommandInput placeholder="Поиск полей..." />
                             <CommandList>
-                              <CommandEmpty>No fields found.</CommandEmpty>
+                              <CommandEmpty>Поля не найдены.</CommandEmpty>
                               <CommandGroup>
                                 {sortableColumns.map((column) => (
                                   <CommandItem
@@ -347,7 +347,7 @@ export function DataTableSortList<TData>({
               // disabled={sorting.length >= sortableColumns.length}
               disabled={sortableColumns.length === 0}
             >
-              Add sort
+              Добавить
             </Button>
             {sorting.length > 0 ? (
               <Button
@@ -356,7 +356,7 @@ export function DataTableSortList<TData>({
                 className="rounded"
                 onClick={() => setSorting(null)}
               >
-                Reset sorting
+                Сбросить
               </Button>
             ) : null}
           </div>

@@ -10,9 +10,7 @@ import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
-import { Loader, X } from 'lucide-react'
-import ClusterSelect from '../inputs/cluster-select'
-import { Separator } from '~/components/ui/separator'
+import { Loader } from 'lucide-react'
 import { companyToCluster } from '~/server/actions/mapItems'
 
 export default function CompanyToClusterForm({
@@ -32,7 +30,6 @@ export default function CompanyToClusterForm({
       name: "",
       description: "",
       mapItemId,
-      clusterId: null,
       companiesInput: [company]
     },
     mode: "onChange"
@@ -53,8 +50,6 @@ export default function CompanyToClusterForm({
     })
   }
 
-  const hasCluster = !!form.getValues("clusterId")
-
   const saveDisabled = isPending || !form.formState.isValid
 
   return (
@@ -63,34 +58,6 @@ export default function CompanyToClusterForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
-        <div className='flex items-end gap-1'>
-          <ClusterSelect
-            form={form}
-            name="clusterId"
-            label="Выберите Кластер"
-            onOpenChange={() => form.clearErrors()}
-            hasMapItem={false}
-            className='flex-1'
-          />
-          {hasCluster && (
-            <Button
-              variant="outline"
-              onClick={() => form.setValue(
-                "clusterId",
-                null, 
-                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-              )}
-              className='px-1'
-            >
-              <X/>
-            </Button>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <Separator className="flex-1" />
-          <span className="text-muted-foreground">Или</span>
-          <Separator className="flex-1" />
-        </div>
         <InputField 
           form={form}
           name="name"
