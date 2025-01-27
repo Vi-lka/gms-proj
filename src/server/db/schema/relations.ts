@@ -1,8 +1,10 @@
 import { relations } from "drizzle-orm";
-import { accounts, areasData, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems, sessions, users } from ".";
+import { accounts, areasData, authenticators, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems, sessions, users } from ".";
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  sessions: many(sessions),
+  authenticators: many(authenticators)
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -11,6 +13,10 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const authenticatorsRelations = relations(authenticators, ({ one }) => ({
+  user: one(users, { fields: [authenticators.userId], references: [users.id] }),
 }));
 
 export const clustersRelations = relations(clusters, ({ one }) => ({

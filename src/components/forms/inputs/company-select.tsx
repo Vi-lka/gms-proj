@@ -5,6 +5,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/comp
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn } from "~/lib/utils";
+import { getApiRoute } from "~/lib/validations/api-routes";
 import { type Company } from "~/server/db/schema";
 
 export default function CompanySelect<TData extends FieldValues>({
@@ -14,6 +15,7 @@ export default function CompanySelect<TData extends FieldValues>({
   placeholder,
   // eslint-disable-next-line @typescript-eslint/unbound-method
   onOpenChange,
+  hasMapItem,
   className
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,10 +23,16 @@ export default function CompanySelect<TData extends FieldValues>({
   name: Path<TData>,
   label?: React.ReactNode,
   placeholder?: string,
-  onOpenChange?(open: boolean): void
+  onOpenChange?(open: boolean): void,
+  hasMapItem?: boolean,
   className?: string,
 }) {
-  const { data, error, isLoading } = useSWR<Company[], Error>("/api/companies");
+  const { data, error, isLoading } = useSWR<Company[], Error>(
+    getApiRoute({
+      route: "companies", 
+      searchParams: {hasMapItem}
+    })
+  );
 
   if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {

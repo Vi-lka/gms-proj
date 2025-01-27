@@ -104,3 +104,8 @@ export const searchClustersApi = {
 }
 export const searchClustersApiLoader = createLoader(searchClustersApi)
 
+export const searchCompaniesApi = {
+  hasMapItem: parseAsBoolean.withDefault(false)
+}
+export const searchCompaniesApiLoader = createLoader(searchCompaniesApi)
+

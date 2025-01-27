@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 const useEventListener = (
   event: any, 
-  listener: () => void,
+  listener: (ev?: Event) => void,
   useCapture?: boolean
 ) => {
   useEffect(() => {

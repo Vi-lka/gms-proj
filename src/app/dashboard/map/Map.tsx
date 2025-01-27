@@ -58,7 +58,7 @@ export default function Map({ promises }: MapProps) {
   return (
     <div className='w-full h-full flex flex-col gap-2 flex-grow'>
       <MapToolbarAdmin />
-      <div ref={ref} className='w-full h-full flex-grow bg-muted border rounded-xl overflow-hidden'>
+      <div ref={ref} className='w-full h-full flex-grow bg-muted border rounded-xl'>
         <MapStage
           mapData={mapData}
           actions={
