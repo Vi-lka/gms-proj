@@ -1,10 +1,10 @@
 "use client"
 
 import React from 'react'
-import { Check, Database, Map, Plus, X } from 'lucide-react'
+import { Check, Database, Map, MapPinCheck, Plus, X } from 'lucide-react'
 import { type MapItemSchema } from '~/lib/validations/forms'
 import { useAtomValue } from 'jotai'
-import { mapContainerDimensions, stageAtom, stageRefAtom } from '~/lib/atoms/main'
+import { mapContainerDimensions, selectedItemAtom, stageAtom, stageRefAtom } from '~/lib/atoms/main'
 import Konva from 'konva'
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
 import { toast } from 'sonner'
@@ -25,6 +25,8 @@ export default function AddEllementButton({
   const [addEllement, setAddEllement] = React.useState(false)
   const [mapItem, setMapItem] = React.useState<MapItemSchema | null>(null)
   const [openAddEllementSheet, setOpenAddEllementSheet] = React.useState(false)
+
+  const selectedItem = useAtomValue(selectedItemAtom)
 
   const scale = valueFromWindowWidth({
     windowW,
@@ -95,17 +97,28 @@ export default function AddEllementButton({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addEllement, stageRef])
 
-  // Effect for accept item Position and open Sheet for data input
-  React.useEffect(() => {
-    const onDismiss = () => {
+  const onOpenChange = React.useCallback((open: boolean) => {
+    setOpenAddEllementSheet(open)
+    if (!open) {
       setAddEllement(false);
       setMapItem(null);
     }
+  }, [])
 
-    const onAccept = () => {
-      setOpenAddEllementSheet(true)
-    }
+  const onDismiss = () => {
+    setAddEllement(false);
+    setMapItem(null);
+    toast.dismiss("accept-pos")
+  }
 
+  const onAccept = React.useCallback(() => {
+    setOpenAddEllementSheet(true)
+    setAddEllement(false);
+    toast.dismiss("accept-pos")
+  }, [])
+
+  // Effect for accept item Position and open Sheet for data input
+  React.useEffect(() => {
     if (!!mapItem) {
       toast('Подтвердите расположение элемента', {
         id: "accept-pos",
@@ -123,9 +136,41 @@ export default function AddEllementButton({
         onDismiss
       });
     }
-  }, [mapItem])
+  }, [mapItem, onAccept])
+
+  // Effect for selectedItem
+  React.useEffect(() => {
+    if (!!selectedItem) onDismiss()
+  }, [selectedItem])
+
+  // Effect for cancle
+  React.useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!mapItem) {
+        if (addEllement && event.key === "Escape") {
+          onOpenChange(false)
+        }
+      }
+      if (mapItem) {
+        if (addEllement && event.key === "Escape") {
+          onDismiss()
+        }
+        if (addEllement && event.key === "Enter") {
+          event.preventDefault()
+          onAccept()
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [mapItem, onOpenChange, onAccept, addEllement])
 
   function getButtonContent() {
+    if (mapItem && !openAddEllementSheet) return {
+      title: "Подтвердите расположение элемента...",
+      icon: <MapPinCheck className="size-4" aria-hidden="true" />,
+    }
     if (mapItem) return { 
       title:"Введите данные", 
       icon: <Database className="size-4" aria-hidden="true" />
@@ -139,28 +184,20 @@ export default function AddEllementButton({
       icon: <Plus className="size-4" aria-hidden="true" />
     }
   }
-
-  const onOpenChange = (open: boolean) => {
-    setOpenAddEllementSheet(open)
-    if (!open) {
-      setAddEllement(false);
-      setMapItem(null);
-    }
-  }
   
   return (
     <>
       <Button
         aria-label="Добавить метку"
         variant="ghost"
-        disabled={addEllement || !!mapItem}
+        disabled={addEllement || !!mapItem || !!selectedItem}
         className={cn("h-8 px-2 lg:px-3", className)}
         onClick={() => setAddEllement(true)}
       >
         {getButtonContent().title}
         {getButtonContent().icon}
       </Button>
-      <AddEllementSheet 
+      <AddEllementSheet
         open={openAddEllementSheet}
         onOpenChange={onOpenChange}
         mapItem={mapItem}

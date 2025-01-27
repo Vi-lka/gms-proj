@@ -3,22 +3,20 @@ import { Layer } from 'react-konva'
 import getIntersections from '~/lib/intersections/get-intersections';
 import { type MapItemT } from '~/lib/types';
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth';
-import { useAtomValue } from 'jotai';
-import { mapContainerDimensions, stageAtom } from '~/lib/atoms/main';
+import { useAtom, useAtomValue } from 'jotai';
+import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms/main';
 import GroupItem from './items/group-item';
 import SingleItem from './items/single-item';
 
 export default function MapItemsAdmin({
-  items,
-  selectedItem,
-  handleClick
+  items
 }: {
-  items: MapItemT[],
-  selectedItem: MapItemT | null,
-  handleClick: (item: MapItemT) => void
+  items: MapItemT[]
 }) {
   const stage = useAtomValue(stageAtom);
   const { width: windowW } = useAtomValue(mapContainerDimensions);
+
+  const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
   const scaleForIntersections = valueFromWindowWidth({
     windowW,
@@ -56,7 +54,7 @@ export default function MapItemsAdmin({
               }
               onClick={(e) => {
                 e.stopPropagation()
-                handleClick(item.items)
+                setSelectedItem(item.items)
               }}
             />
           )

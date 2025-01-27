@@ -1,29 +1,23 @@
 import { Edit, Move, Trash2, X } from 'lucide-react'
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from '~/components/ui/button'
 import { Kbd } from '~/components/ui/kbd'
 import { Portal } from '~/components/ui/portal'
 import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
-import { type MapItemT } from '~/lib/types'
 import UpdateEllementSheet from './update-ellement-sheet'
 import DeleteEllementDialog from './delete-ellement-dialog'
 import dynamic from 'next/dynamic'
+import { useAtom } from 'jotai'
+import { itemActionAtom, selectedItemAtom } from '~/lib/atoms/main'
 
 const MoveEllementPortal = dynamic(() => import('./move-ellement-portal'), {
   ssr: false,
 });
 
-type ItemAction = "update" | "delete" | "move" | null
-
-export default function MapItemsActionsAdmin({
-  selectedItem,
-  setSelectedItem
-}: {
-  selectedItem: MapItemT | null,
-  setSelectedItem: React.Dispatch<React.SetStateAction<MapItemT | null>>
-}) {
-  const [itemAction, setItemAction] = useState<ItemAction>(null)
+export default function MapItemsActionsAdmin() {
+  const [itemAction, setItemAction] = useAtom(itemActionAtom)
+  const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
   // Clear selection on Escape key press
   React.useEffect(() => {
@@ -47,7 +41,7 @@ export default function MapItemsActionsAdmin({
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [itemAction, selectedItem, setSelectedItem])
+  }, [itemAction, selectedItem, setItemAction, setSelectedItem])
 
   function onOpenChange(open: boolean) {
     if (!open) setItemAction(null)

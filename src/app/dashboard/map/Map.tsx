@@ -34,7 +34,6 @@ interface MapProps {
 export default function Map({ promises }: MapProps) {
   const { dimensions, ref } = useElementDimensions();
   const setContainerDimensions = useSetAtom(mapContainerDimensions)
-  const [selectedItem, setSelectedItem] = React.useState<MapItemT | null>(null);
 
   React.useEffect(() => {
     if (dimensions) setContainerDimensions(dimensions)
@@ -61,19 +60,10 @@ export default function Map({ promises }: MapProps) {
       <div ref={ref} className='w-full h-full flex-grow bg-muted border rounded-xl'>
         <MapStage
           mapData={mapData}
-          actions={
-            <MapItemsActionsAdmin 
-              selectedItem={selectedItem}
-              setSelectedItem={(setSelectedItem)}
-            />
-          }
+          actions={<MapItemsActionsAdmin />}
           className='w-full'
         >
-          <MapItemsAdmin 
-            items={itemsData} 
-            selectedItem={selectedItem}
-            handleClick={(item) => setSelectedItem(item)}
-          />
+          <MapItemsAdmin items={itemsData} />
         </MapStage>
       </div>
     </div>
