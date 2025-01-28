@@ -114,33 +114,6 @@ export function getColumns({
       )
     },
     {
-      accessorKey: "clusterName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Кластер" />
-      ),
-      cell: ({ row }) => (
-        <div
-          onClick={()=> {
-            if (row.original.clusterId) {
-              void navigator.clipboard.writeText(row.original.clusterId)
-              toast.success('ID скопирован')
-            }
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className="max-w-[31.25rem] truncate font-medium">
-                {row.getValue("clusterName")}
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                ID: {row.original.clusterId}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      )
-    },
-    {
       id: "actions",
       cell: function Cell({ row }) {
         return (

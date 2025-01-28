@@ -174,9 +174,7 @@ export interface LicensedAreasExtend extends LicensedAreas {
   companyName: Company["name"],
 }
 export interface FieldsExtend extends Fields {
-  companyName: Company["name"],
-  clusterId: Cluster["id"] | null,
-  clusterName: Cluster["name"] | null,
+  companyName: Company["name"]
 }
 export interface AreasDataExtend extends AreasData {
   areaName: LicensedAreas["name"],

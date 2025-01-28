@@ -52,8 +52,6 @@ export const searchParamsFields = {
   name: parseAsString.withDefault(""),
   companyId: parseAsString.withDefault(""),
   companyName: parseAsString.withDefault(""),
-  clusterId: parseAsString.withDefault(""),
-  clusterName: parseAsString.withDefault(""),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  

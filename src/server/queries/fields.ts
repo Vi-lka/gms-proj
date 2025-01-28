@@ -1,7 +1,7 @@
 import { type GetFieldsSchema } from "~/lib/validations/fields";
 import { auth } from "../auth";
 import { and, count, eq, ilike, inArray, or } from "drizzle-orm";
-import { clusters, companies, fields } from "../db/schema";
+import { companies, fields } from "../db/schema";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
@@ -30,19 +30,7 @@ export async function getFields(
                 .where(
                   or(
                     ilike(companies.name, `%${input.name}%`),
-                    ilike(companies.id, `%${input.name}%`),
-                    inArray(
-                      companies.clusterId,
-                      db
-                        .select({ id: clusters.id })
-                        .from(clusters)
-                        .where(
-                          or(
-                            ilike(clusters.name, `%${input.name}%`),
-                            ilike(clusters.id, `%${input.name}%`),
-                          )
-                        )
-                    ),
+                    ilike(companies.id, `%${input.name}%`)
                   )
                 )
             )
@@ -54,23 +42,6 @@ export async function getFields(
                 .select({ id: companies.id })
                 .from(companies)
                 .where(eq(companies.id, input.companyId))
-            )
-          ) : undefined,
-          input.clusterId ? (
-            inArray(
-              fields.companyId,
-              db
-                .select({ id: companies.id })
-                .from(companies)
-                .where(
-                    inArray(
-                      companies.clusterId,
-                      db
-                        .select({ id: clusters.id })
-                        .from(clusters)
-                        .where(eq(clusters.id, input.clusterId))
-                    ),
-                )
             )
           ) : undefined
         )
@@ -89,14 +60,6 @@ export async function getFields(
                 columns: {
                   id: true,
                   name: true
-                },
-                with: {
-                  cluster: {
-                    columns: {
-                      id: true,
-                      name: true  
-                    }
-                  }
                 }
               }
             }
@@ -119,9 +82,7 @@ export async function getFields(
 
       const transformData = data.map(({company, ...other}) => ({
         ...other,
-        companyName: company.name,
-        clusterId: company.cluster?.id ?? null,
-        clusterName: company.cluster?.name ?? null
+        companyName: company.name
       }))
 
       const sortedData = orderData(input.sort, transformData)
