@@ -5,13 +5,13 @@ import { type LicensedAreasExtend } from '~/server/db/schema'
 import DeleteLicensedAreasDialog from './delete-licensed-areas-dialog'
 import CreateLicensedAreaSheet from './create-licensed-area-sheet'
 
-interface TasksTableToolbarActionsProps {
+interface LicensedAreasTableToolbarActionsProps {
   table: Table<LicensedAreasExtend>
 }
 
 export default function LicensedAreasTableToolbarActions({
   table
-}: TasksTableToolbarActionsProps) {
+}: LicensedAreasTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
   return (

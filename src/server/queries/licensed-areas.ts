@@ -1,5 +1,7 @@
 "use server"
 
+import "server-only"
+
 import { type GetLicensedAreasSchema } from "~/lib/validations/licensed-areas";
 import { auth } from "../auth";
 import { and, count, eq, ilike, inArray, or } from "drizzle-orm";

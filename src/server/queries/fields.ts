@@ -1,3 +1,7 @@
+"use server"
+
+import "server-only"
+
 import { type GetFieldsSchema } from "~/lib/validations/fields";
 import { auth } from "../auth";
 import { and, count, eq, ilike, inArray, or } from "drizzle-orm";

@@ -5,13 +5,13 @@ import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import CreateFieldSheet from './create-field-sheet'
 import DeleteFieldsDialog from './delete-fields-dialog'
 
-interface TasksTableToolbarActionsProps {
+interface FieldsTableToolbarActionsProps {
   table: Table<FieldsExtend>
 }
 
 export default function FieldsTableToolbarActions({
   table
-}: TasksTableToolbarActionsProps) {
+}: FieldsTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
   return (

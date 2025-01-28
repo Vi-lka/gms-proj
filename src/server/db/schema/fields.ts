@@ -1,6 +1,6 @@
 import { date, index, pgEnum, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
-import { type Cluster, companies, type Company } from "./map";
+import { companies, type Company } from "./map";
 import { numericCasted } from "../utils";
 
 export const fields = createTable(

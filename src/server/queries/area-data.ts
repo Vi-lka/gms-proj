@@ -1,5 +1,7 @@
 "use server"
 
+import "server-only"
+
 import { type GetAreasDataSchema } from "~/lib/validations/areas-data";
 import { auth } from "../auth";
 import { unstable_cache } from "~/lib/unstable-cache";

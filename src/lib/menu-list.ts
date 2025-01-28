@@ -6,7 +6,8 @@ import {
   LandPlot,
   Pickaxe,
   Database,
-  Cookie
+  Cookie,
+  Building2
 } from "lucide-react";
 
 type Submenu = {
@@ -55,6 +56,11 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: "Данные",
       menus: [
+        {
+          href: "/dashboard/companies",
+          label: "Компании",
+          icon: Building2,
+        },
         {
           href: "/dashboard/fields",
           label: "Месторождения",

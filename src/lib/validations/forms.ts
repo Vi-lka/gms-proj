@@ -11,15 +11,12 @@ export type CompanySchema = z.infer<typeof companySchema>
 
 export const createCompanySchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional(),
-  clusterId: z.string().optional(),
+  description: z.string().nullable(),
 })
 export type CreateCompanySchema = z.infer<typeof createCompanySchema>
 
-export const updateCompanySchema = z.object({
-  id: z.string(),
-  name: z.string().min(1),
-  description: z.string().nullable(),
+export const updateCompanySchema = createCompanySchema.extend({
+  id: z.string().min(1),
 })
 export type UpdateCompanySchema = z.infer<typeof updateCompanySchema>
 

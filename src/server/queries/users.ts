@@ -1,3 +1,5 @@
+"use server"
+
 import "server-only"
 
 import { unstable_cache } from "~/lib/unstable-cache";

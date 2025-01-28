@@ -1,9 +1,10 @@
+"use server"
+
 import "server-only"
 
 import { unstable_cache } from "~/lib/unstable-cache";
 import { auth } from "../auth";
 import { db } from "../db";
-import { inArray } from "drizzle-orm";
 
 export async function getMap() {
   const session = await auth();
