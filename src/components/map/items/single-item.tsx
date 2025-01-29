@@ -1,15 +1,16 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Html } from 'react-konva-utils'
 import { useAtomValue } from 'jotai'
 import { CircleDot } from 'lucide-react'
 import { type MapItemT } from '~/lib/types'
-import { mapContainerDimensions, stageAtom } from '~/lib/atoms/main'
+import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms/main'
 import { useStageEllementPos } from '~/hooks/use-stage-ellement-pos'
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
-import { Button } from '~/components/ui/button'
+import { buttonVariants } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
+import { Separator } from '~/components/ui/separator'
 
 export default function SingleItem({
   data,
@@ -17,10 +18,12 @@ export default function SingleItem({
   className
 }: {
   data: MapItemT,
-  onClick?: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: React.MouseEventHandler<HTMLDivElement>,
   className?: string
 }) {
   const stage = useAtomValue(stageAtom)
+
+  const selectedItem = useAtomValue(selectedItemAtom)
 
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
@@ -38,6 +41,13 @@ export default function SingleItem({
     minw: 2.4/stage.scale,
   })
 
+  const ellementScale = valueFromWindowWidth({
+    windowW,
+    w1024: 0.8,
+    w425: 0.6,
+    minw: 0.3,
+  })
+
   return (
     <Html
       groupProps={{
@@ -47,20 +57,53 @@ export default function SingleItem({
         y: pos.y,
         scale: {x: scale, y: scale}
       }}
+      divProps={{
+        className: "hover:!z-[1000]"
+      }}
     >
-      <div className='relative' style={{scale: size.width < 1 ? size.width : 1}}>
-        <Button 
+      <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
+        <div 
           className={cn(
-            "absolute -translate-x-1/2 -translate-y-1/2 block p-0.5 w-fit h-fit aspect-square text-center rounded-full group hover:bg-accent duration-300",
+            buttonVariants({ 
+              variant: "default", 
+              size: "default", 
+              className: "absolute -translate-x-1/2 -translate-y-1/2 block p-0.5 w-fit h-fit aspect-square text-center rounded-full group hover:bg-accent duration-300"
+            }),
             className
           )}
           onClick={onClick}
         >
           <CircleDot className='mx-auto !w-5 !h-5 group-hover:text-foreground' />
-          <p className='relative font-semibold text-xs'>
-            <span className='absolute whitespace-pre top-[-17px] left-7 text-foreground bg-accent group-hover:underline rounded-md'>{data.companies[0]?.name}</span>
-          </p>
-        </Button>
+          <div className='relative font-medium text-xs text-left cursor-pointer'>
+            <div className={cn(
+              'absolute whitespace-pre top-[-21px] block w-max max-w-32 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
+              selectedItem?.id === data.id ? "left-7" : "left-6"
+            )}>
+              {data.cluster 
+                ? (
+                  <div className='flex flex-col gap-1'>
+                    <p className='text-foreground/70 text-[10px] line-clamp-2'>{data.cluster.name}</p>
+                    {data.companies.map((comp, indx) => (
+                      <div key={indx}>
+                        <span className='line-clamp-2'>
+                          {comp.name}
+                        </span>
+                        {indx < data.companies.length - 1 && (
+                          <Separator className='bg-foreground mt-0.5' />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )
+                : (
+                  <p className='line-clamp-2'>
+                    {data.companies[0]?.name}
+                  </p>
+                )
+              }
+            </div>
+          </div>
+        </div>
       </div>
     </Html>
   )

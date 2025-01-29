@@ -7,6 +7,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms/main';
 import GroupItem from './items/group-item';
 import SingleItem from './items/single-item';
+import { cn } from '~/lib/utils';
 
 export default function MapItemsAdmin({
   items
@@ -20,7 +21,7 @@ export default function MapItemsAdmin({
 
   const scaleForIntersections = valueFromWindowWidth({
     windowW,
-    w1024: stage.scale,
+    w1024: 0.7*stage.scale,
     w425: 0.4*stage.scale,
     minw: 0.3*stage.scale,
   })
@@ -48,10 +49,11 @@ export default function MapItemsAdmin({
             <SingleItem 
               key={indx}
               data={item.items}
-              className={selectedItem?.id === item.items.id 
-                ? "!outline-dashed !outline-2 !outline-offset-2 !outline-yellow" 
-                : ""
-              }
+              className={cn(selectedItem?.id === item.items.id 
+                ? "!outline-yellow" 
+                : "outline-transparent",
+                "!outline-dashed !outline-2 !outline-offset-2 transition-all"
+              )}
               onClick={(e) => {
                 e.stopPropagation()
                 setSelectedItem(item.items)

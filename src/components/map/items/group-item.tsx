@@ -123,6 +123,13 @@ export default function GroupItem({
     minw: 2.4/stage.scale,
   })
 
+  const ellementScale = valueFromWindowWidth({
+    windowW,
+    w1024: 0.9,
+    w425: 0.7,
+    minw: 0.4,
+  })
+
   return (
     <Html
       groupProps={{
@@ -133,7 +140,7 @@ export default function GroupItem({
         scale: {x: scale, y: scale}
       }}
     >
-      <div className='relative' style={{scale: size.width < 1 ? size.width : 1}}>
+      <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
         <Button
           ref={ref}
           className={cn(
