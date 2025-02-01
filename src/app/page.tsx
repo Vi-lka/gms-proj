@@ -1,25 +1,40 @@
-import Link from "next/link";
+import React from "react";
+import { getMap, getMapItems } from "~/server/queries/map";
+import Map from "./Map";
+import { auth } from "~/server/auth";
+import { providerMap } from "~/server/auth/config";
+import SignInForm from "~/components/auth/sign-in";
+import { redirect } from "next/navigation";
 
-export default async function HomePage() {
+type SearchParams = Promise<{ callbackUrl: string | undefined, code: string | undefined }>
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/dashboard"
-          >
-            <h3 className="text-2xl font-bold">Dashboard →</h3>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="/api/auth/signout"
-          >
-            <h3 className="text-2xl font-bold">Sign Out →</h3>
-          </Link>
-        </div>
+export default async function HomePage(props: {
+  searchParams: SearchParams
+}) {
+  const searchParams = await props.searchParams
+
+  const session = await auth()
+
+  const providers = Object.values(providerMap)
+
+  if (!session?.user) return <SignInForm providers={providers} callbackUrl={searchParams.callbackUrl} />
+
+  const promises = Promise.all([
+    getMap(),
+    getMapItems(),
+  ])
+
+  if (session.user.role === "admin") return (
+    <main className="min-h-screen flex flex-col overflow-hidden">
+      <div className="flex flex-col flex-grow">
+        <React.Suspense
+          fallback={"Loading..."}
+        >
+          <Map promises={promises} />
+        </React.Suspense>
       </div>
     </main>
   );
+
+  redirect("/sign-in")
 }

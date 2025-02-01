@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Html } from 'react-konva-utils'
 import { useAtomValue } from 'jotai'
 import { CircleDot } from 'lucide-react'
@@ -11,19 +11,24 @@ import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
 import { buttonVariants } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 import { Separator } from '~/components/ui/separator'
+import useOutsideClick from '~/hooks/use-outside-click'
 
 export default function SingleItem({
   data,
   onClick,
+  handleClickOutside,
   className
 }: {
   data: MapItemT,
   onClick?: React.MouseEventHandler<HTMLDivElement>,
+  handleClickOutside?: () => void,
   className?: string
 }) {
   const stage = useAtomValue(stageAtom)
 
   const selectedItem = useAtomValue(selectedItemAtom)
+
+  const ref = useOutsideClick(100, handleClickOutside);
 
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
@@ -63,6 +68,7 @@ export default function SingleItem({
     >
       <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
         <div 
+          ref={ref}
           className={cn(
             buttonVariants({ 
               variant: "default", 
