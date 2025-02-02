@@ -9,12 +9,13 @@ import { companies, fields, licensedAreas } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
+import { restrictUser } from "~/lib/utils";
 
 export async function getLicensedAreas(
   input: GetLicensedAreasSchema,
 ) {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
   }
 

@@ -53,13 +53,13 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <GoBack
+      {/* <GoBack
         variant="ghost"
         className='absolute left-4 top-4 md:left-8 md:top-8'
       >
         <ArrowLeftToLine />
         Назад
-      </GoBack>
+      </GoBack> */}
       <div className="mx-auto flex w-5/6 flex-col justify-center space-y-6 sm:max-w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">

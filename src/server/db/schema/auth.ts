@@ -12,7 +12,7 @@ import {
 import { type AdapterAccount } from "next-auth/adapters";
 import createTable from "./createTable";
 
-export const roleEnum = pgEnum('role', ['user', 'admin']);
+export const roleEnum = pgEnum('role', ['unknown', 'guest', 'user', 'admin', 'super-admin']);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })

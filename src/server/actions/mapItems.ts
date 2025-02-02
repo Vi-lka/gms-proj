@@ -9,6 +9,7 @@ import { clusters, companies, companiesToMapItems, mapItems } from "../db/schema
 import { and, eq, inArray } from "drizzle-orm";
 import { type CompanyToClusterSchema, type UpdateCompanySchema, type CreateMapItemClusterSchema, type CreateMapItemSchema, UpdateClusterSchema, type UpdateMapItemClusterSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
+import { restrictUser } from "~/lib/utils";
 
 type CreateMapItemT = {
   xPos: number,
@@ -30,7 +31,7 @@ export async function createMapItem({
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -102,7 +103,7 @@ export async function createMapItemCluster({
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -179,7 +180,7 @@ export async function companyToCluster(
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -273,7 +274,7 @@ export async function updateMapItemCluster(
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -363,7 +364,7 @@ export async function moveMapItem({
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -401,7 +402,7 @@ export async function deleteMapItem(
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,

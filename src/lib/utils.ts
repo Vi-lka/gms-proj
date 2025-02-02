@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { type ApproxEnumT } from "./types"
+import { type UserRestrictions, type UserRole, type ApproxEnumT } from "./types"
 import translateData from "./static/translate-data"
+import { roleEnum } from "~/server/db/schema"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -119,4 +120,18 @@ export function combineArraysWithCommonElements<T>(arrays: T[][]): T[][] {
   })
 
   return uniqResult;
+}
+
+export function restrictUser(role: UserRole | undefined, restriction: UserRestrictions) {
+  if (!role || role === 'unknown') return true; // Restrict unknown users by default
+
+  if ((role === 'guest' || role === 'user') && restriction !== 'content')
+    return true // Restrict guest and user to view admin panel
+
+  if (role === "admin" && restriction === "admin-panel-users") 
+    return true // Restrict admin to view admin panel users
+
+  if (role === "super-admin") return false // Super admin can view everything
+
+  return false
 }

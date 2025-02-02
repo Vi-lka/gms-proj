@@ -16,13 +16,16 @@ import {
   TooltipProvider
 } from "~/components/ui/tooltip";
 import { signOut } from "~/server/auth/helpers";
+import { useSession } from "next-auth/react";
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
 export function Menu({ isOpen }: MenuProps) {
+  const session = useSession();
+
   const pathname = usePathname();
-  const menuList = getMenuList(pathname);
+  const menuList = getMenuList(pathname, session.data?.user.role);
 
   const isActive = (href: string) => {
     if ((href === "/dashboard") && pathname.endsWith("/dashboard")) return true;

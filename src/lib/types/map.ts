@@ -24,6 +24,6 @@ export type IntersectionGroupT = {
 }
 export type SingleItemGroupT = {
   intersection: false,
-  items: MapItemT
+  data: MapItemT
 }
 export type MapGroupT = IntersectionGroupT | SingleItemGroupT

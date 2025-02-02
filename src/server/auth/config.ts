@@ -6,6 +6,7 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import { type Provider } from "next-auth/providers";
 import Yandex from "next-auth/providers/yandex";
 import { env } from "~/env";
+import { type UserRole } from "~/lib/types";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,7 +19,7 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      role: 'user' | 'admin';
+      role: UserRole
     } & DefaultSession["user"];
   }
 }
@@ -27,7 +28,7 @@ const providers: Provider[] = [
   Yandex({
     profile(profile) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-      return { ...profile, name: profile.real_name, email: profile.default_email, role: (profile as any).role ?? "user" }
+      return { ...profile, name: profile.real_name, email: profile.default_email, role: (profile as any).role ?? 'unknown' }
     }
   }),
 ]

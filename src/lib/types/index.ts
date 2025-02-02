@@ -16,6 +16,7 @@ export interface SessionWithUser extends Session {
   role: UserRole
 }
 
+export type UserRestrictions = 'content' | 'admin-panel' | 'admin-panel-users'
 
 export type Prettify<T> = {
   [K in keyof T]: T[K]

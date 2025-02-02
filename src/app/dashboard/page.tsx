@@ -7,6 +7,7 @@ import DashboardContent from '~/components/admin-panel/dashboard/dashboard-conte
 import { ContentLayout } from '~/components/admin-panel/content-layout'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 import Link from 'next/link'
+import { restrictUser } from '~/lib/utils'
 
 type SearchParams = Promise<{ callbackUrl: string | undefined, code: string | undefined }>
 
@@ -21,7 +22,7 @@ export default async function DashboardPage(props: {
 
   if (!session?.user) return <SignInForm providers={providers} callbackUrl={searchParams.callbackUrl} />
 
-  if (session.user.role === "admin") return (
+  if (!restrictUser(session?.user.role, 'admin-panel')) return (
     <ContentLayout title="Панель">
       <Breadcrumb>
         <BreadcrumbList>

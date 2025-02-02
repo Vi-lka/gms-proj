@@ -8,12 +8,13 @@ import { eq } from "drizzle-orm"
 import { takeFirstOrThrow } from "../db/utils"
 import { getErrorMessage } from "~/lib/handle-error"
 import { auth } from "../auth"
+import { restrictUser } from "~/lib/utils"
 
 export async function updateUser(input: UpdateUserSchema & { id: string }) {
     noStore();
 
     const session = await auth();
-    if (session?.user.role !== "admin") {
+    if (restrictUser(session?.user.role, 'admin-panel-users')) {
       const err = new Error("No access")
       return {
         data: null,

@@ -8,6 +8,13 @@
       "when": 1737804788924,
       "tag": "0000_open_slayback",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1738402087185,
+      "tag": "0001_fuzzy_fabian_cortez",
+      "breakpoints": true
     }
   ]
 }

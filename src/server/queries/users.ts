@@ -14,17 +14,17 @@ import {
   ilike,
   inArray,
   or,
-  type SQL,
 } from "drizzle-orm"
 import { db } from "../db";
 import { auth } from "../auth";
 import { getRelationOrderBy, orderData } from "../db/utils";
+import { restrictUser } from "~/lib/utils";
 
 export async function getUsers(
   input: GetUsersSchema,
 ) {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel-users')) {
     throw new Error("No access");
   }
 
@@ -92,7 +92,7 @@ export async function getUsers(
 
 export async function getUserRolesCounts() {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel-users')) {
     throw new Error("No access");
   }
 
@@ -136,7 +136,7 @@ export async function getSessions(
   input: GetSessionsSchema,
 ) {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel-users')) {
     throw new Error("No access");
   }
 
@@ -244,7 +244,7 @@ export async function getSessions(
 
 export async function getSessionRolesCounts() {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel-users')) {
     throw new Error("No access");
   }
 

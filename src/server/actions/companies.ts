@@ -8,12 +8,13 @@ import { getErrorMessage } from "~/lib/handle-error";
 import { companies, companiesToMapItems, mapItems } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { and, eq, inArray, isNull } from "drizzle-orm";
+import { restrictUser } from "~/lib/utils";
 
 export async function createCompany(input: CreateCompanySchema) {
   noStore()
 
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -46,7 +47,7 @@ export async function updateCompany(input: UpdateCompanySchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -83,7 +84,7 @@ export async function deleteCompanies(ids: string[]) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,

@@ -5,10 +5,11 @@ import "server-only"
 import { unstable_cache } from "~/lib/unstable-cache";
 import { auth } from "../auth";
 import { db } from "../db";
+import { restrictUser } from "~/lib/utils";
 
 export async function getMap() {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
   }
 
@@ -49,7 +50,7 @@ export async function getMap() {
 
 export async function getMapItems() {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
   }
 
@@ -116,6 +117,44 @@ export async function getMapItems() {
     fetchData,
     // [JSON.stringify(input)],
     ["map_items"],
+    { revalidate: 60, tags: ["map_items"] }
+  )()
+
+  return result
+}
+
+export async function getMapItem(id: string) {
+  const session = await auth();
+  if (restrictUser(session?.user.role, 'content')) {
+    throw new Error("No access");
+  }
+
+  const fetchData = async () => {
+    try {
+      const data = await db
+        .query.mapItems.findFirst({
+          with: {
+            cluster: true,
+            companiesToMapItems: {
+              with: {
+                company: true
+              }
+            }
+          },
+          where(fields, operators) {
+            return operators.eq(fields.id, id)
+          },
+        })
+
+      return data
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const result = await unstable_cache(
+    fetchData,
+    [JSON.stringify(id)],
     { revalidate: 60, tags: ["map_items"] }
   )()
 

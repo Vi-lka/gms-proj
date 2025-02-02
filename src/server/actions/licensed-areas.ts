@@ -8,12 +8,13 @@ import { licensedAreas } from "../db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { type UpdateLicensedAreaSchema, type CreateLicensedAreaSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
+import { restrictUser } from "~/lib/utils";
 
 export async function createLicensedArea(input: CreateLicensedAreaSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -47,7 +48,7 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -86,7 +87,7 @@ export async function deleteLicensedAreas(ids: string[]) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,

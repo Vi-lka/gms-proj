@@ -7,6 +7,7 @@ import { DataTableSkeleton } from '~/components/data-table/data-table-skeleton';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb';
 import { getValidFilters } from '~/lib/data-table-func';
 import type { PageProps } from '~/lib/types'
+import { restrictUser } from '~/lib/utils';
 import { searchParamsSessionsCache } from '~/lib/validations/search-params';
 import { auth } from '~/server/auth';
 import { getSessionRolesCounts, getSessions } from '~/server/queries/users';
@@ -14,7 +15,7 @@ import { getSessionRolesCounts, getSessions } from '~/server/queries/users';
 export default async function SessionsPage(props: PageProps) {
   const session = await auth();
 
-  if (!session) redirect("/dashboard");
+  if (!session || restrictUser(session?.user.role, 'admin-panel-users')) redirect("/dashboard");
 
   const searchParams = await props.searchParams
   const search = searchParamsSessionsCache.parse(searchParams)

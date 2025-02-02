@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutGrid, LogOut, User } from "lucide-react";
+import { LayoutGrid, LogOut } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -22,6 +22,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
 import { signOut } from "~/server/auth/helpers";
+import { restrictUser } from "~/lib/utils";
 
 export default function UserNavClient() {
   const session = useSession();
@@ -67,21 +68,19 @@ export default function UserNavClient() {
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/dashboard" className="flex items-center">
-              <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
-              Панель
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
-              Account
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        {!restrictUser(user.role, 'admin-panel') ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                <Link href="/dashboard" className="flex items-center">
+                  <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
+                  Панель
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </>
+        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="hover:cursor-pointer" onClick={async () => await signOut()}>
           <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />

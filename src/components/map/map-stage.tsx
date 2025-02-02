@@ -40,11 +40,13 @@ export default function MapStage({
   const { width: windowW, height: windowH } = useAtomValue(mapContainerDimensions);
 
   React.useEffect(() => {
-    setStage(prev => ({
-      ...prev,
+    setStage({
+      x: 0, 
+      y: 0,
+      scale: 1,
       width: windowW, 
       height: windowH, 
-    }))
+    })
   }, [setStage, windowW, windowH])
 
   const MIN_SCALE = valueFromWindowWidth({

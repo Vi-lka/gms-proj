@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { getErrorMessage } from "~/lib/handle-error";
 import { updateUser } from "~/server/actions/updateUser";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { idToSentenceCase } from "~/lib/utils";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
@@ -109,8 +110,8 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Роль" />
       ),
       cell: ({ row }) => (
-        <div className="flex w-[6.25rem] items-center">
-          <Badge variant="outline" className="capitalize">{row.getValue("role")}</Badge>
+        <div className="flex w-36 items-center">
+          <Badge variant="outline" className="capitalize">{idToSentenceCase(row.getValue("role"))}</Badge>
         </div>
       ),
       filterFn: (row, id, value) => {
@@ -167,7 +168,7 @@ export function getColumns({
                         className="capitalize"
                         disabled={isUpdatePending}
                       >
-                        {role}
+                        {idToSentenceCase(role)}
                       </DropdownMenuRadioItem>
                     ))}
                   </DropdownMenuRadioGroup>

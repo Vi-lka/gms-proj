@@ -9,12 +9,13 @@ import { companies, fields } from "../db/schema";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
+import { restrictUser } from "~/lib/utils";
 
 export async function getFields(
   input: GetFieldsSchema,
 ) {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
   }
 

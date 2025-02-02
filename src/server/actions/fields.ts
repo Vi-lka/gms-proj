@@ -8,12 +8,13 @@ import { db } from "../db";
 import { fields } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq, inArray } from "drizzle-orm";
+import { restrictUser } from "~/lib/utils";
 
 export async function createField(input: CreateFieldSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -47,7 +48,7 @@ export async function updateField(input: UpdateFieldSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -86,7 +87,7 @@ export async function deleteFields(ids: string[]) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,

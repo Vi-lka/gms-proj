@@ -8,12 +8,13 @@ import { db } from "../db";
 import { areasData } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq, inArray } from "drizzle-orm";
+import { restrictUser } from "~/lib/utils";
 
 export async function createAreasData(input: CreateAreasDataSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -56,7 +57,7 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -100,7 +101,7 @@ export async function deleteAreasData(ids: string[]) {
   noStore()
   
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,

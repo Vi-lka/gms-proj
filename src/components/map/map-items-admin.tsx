@@ -48,15 +48,15 @@ export default function MapItemsAdmin({
           : (
             <SingleItem 
               key={indx}
-              data={item.items}
-              className={cn(selectedItem?.id === item.items.id 
+              data={item.data}
+              className={cn(selectedItem?.id === item.data.id 
                 ? "!outline-yellow" 
                 : "outline-transparent",
                 "!outline-dashed !outline-2 !outline-offset-2 transition-all"
               )}
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedItem(item.items)
+                setSelectedItem(item.data)
               }}
             />
           )

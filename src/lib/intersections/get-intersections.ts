@@ -65,7 +65,7 @@ export default function getIntersections(data: MapItemT[], scale: number) {
     dataGroups.push({intersection: true, items: item})
   })
   singleItems.forEach(item => {
-    dataGroups.push({intersection: false, items: item})
+    dataGroups.push({intersection: false, data: item})
   })
 
   const uniqDataGroups = dataGroups.filter((obj, index, arr) => {

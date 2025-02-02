@@ -8,12 +8,15 @@ import { type MapItemT } from '~/lib/types'
 import GroupItem from './items/group-item';
 import SingleItem from './items/single-item';
 import { cn } from '~/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export default function MapItems({
   items
 }: {
   items: MapItemT[]
 }) {
+  const router = useRouter();
+  
   const stage = useAtomValue(stageAtom);
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
@@ -48,15 +51,16 @@ export default function MapItems({
           : (
             <SingleItem 
               key={indx}
-              data={item.items}
-              className={cn(selectedItem?.id === item.items.id 
+              data={item.data}
+              className={cn(selectedItem?.id === item.data.id 
                 ? "!outline-yellow" 
                 : "outline-transparent",
                 "!outline-dashed !outline-2 !outline-offset-2 transition-all"
               )}
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedItem(item.items)
+                setSelectedItem(item.data)
+                router.push(`/${item.data.id}`)
               }}
               handleClickOutside={() => {
                 setSelectedItem(null)

@@ -9,6 +9,7 @@ import {
   Cookie,
   Building2
 } from "lucide-react";
+import { type UserRole } from "./types";
 
 type Submenu = {
   href: string;
@@ -30,8 +31,8 @@ type Group = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getMenuList(pathname: string): Group[] {
-  return [
+export function getMenuList(pathname: string, role: UserRole | undefined): Group[] {
+  const menuList: Group[] = [
     {
       groupLabel: "",
       menus: [
@@ -77,7 +78,11 @@ export function getMenuList(pathname: string): Group[] {
           icon: Database,
         },
       ]
-    },
+    }
+  ]
+
+  if (role === 'super-admin') return [
+    ...menuList,
     {
       groupLabel: "Пользователи",
       menus: [
@@ -93,5 +98,6 @@ export function getMenuList(pathname: string): Group[] {
         },
       ]
     }
-  ];
+  ] 
+  else return menuList
 }

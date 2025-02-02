@@ -9,12 +9,13 @@ import { and, count, ilike, inArray, or, eq } from "drizzle-orm";
 import { areasData, companies, fields, licensedAreas } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, intervalToString, orderData } from "../db/utils";
+import { restrictUser } from "~/lib/utils";
 
 export async function getAreasData(
   input: GetAreasDataSchema,
 ) {
   const session = await auth();
-  if (session?.user.role !== "admin") {
+  if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
   }
 
