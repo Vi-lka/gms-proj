@@ -7,14 +7,12 @@ import { toast } from 'sonner'
 import { Form } from '~/components/ui/form'
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos'
 import { createMapItemSchema, type CreateMapItemSchema, type MapItemSchema } from '~/lib/validations/forms'
-import InputField from '../inputs/simple/input-field'
-import TextareaField from '../inputs/simple/textarea-field'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
-import { Loader, X } from 'lucide-react'
-import { Separator } from '~/components/ui/separator'
+import { Loader } from 'lucide-react'
 import CompanySelect from '../inputs/company-select'
 import { createMapItem } from '~/server/actions/mapItems'
+import FieldsSelect from '../inputs/fields-select'
 
 export default function CreateMapItemForm({
   mapItem,
@@ -32,8 +30,7 @@ export default function CreateMapItemForm({
   const form = useForm<CreateMapItemSchema>({
     resolver: zodResolver(createMapItemSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      fields: []
     },
     mode: "onChange"
   })
@@ -73,40 +70,39 @@ export default function CreateMapItemForm({
             form={form}
             name="id"
             label="Выберите Компанию"
-            onOpenChange={() => form.clearErrors()}
+            handleClear={() => {
+              form.setValue(
+                "id", 
+                '', 
+                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+              )
+              form.setValue(
+                "fields", 
+                [], 
+                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+              )
+            }}
+            onSelect={() => {
+              form.setValue(
+                "fields", 
+                [], 
+                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+              )
+            }}
             className='flex-1'
           />
-          {hasCompany && (
-            <Button
-              variant="outline"
-              onClick={() => form.setValue(
-                "id", 
-                null, 
-                {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-              )}
-              className='px-1'
-            >
-              <X/>
-            </Button>
-          )}
         </div>
-        <div className="flex items-center gap-4">
-          <Separator className="flex-1" />
-          <span className="text-muted-foreground">Или</span>
-          <Separator className="flex-1" />
-        </div>
-        <InputField 
-          form={form}
-          name="name"
-          label="Название"
-          placeholder="Компания..."
-        />
-        <TextareaField 
-          form={form}
-          name="description"
-          label="Описание"
-          placeholder="Краткое описание..."
-        />
+        {hasCompany && (
+          <FieldsSelect 
+            form={form}
+            name="fields"
+            label="Выберите Месторождения"
+            searchParams={{
+              hasMapItem: false,
+              companyId: form.getValues("id")
+            }}
+          />
+        )}
         <SheetFooter className="gap-2 pt-2 sm:space-x-0">
           <SheetClose asChild>
             <Button type="button" variant="outline">

@@ -57,7 +57,7 @@ const defaultValues: CreateAreasDataSchema = {
     samplingDate: null,
     analysisDate: null,
     protocol: "",
-    protocolUrl: "",
+    protocolUrl: null,
     sampleCode: "",
     pHydrogen: null,
     density: null,

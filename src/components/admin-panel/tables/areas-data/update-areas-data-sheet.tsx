@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { type ElementsSchema, updateAreasDataSchema, type UpdateAreasDataSchema } from '~/lib/validations/forms'
-import { type AreasDataExtend } from '~/server/db/schema'
+import { type AreaDataExtend } from '~/server/db/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateAreasData } from '~/server/actions/areas-data'
 import { toast } from 'sonner'
@@ -23,7 +23,7 @@ import { Loader } from 'lucide-react'
 
 interface UpdateAreasDataSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
-  areaData: AreasDataExtend | null
+  areaData: AreaDataExtend | null
 }
 
 export default function UpdateAreasDataSheet({
@@ -81,6 +81,14 @@ export default function UpdateAreasDataSheet({
                   form={form}
                   name="areaId"
                   label="Лицензионный участок"
+                  handleClear={() => {
+                    form.setValue(
+                      'areaId', 
+                      '', 
+                      {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                    )
+                  }}
+                  className='w-72'
                 />
                 <InputField
                   form={form}

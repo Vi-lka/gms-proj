@@ -1,6 +1,6 @@
 import { date, index, pgEnum, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
-import { companies, type Company } from "./map";
+import { companies, mapItems, type Company } from "./map";
 import { numericCasted } from "../utils";
 
 export const fields = createTable(
@@ -14,6 +14,8 @@ export const fields = createTable(
     description: text("description"),
     companyId: varchar("company_id", { length: 255 })
       .references(() => companies.id, {onDelete: 'cascade'}).notNull(),
+    mapItemId: varchar("map_item_id", { length: 255 })
+      .references(() => mapItems.id, {onDelete: 'set null'}),
   },
   (field) => ({
     nameIndex: index("field_name_idx").on(field.name),
@@ -164,22 +166,22 @@ export const areasData = createTable(
 )
 
 // Types
-export type Fields = typeof fields.$inferSelect
-export type LicensedAreas = typeof licensedAreas.$inferSelect
-export type AreasData = typeof areasData.$inferSelect
+export type Field = typeof fields.$inferSelect
+export type LicensedArea = typeof licensedAreas.$inferSelect
+export type AreaData = typeof areasData.$inferSelect
 
-export interface LicensedAreasExtend extends LicensedAreas {
-  fieldName: Fields["name"],
+export interface LicensedAreaExtend extends LicensedArea {
+  fieldName: Field["name"],
   companyId: Company["id"],
   companyName: Company["name"],
 }
-export interface FieldsExtend extends Fields {
+export interface FieldExtend extends Field {
   companyName: Company["name"]
 }
-export interface AreasDataExtend extends AreasData {
-  areaName: LicensedAreas["name"],
-  fieldId: Fields["id"],
-  fieldName: Fields["name"],
+export interface AreaDataExtend extends AreaData {
+  areaName: LicensedArea["name"],
+  fieldId: Field["id"],
+  fieldName: Field["name"],
   companyId: Company["id"],
   companyName: Company["name"],
   occurrenceInterval: string | null

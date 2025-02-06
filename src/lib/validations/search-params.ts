@@ -10,7 +10,7 @@ import {
     parseAsBoolean,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type AreasDataExtend, type Company, type FieldsExtend, type LicensedAreasExtend, type SessionExtend, type User, users } from "~/server/db/schema";
+import { type AreaDataExtend, type Company, type FieldExtend, type LicensedAreaExtend, type SessionExtend, type User, users } from "~/server/db/schema";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -59,7 +59,7 @@ export const searchParamsCompaniesCache = createSearchParamsCache(searchParamsCo
 export const searchParamsFields = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<FieldsExtend>().withDefault([
+  sort: getSortingStateParser<FieldExtend>().withDefault([
     { id: "id", desc: false }
   ]),
   id: parseAsString.withDefault(""),
@@ -75,7 +75,7 @@ export const searchParamsFieldsCache = createSearchParamsCache(searchParamsField
 export const searchLicensedAreas = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<LicensedAreasExtend>().withDefault([
+  sort: getSortingStateParser<LicensedAreaExtend>().withDefault([
     { id: "id", desc: false }
   ]),
   id: parseAsString.withDefault(""),
@@ -93,7 +93,7 @@ export const searchLicensedAreasCache = createSearchParamsCache(searchLicensedAr
 export const searchAreasData = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<AreasDataExtend>().withDefault([
+  sort: getSortingStateParser<AreaDataExtend>().withDefault([
     { id: "id", desc: false }
   ]),
   id: parseAsString.withDefault(""),
@@ -112,12 +112,24 @@ export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
 
 // API Routes
 export const searchClustersApi = {
-  hasMapItem: parseAsBoolean
+  hasMapItem: parseAsBoolean,
 }
 export const searchClustersApiLoader = createLoader(searchClustersApi)
 
 export const searchCompaniesApi = {
-  hasMapItem: parseAsBoolean
+  hasMapItem: parseAsBoolean,
 }
 export const searchCompaniesApiLoader = createLoader(searchCompaniesApi)
 
+export const searchFieldsApi = {
+  hasMapItem: parseAsBoolean,
+  mapItemId: parseAsString,
+  companyId: parseAsString,
+  fieldsIds: parseAsArrayOf(parseAsString)
+}
+export const searchFieldsApiLoader = createLoader(searchFieldsApi)
+
+export const searchLicensedAreasApi = {
+  fieldId: parseAsString,
+}
+export const searchLicensedAreasApiLoader = createLoader(searchLicensedAreasApi)

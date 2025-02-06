@@ -6,10 +6,10 @@ import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
 import { deleteAreasData } from '~/server/actions/areas-data'
-import { type AreasDataExtend } from '~/server/db/schema'
+import { type AreaDataExtend } from '~/server/db/schema'
 
 interface DeleteAreasDataDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  areasData: Row<AreasDataExtend>["original"][]
+  areasData: Row<AreaDataExtend>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

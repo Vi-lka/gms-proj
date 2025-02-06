@@ -34,6 +34,7 @@ export const mapItemsRelations = relations(mapItems, ({ one, many }) => ({
     references: [clusters.id] 
   }),
   companiesToMapItems: many(companiesToMapItems),
+  fields: many(fields)
 }));
 
 export const companiesToMapItemsRelations = relations(companiesToMapItems, ({ one }) => ({
@@ -49,6 +50,7 @@ export const companiesToMapItemsRelations = relations(companiesToMapItems, ({ on
 
 export const fieldsRelations = relations(fields, ({ one, many }) => ({
   company: one(companies, { fields: [fields.companyId], references: [companies.id] }),
+  mapItem: one(mapItems, { fields: [fields.mapItemId], references: [mapItems.id] }),
   licensedAreas: many(licensedAreas)
 }));
 

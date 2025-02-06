@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types'
-import { type LicensedAreasExtend } from '~/server/db/schema'
+import { type LicensedAreaExtend } from '~/server/db/schema'
 import { type getLicensedAreas } from '~/server/queries/licensed-areas'
 import { getColumns } from './licensed-areas-columns'
 import { useDataTable } from '~/hooks/use-data-table'
@@ -23,14 +23,14 @@ interface LicensedAreasTableProps {
 export default function LicensedAreasTable({ promises }: LicensedAreasTableProps) {
   const [{ data, pageCount }] = React.use(promises)
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<LicensedAreasExtend> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<LicensedAreaExtend> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<LicensedAreasExtend>[] = [
+  const filterFields: DataTableFilterField<LicensedAreaExtend>[] = [
     {
       id: "name",
       label: "Название",

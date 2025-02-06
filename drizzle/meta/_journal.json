@@ -15,6 +15,20 @@
       "when": 1738402087185,
       "tag": "0001_fuzzy_fabian_cortez",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738554999620,
+      "tag": "0002_lazy_cardiac",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1738824331492,
+      "tag": "0003_dear_franklin_richards",
+      "breakpoints": true
     }
   ]
 }

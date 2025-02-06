@@ -6,10 +6,10 @@ import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
 import { deleteLicensedAreas } from '~/server/actions/licensed-areas'
-import { type LicensedAreasExtend } from '~/server/db/schema'
+import { type LicensedAreaExtend } from '~/server/db/schema'
 
 interface DeleteLicensedAreasDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  licensedAreas: Row<LicensedAreasExtend>["original"][]
+  licensedAreas: Row<LicensedAreaExtend>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

@@ -2,14 +2,14 @@ import { type Row } from '@tanstack/react-table'
 import React from 'react'
 import { toast } from 'sonner'
 import { type Dialog } from '~/components/ui/dialog'
-import { type FieldsExtend } from '~/server/db/schema'
+import { type FieldExtend } from '~/server/db/schema'
 import { deleteFields } from '~/server/actions/fields'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { Button } from '~/components/ui/button'
 import { Loader, Trash } from 'lucide-react'
 
 interface DeleteFieldsDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  fields: Row<FieldsExtend>["original"][]
+  fields: Row<FieldExtend>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

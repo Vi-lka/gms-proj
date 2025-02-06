@@ -3,8 +3,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Form } from '~/components/ui/form'
-import { companyToClusterSchema, type CompanyToClusterSchema, type UpdateCompanySchema } from '~/lib/validations/forms'
-// import { companyToCluster } from '~/server/actions/companies'
+import { companyToClusterSchema, type UpdateMapItemCompanySchema, type CompanyToClusterSchema } from '~/lib/validations/forms'
 import InputField from '../inputs/simple/input-field'
 import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
@@ -15,11 +14,9 @@ import { companyToCluster } from '~/server/actions/mapItems'
 
 export default function CompanyToClusterForm({
   company,
-  mapItemId,
   onFormSubmit
 }: {
-  company: UpdateCompanySchema,
-  mapItemId: string,
+  company: UpdateMapItemCompanySchema,
   onFormSubmit:(() => void) | undefined
 })  {
   const [isPending, startTransition] = React.useTransition()
@@ -29,7 +26,7 @@ export default function CompanyToClusterForm({
     defaultValues: {
       name: "",
       description: "",
-      mapItemId,
+      mapItemId: company.mapItemId,
       companiesInput: [company]
     },
     mode: "onChange"
@@ -75,6 +72,7 @@ export default function CompanyToClusterForm({
           name="companiesInput"
           label="Компании"
           isPending={isPending}
+          defaultCompanies={[company]}
         />
         <SheetFooter className="gap-2 pt-2 sm:space-x-0">
           <SheetClose asChild>

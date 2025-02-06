@@ -3,7 +3,6 @@
 import React from 'react'
 import useEventListener from "./use-event-listener"
 
-// TODO: fix this - height is always get bigger and bigger
 const useElementDimensions = () => {
   const ref = React.useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = React.useState<DOMRect | null>(null)

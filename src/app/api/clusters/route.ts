@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
 
   try {
     const data = await db.query.clusters.findMany({
-      where
+      where,
+      orderBy: (clusters, { asc }) => [asc(clusters.name)]
     })
 
     return Response.json(data)

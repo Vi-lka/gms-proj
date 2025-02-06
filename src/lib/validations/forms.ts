@@ -21,8 +21,6 @@ export const updateCompanySchema = createCompanySchema.extend({
 export type UpdateCompanySchema = z.infer<typeof updateCompanySchema>
 
 
-
-
 // CLUSTER
 export const createClusterSchema = z.object({
   name: z.string().min(1),
@@ -40,6 +38,18 @@ export const updateClusterSchema = z.object({
 export type UpdateClusterSchema = z.infer<typeof updateClusterSchema>
 
 
+// FIELD
+export const createFieldSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().nullable(),
+  companyId: z.string().min(1, "Выберите компанию")
+})
+export type CreateFieldSchema = z.infer<typeof createFieldSchema>
+
+export const updateFieldSchema = createFieldSchema.extend({
+  id: z.string().min(1),
+})
+export type UpdateFieldSchema = z.infer<typeof updateFieldSchema>
 
 
 // MAP ITEM
@@ -51,16 +61,9 @@ export const MapItemSchema = z.object({
 export type MapItemSchema = z.infer<typeof MapItemSchema>
 
 export const createMapItemSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  id: z.string().nullable().optional()
-}).or(
-  z.object({
-    name: z.string().optional(),
-    description: z.string().optional(),
-    id: z.string().min(1, "Выберите компанию")
-  })
-)
+  id: z.string({required_error: "Выберите компанию"}).min(1, "Выберите компанию"),
+  fields: z.string().array().min(1, "Выберите месторождение")
+})
 export type CreateMapItemSchema = z.infer<typeof createMapItemSchema>
 
 export const createMapItemClusterSchema = z.object({
@@ -78,6 +81,13 @@ export const companyToClusterSchema = z.object({
 })
 export type CompanyToClusterSchema = z.infer<typeof companyToClusterSchema>
 
+export const updateMapItemCompanySchema = z.object({
+  id: z.string({required_error: "Выберите компанию"}).min(1, "Выберите компанию"),
+  mapItemId: z.string(),
+  fields: z.string().array().min(1, "Выберите месторождение")
+})
+export type UpdateMapItemCompanySchema = z.infer<typeof updateMapItemCompanySchema>
+
 export const updateMapItemClusterSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
@@ -86,21 +96,6 @@ export const updateMapItemClusterSchema = z.object({
   mapItemId: z.string(),
 })
 export type UpdateMapItemClusterSchema = z.infer<typeof updateMapItemClusterSchema>
-
-
-
-// FIELD
-export const createFieldSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  companyId: z.string().min(1, "Выберите компанию")
-})
-export type CreateFieldSchema = z.infer<typeof createFieldSchema>
-
-export const updateFieldSchema = createFieldSchema.extend({
-  id: z.string().min(1),
-})
-export type UpdateFieldSchema = z.infer<typeof updateFieldSchema>
 
 
 

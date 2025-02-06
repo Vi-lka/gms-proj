@@ -11,11 +11,11 @@ import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { updateFieldSchema, type UpdateFieldSchema } from '~/lib/validations/forms'
 import { updateField } from '~/server/actions/fields'
-import { type FieldsExtend } from '~/server/db/schema'
+import { type FieldExtend } from '~/server/db/schema'
 
 interface UpdateFieldSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
-  field: FieldsExtend | null
+  field: FieldExtend | null
 }
 
 export default function UpdateFieldSheet({
@@ -93,6 +93,13 @@ export default function UpdateFieldSheet({
               form={form}
               name="companyId"
               label="Компания"
+              handleClear={() => {
+                form.setValue(
+                  'companyId', 
+                  '', 
+                  {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                )
+              }}
             />
             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
               <SheetClose asChild>

@@ -1,15 +1,10 @@
+import { type Cluster, type CompanyExtend, type Field } from "~/server/db/schema";
+
 export type MapItemT = {
   id: string,
-  companies: {
-    id: string; 
-    name: string;
-    description: string | null;
-  }[];
-  cluster: {
-    id: string;
-    name: string;
-    description: string | null;
-  } | null;
+  companies: CompanyExtend[];
+  fields: Field[]
+  cluster: Cluster | null;
   x: number;
   y: number;
   width?: number;

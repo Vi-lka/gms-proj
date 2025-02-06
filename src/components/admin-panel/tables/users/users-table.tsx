@@ -5,7 +5,7 @@ import type { DataTableFilterField, DataTableRowAction } from '~/lib/types'
 import { users, type User } from '~/server/db/schema'
 import type { getUserRolesCounts, getUsers } from '~/server/queries/users'
 import { getColumns } from './users-table-columns'
-import { toSentenceCase } from '~/lib/utils'
+import { idToSentenceCase } from '~/lib/utils'
 import { useDataTable } from '~/hooks/use-data-table'
 import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
@@ -39,7 +39,7 @@ export default function UsersTable({ promises }: UsersTableProps) {
       id: "role",
       label: "Роль",
       options: users.role.enumValues.map((role) => ({
-        label: toSentenceCase(role),
+        label: idToSentenceCase(role),
         value: role,
         count: roleCounts[role],
       }))

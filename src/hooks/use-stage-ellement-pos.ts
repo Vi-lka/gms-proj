@@ -43,33 +43,6 @@ export function useStageEllementPos(
     });
 }
 
-// TODO: width and height to DB
-// export function useRevertStageEllementPos(
-//   size: { width: number, height: number },
-//   pos: { x: number, y: number },
-// ) {
-//     const { width: windowW, height: windowH } = useAtomValue(mapContainerDimensions);
-
-//     const mainImage = useAtomValue(mainImageAtom)
-
-//     const width = size.width / defaultRel(mainImage.size.width)
-//     const height = size.height / defaultRel(mainImage.size.height)
-
-//     const xOffset = (windowW - width) / 2;
-//     const yOffset = (windowH - height) / 2;
-
-//     const relativeX = pos.x - xOffset
-//     const relativeY = yOffset - pos.y
-
-//     const x = relativeX / defaultRel(mainImage.size.width)
-//     const y = relativeY / defaultRel(mainImage.size.height)
-
-//     return ({
-//         size: {width, height},
-//         pos: { x, y }
-//     });
-// }
-
 export function useRevertStageEllementPos(
   pos: { x: number, y: number },
 ) {

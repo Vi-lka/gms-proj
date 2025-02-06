@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { type Path, type UseFormReturn, type FieldValues, type PathValue } from 'react-hook-form'
-import { type CompanySchema } from '~/lib/validations/forms'
+import { type CreateMapItemSchema } from '~/lib/validations/forms'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion'
 import { Button } from '../../ui/button'
-import { Delete, Plus, X } from 'lucide-react'
-import { FormLabel } from '../../ui/form'
+import { Delete, Plus } from 'lucide-react'
 import { cn } from '~/lib/utils'
-import { Input } from '../../ui/input'
-import { Textarea } from '../../ui/textarea'
 import CompanySelect from './company-select'
-import { Separator } from '~/components/ui/separator'
+import FieldsSelect from './fields-select'
+import useSWR from 'swr'
+import { type Company } from '~/server/db/schema'
+import { getApiRoute } from '~/lib/validations/api-routes'
 
 export default function CompaniesInput<TData extends FieldValues>({
   form,
   name,
-  isPending,
   label,
+  defaultCompanies,
   className,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,13 +23,21 @@ export default function CompaniesInput<TData extends FieldValues>({
   name: Path<TData>,
   isPending: boolean,
   label?: React.ReactNode,
+  defaultCompanies?: CreateMapItemSchema[],
   className?: string,
 }) {
   const [accordionValue, setAccordionValue] = useState<string | undefined>()
+  const [companies, setCompanies] = useState<CreateMapItemSchema[]>([])
 
-  const data = form.getValues(name) as CompanySchema[] | null | undefined
+  const { data: allCompanies, error, isLoading } = useSWR<Company[], Error>(
+    getApiRoute({ route: "companies" })
+  );
 
-  const companies = data ? data : []
+  const data = form.getValues(name) as CreateMapItemSchema[] | null | undefined
+
+  useEffect(() => {
+    if (data) setCompanies(data)
+  }, [data])
 
   return (
     <div className={cn('space-y-2 !mb-3 w-full', className)}>
@@ -37,7 +45,7 @@ export default function CompaniesInput<TData extends FieldValues>({
       {companies.length > 0
         ? (
           <Accordion 
-            type="single"
+            type='single'
             collapsible
             value={accordionValue}
             onValueChange={(value) => setAccordionValue(value)}
@@ -45,7 +53,12 @@ export default function CompaniesInput<TData extends FieldValues>({
           >
             {companies.map((company, indx) => {
               const hasCompany = !!(form.getValues(`${name}[${indx}].id` as Path<TData>))
-              const title = hasCompany ? form.getValues(`${name}[${indx}].id` as Path<TData>) : company.name
+              const selectedCompany = allCompanies?.find(comp => comp.id === form.getValues(`${name}[${indx}].id` as Path<TData>))?.name
+              const title = (hasCompany && !error && !isLoading && selectedCompany) 
+                ? selectedCompany
+                : company.id
+
+              const thisCompanyFormDefaultValues = defaultCompanies?.find(defComp => defComp.id === company.id)
 
               return (
               <AccordionItem key={indx} value={`${indx}`} className='border-b-2'>
@@ -59,9 +72,12 @@ export default function CompaniesInput<TData extends FieldValues>({
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
+                        setAccordionValue('')
+                        const newCompanies = companies.filter((_, i) => indx !== i)
+                        setCompanies(newCompanies)
                         form.setValue(
                           name,
-                          companies.filter((_, i) => indx !== i) as PathValue<TData, Path<TData>>, 
+                          newCompanies as PathValue<TData, Path<TData>>, 
                           {shouldDirty: true, shouldTouch: true, shouldValidate: true}
                         )
                       }}
@@ -70,67 +86,49 @@ export default function CompaniesInput<TData extends FieldValues>({
                     </Button>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className='flex flex-col gap-2 border-2 border-b-0 border-boder rounded-t-xl p-3'>
+                <AccordionContent className='flex flex-col gap-4 border-2 border-b-0 border-boder rounded-t-xl p-3'>
                   <div className='flex items-end gap-1 mt-2'>
                     <CompanySelect
                       form={form}
                       name={`${name}[${indx}].id` as Path<TData>}
                       label="Выберите Компанию"
-                      onOpenChange={() => form.clearErrors()}
-                      className='flex-1'
-                    />
-                    {hasCompany && (
-                      <Button
-                        variant="outline"
-                        onClick={() => form.setValue(
+                      handleClear={() => {
+                        form.setValue(
                           `${name}[${indx}].id` as Path<TData>, 
                           null as PathValue<TData, Path<TData>>,
                           {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-                        )}
-                        className='px-1'
-                      >
-                        <X/>
-                      </Button>
-                    )}
+                        )
+                        form.setValue(
+                          `${name}[${indx}].fields` as Path<TData>, 
+                          [] as PathValue<TData, Path<TData>>,
+                          {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                        )
+                      }}
+                      onOpenChange={() => form.clearErrors()}
+                      onSelect={() => {
+                        form.setValue(
+                          `${name}[${indx}].fields` as Path<TData>,
+                          [] as PathValue<TData, Path<TData>>,
+                          {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                        )
+                      }}
+                      className='flex-1'
+                    />
                   </div>
-                  {!hasCompany && (
-                    <>
-                      <div className="flex items-center gap-4">
-                        <Separator className="flex-1" />
-                        <span className="text-muted-foreground">Или</span>
-                        <Separator className="flex-1" />
-                      </div>
-
-                      <p className='font-medium mb-2'>Создать Компанию</p>
-
-                      <div className='w-full'>
-                        <FormLabel>Название</FormLabel>
-                        <Input
-                          value={form.getValues(`${name}[${indx}].name` as Path<TData>) as string}
-                          placeholder="Компания..."
-                          disabled={form.formState.isSubmitting || isPending}
-                          onChange={(e) => form.setValue(
-                            `${name}[${indx}].name` as Path<TData>, 
-                            e.target.value as PathValue<TData, Path<TData>>,
-                            {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-                          )}
-                        />
-                      </div>
-                        
-                      <div className='w-full'>
-                        <FormLabel>Описание</FormLabel>
-                        <Textarea
-                          value={form.getValues(`${name}[${indx}].description` as Path<TData>) ?? ""}
-                          placeholder="Краткое описание..."
-                          disabled={form.formState.isSubmitting || isPending}
-                          onChange={(e) => form.setValue(
-                            `${name}[${indx}].description` as Path<TData>, 
-                            e.target.value as PathValue<TData, Path<TData>>,
-                            {shouldDirty: true, shouldTouch: true, shouldValidate: true}
-                          )}
-                        />
-                      </div>
-                    </>
+                  {hasCompany && (
+                    <FieldsSelect
+                      form={form}
+                      name={`${name}[${indx}].fields` as Path<TData>}
+                      label="Выберите Месторождения"
+                      onOpenChange={() => form.clearErrors()}
+                      searchParams={{
+                        hasMapItem: false,
+                        companyId: form.getValues(`${name}[${indx}].id` as Path<TData>),
+                        fieldsIds: form.getValues(`${name}[${indx}].id` as Path<TData>) === thisCompanyFormDefaultValues?.id 
+                          ? thisCompanyFormDefaultValues.fields 
+                          : undefined
+                      }}
+                    />
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -143,11 +141,15 @@ export default function CompaniesInput<TData extends FieldValues>({
         className='w-full'
         type="button"
         onClick={() => {
+          setCompanies([
+            ...companies,
+            {id: '', fields: []}
+          ])
             form.setValue(
               name, 
               [
                 ...companies,
-                {name: "", description: ""}
+                {id: '', fields: []}
               ] as PathValue<TData, Path<TData>>,
               {shouldDirty: true, shouldTouch: true, shouldValidate: true}
             )

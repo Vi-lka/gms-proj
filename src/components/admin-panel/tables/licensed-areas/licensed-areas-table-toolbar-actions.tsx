@@ -1,12 +1,12 @@
 import { type Table } from '@tanstack/react-table'
 import React from 'react'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
-import { type LicensedAreasExtend } from '~/server/db/schema'
+import { type LicensedAreaExtend } from '~/server/db/schema'
 import DeleteLicensedAreasDialog from './delete-licensed-areas-dialog'
 import CreateLicensedAreaSheet from './create-licensed-area-sheet'
 
 interface LicensedAreasTableToolbarActionsProps {
-  table: Table<LicensedAreasExtend>
+  table: Table<LicensedAreaExtend>
 }
 
 export default function LicensedAreasTableToolbarActions({

@@ -7,17 +7,17 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
-import { type LicensedAreasExtend } from "~/server/db/schema";
+import { type LicensedAreaExtend } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<LicensedAreasExtend> | null>
+    React.SetStateAction<DataTableRowAction<LicensedAreaExtend> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<LicensedAreasExtend>[] {
+}: GetColumnsProps): ColumnDef<LicensedAreaExtend>[] {
   return [
     {
       id: "select",

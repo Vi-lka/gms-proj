@@ -56,47 +56,27 @@ export async function getMapItems() {
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
-
-      // const where = and(
-          // input.name ? or(
-            // ilike(users.name, `%${input.name}%`),
-            // ilike(users.id, `%${input.name}%`)
-          // ) : undefined,
-          // input.role.length > 0
-            // ? inArray(users.role, input.role)
-            // : undefined,
-        // )
-
       const { data, total } = await db.transaction(async (tx) => {
         const data = await tx
           .query.mapItems.findMany({
             with: {
               cluster: true,
+              fields: true,
               companiesToMapItems: {
                 with: {
                   company: true
-                }
-              }
+                },
+              },
             },
-            // where: 
           })
 
         const total = await tx
           .query.mapItems.findMany({
             with: {
               cluster: true,
-              companiesToMapItems: {
-                columns: {
-                  companyId: false,
-                  mapItemId: false,
-                },
-                with: {
-                  company: true
-                }
-              }
+              fields: true,
+              companiesToMapItems: true,
             },
-            // where: 
           }).then(data => data.length)
 
         return {

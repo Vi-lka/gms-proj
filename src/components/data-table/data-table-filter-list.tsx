@@ -187,7 +187,7 @@ export function DataTableFilterList<TData>({
             type={filter.type}
             aria-label={`${filterField.label} filter value`}
             aria-describedby={`${inputId}-description`}
-            placeholder={filterField.placeholder ?? "Enter a value..."}
+            placeholder={filterField.placeholder ?? "Введите..."}
             className="h-8 w-full rounded"
             defaultValue={
               typeof filter.value === "string" ? filter.value : undefined
@@ -223,7 +223,7 @@ export function DataTableFilterList<TData>({
                   </Badge>
                 ) : (
                   <>
-                    {filterField.placeholder ?? "Select an option..."}
+                    {filterField.placeholder ?? "Выберите..."}
                     <ChevronsUpDown className="size-4" aria-hidden="true" />
                   </>
                 )}
@@ -234,11 +234,11 @@ export function DataTableFilterList<TData>({
               className="w-[12.5rem] origin-[var(--radix-popover-content-transform-origin)]"
             >
               <FacetedFilterInput
-                placeholder={filterField?.label ?? "Search options..."}
+                placeholder={filterField?.label ?? "Выберите..."}
                 aria-label={`Search ${filterField?.label} options`}
               />
               <FacetedFilterList>
-                <FacetedFilterEmpty>No options found.</FacetedFilterEmpty>
+                <FacetedFilterEmpty>Не найдено.</FacetedFilterEmpty>
                 <FacetedFilterGroup>
                   {filterField?.options?.map((option) => (
                     <FacetedFilterItem
@@ -290,7 +290,7 @@ export function DataTableFilterList<TData>({
                 <>
                   {selectedValues.size === 0 && (
                     <>
-                      {filterField.placeholder ?? " Select options..."}
+                      {filterField.placeholder ?? " Выберите..."}
                       <ChevronsUpDown className="size-4" aria-hidden="true" />
                     </>
                   )}
@@ -309,7 +309,7 @@ export function DataTableFilterList<TData>({
                           variant="secondary"
                           className="rounded-sm px-1 font-normal"
                         >
-                          {selectedValues.size} selected
+                          {selectedValues.size} выбрано
                         </Badge>
                       ) : (
                         filterField?.options
@@ -335,10 +335,10 @@ export function DataTableFilterList<TData>({
             >
               <FacetedFilterInput
                 aria-label={`Search ${filterField?.label} options`}
-                placeholder={filterField?.label ?? "Search options..."}
+                placeholder={filterField?.label ?? "Поиск..."}
               />
               <FacetedFilterList>
-                <FacetedFilterEmpty>No options found.</FacetedFilterEmpty>
+                <FacetedFilterEmpty>Не найдено.</FacetedFilterEmpty>
                 <FacetedFilterGroup>
                   {filterField?.options?.map((option) => (
                     <FacetedFilterItem
@@ -528,7 +528,7 @@ export function DataTableFilterList<TData>({
             aria-controls={`${id}-filter-dialog`}
           >
             <ListFilter className="size-3" aria-hidden="true" />
-            Filters
+            Фильтры
             {filters.length > 0 && (
               <Badge
                 variant="secondary"
@@ -549,12 +549,12 @@ export function DataTableFilterList<TData>({
           )}
         >
           {filters.length > 0 ? (
-            <h4 className="font-medium leading-none">Filters</h4>
+            <h4 className="font-medium leading-none">Фильтры</h4>
           ) : (
             <div className="flex flex-col gap-1">
-              <h4 className="font-medium leading-none">No filters applied</h4>
+              <h4 className="font-medium leading-none">Фильтры не применены</h4>
               <p className="text-sm text-muted-foreground">
-                Add filters to refine your results.
+                Добавьте фильтры, чтобы уточнить результаты.
               </p>
             </div>
           )}
@@ -573,7 +573,7 @@ export function DataTableFilterList<TData>({
                     <div className="min-w-[4.5rem] text-center">
                       {index === 0 ? (
                         <span className="text-sm text-muted-foreground">
-                          Where
+                          Где
                         </span>
                       ) : index === 1 ? (
                         <Select
@@ -621,7 +621,7 @@ export function DataTableFilterList<TData>({
                           <span className="truncate">
                             {filterFields.find(
                               (field) => field.id === filter.id
-                            )?.label ?? "Select field"}
+                            )?.label ?? "Выберите поле"}
                           </span>
                           <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                         </Button>

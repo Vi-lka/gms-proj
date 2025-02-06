@@ -1,6 +1,6 @@
 "use client"
 
-import TooltipMouse from '~/components/ui/special/TooltipMouse'
+import TooltipMouse from '~/components/ui/special/tooltip-mouse'
 import { Button } from '~/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogOverlay, DialogTitle } from '~/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'

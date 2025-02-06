@@ -1,28 +1,46 @@
-import React from 'react'
-import { type FieldValues, type Path, type UseFormReturn } from 'react-hook-form'
+"use client"
+
+import React, { useState } from 'react'
+import { type PathValue, type FieldValues, type Path, type UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Skeleton } from '~/components/ui/skeleton';
+import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox';
 import { cn } from '~/lib/utils';
-import { type LicensedAreas } from '~/server/db/schema';
+import { getApiRoute, type LicensedAreasSearchParamsT } from '~/lib/validations/api-routes';
+import { type LicensedArea } from '~/server/db/schema';
 
 export default function LicensedAreaSelect<TData extends FieldValues>({
   form,
   name,
+  handleClear,
   label,
   placeholder,
+  onOpenChange,
+  onSelect,
+  searchParams,
   className
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<TData, any, undefined>,
   name: Path<TData>,
+  handleClear: () => void,
   label?: React.ReactNode,
   placeholder?: string,
+  onOpenChange?: (open: boolean) => void,
+  onSelect?: ((value: string) => void),
+  searchParams?: LicensedAreasSearchParamsT,
   className?: string,
 }) {
-  const { data, error, isLoading } = useSWR<LicensedAreas[], Error>("/api/licensed-areas");
+  const [open, setOpen] = useState(false)
+
+  const { data, error, isLoading } = useSWR<LicensedArea[], Error>(
+    getApiRoute({
+      route: "licensed-areas", 
+      searchParams
+    })
+  );
 
   if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {
@@ -43,29 +61,46 @@ export default function LicensedAreaSelect<TData extends FieldValues>({
       render={({ field }) => (
         <FormItem className={cn("", className)}>
           <FormLabel>{label}</FormLabel>
-          <Select
-            onValueChange={field.onChange}
-            defaultValue={field.value}
-            {...field}
+          <Combobox 
+            open={open} 
+            onOpenChange={(open) => {
+              setOpen(open)
+              if (onOpenChange) onOpenChange(open)
+            }}
           >
             <FormControl>
-              <SelectTrigger ref={field.ref}>
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
+              <ComboboxTrigger 
+                ref={field.ref} 
+                placeholder={placeholder}
+                selectedValue={dataForField.find(item => item.value === field.value)?.value}
+                handleClear={handleClear}
+              >
+                {dataForField.find(item => item.value === field.value)?.label}
+              </ComboboxTrigger>
             </FormControl>
-            <SelectContent>
-              <SelectGroup>
+            <ComboboxContent>
+              <ComboboxGroup>
                 {dataForField.map((item) => (
-                  <SelectItem
+                  <ComboboxItem
                     key={item.value}
-                    value={item.value}
+                    value={item.label} // for CommandInput
+                    selectedValue={dataForField.find(item => item.value === field.value)?.label}
+                    onSelect={() => {
+                      form.setValue(
+                        name, 
+                        (item.value === field.value ? "" : item.value) as PathValue<TData, Path<TData>>,
+                        {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                      )
+                      setOpen(false)
+                      if (onSelect) onSelect(item.value === field.value ? "" : item.value)
+                    }}
                   >
                     {item.label}
-                  </SelectItem>
+                  </ComboboxItem>
                 ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+              </ComboboxGroup>
+            </ComboboxContent>
+          </Combobox>
           <FormMessage />
         </FormItem>
       )}

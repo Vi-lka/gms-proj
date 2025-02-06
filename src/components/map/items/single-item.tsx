@@ -53,6 +53,8 @@ export default function SingleItem({
     minw: 0.3,
   })
 
+  data.companies.sort((a, b) => a.name.localeCompare(b.name))
+
   return (
     <Html
       groupProps={{

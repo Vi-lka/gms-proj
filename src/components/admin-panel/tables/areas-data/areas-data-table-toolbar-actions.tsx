@@ -1,12 +1,12 @@
 import { type Table } from '@tanstack/react-table'
 import React from 'react'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
-import { type AreasDataExtend } from '~/server/db/schema'
+import { type AreaDataExtend } from '~/server/db/schema'
 import DeleteAreasDataDialog from './delete-areas-data-dialog'
 import CreateAreasDataSheet from './create-areas-data-sheet'
 
 interface AreasDataTableToolbarActionsProps {
-  table: Table<AreasDataExtend>
+  table: Table<AreaDataExtend>
 }
 
 export default function AreasDataTableToolbarActions({

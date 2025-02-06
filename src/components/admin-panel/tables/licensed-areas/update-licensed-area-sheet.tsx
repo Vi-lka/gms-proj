@@ -11,11 +11,11 @@ import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { updateLicensedAreaSchema, type UpdateLicensedAreaSchema } from '~/lib/validations/forms'
 import { updateLicensedArea } from '~/server/actions/licensed-areas'
-import { type LicensedAreasExtend } from '~/server/db/schema'
+import { type LicensedAreaExtend } from '~/server/db/schema'
 
 interface UpdateLicensedAreaSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
-    licensedArea: LicensedAreasExtend | null
+    licensedArea: LicensedAreaExtend | null
 }
 
 export default function UpdateLicensedAreaSheet({
@@ -98,6 +98,13 @@ export default function UpdateLicensedAreaSheet({
               form={form}
               name="fieldId"
               label="Месторождение"
+              handleClear={() => {
+                form.setValue(
+                  'fieldId', 
+                  '', 
+                  {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                )
+              }}
             />
             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
               <SheetClose asChild>

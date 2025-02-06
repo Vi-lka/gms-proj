@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types'
-import { type AreasDataExtend } from '~/server/db/schema'
+import { type AreaDataExtend } from '~/server/db/schema'
 import { type getAreasData } from '~/server/queries/area-data'
 import { getColumns } from './areas-data-colunms'
 import { useDataTable } from '~/hooks/use-data-table'
@@ -23,14 +23,14 @@ interface AreasDataTableProps {
 export default function AreasDataTable({ promises }: AreasDataTableProps) {
   const [{ data, pageCount }] = React.use(promises)
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreasDataExtend> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaDataExtend> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<AreasDataExtend>[] = [
+  const filterFields: DataTableFilterField<AreaDataExtend>[] = [
     {
       id: "areaName",
       label: "Название",

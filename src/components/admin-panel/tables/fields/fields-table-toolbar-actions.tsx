@@ -1,12 +1,12 @@
 import React from 'react'
 import { type Table } from '@tanstack/react-table'
-import { type FieldsExtend } from '~/server/db/schema'
+import { type FieldExtend } from '~/server/db/schema'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import CreateFieldSheet from './create-field-sheet'
 import DeleteFieldsDialog from './delete-fields-dialog'
 
 interface FieldsTableToolbarActionsProps {
-  table: Table<FieldsExtend>
+  table: Table<FieldExtend>
 }
 
 export default function FieldsTableToolbarActions({

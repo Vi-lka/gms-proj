@@ -44,8 +44,15 @@ export default function Map({ promises }: MapProps) {
   const itemsData: MapItemT[] = React.useMemo(
     () => data.map((item) => ({
       id: item.id,
-      companies: item.companiesToMapItems.map(ctmi => ctmi.company),
       cluster: item.cluster,
+      companies: item.companiesToMapItems.map(ctmi => {
+        const companyFields = item.fields.filter(field => field.companyId === ctmi.companyId)
+        return {
+          ...ctmi.company,
+          fields: companyFields
+        }
+      }),
+      fields: item.fields,
       x: item.xPos,
       y: item.yPos,
       width: DEFAULT_ITEM_SIZE.width,

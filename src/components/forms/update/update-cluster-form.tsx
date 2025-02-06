@@ -3,7 +3,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Form } from '~/components/ui/form'
-import { updateMapItemClusterSchema, type UpdateMapItemClusterSchema, type UpdateClusterSchema } from '~/lib/validations/forms'
+import { updateMapItemClusterSchema, type UpdateMapItemClusterSchema } from '~/lib/validations/forms'
 import InputField from '../inputs/simple/input-field'
 import TextareaField from '../inputs/simple/textarea-field'
 import CompaniesInput from '../inputs/companies-input'
@@ -14,30 +14,22 @@ import { updateMapItemCluster } from '~/server/actions/mapItems'
 
 export default function UpdateClusterForm({
   cluster,
-  mapItemId,
   onFormSubmit
 }: {
-  cluster: UpdateClusterSchema,
-  mapItemId: string,
+  cluster: UpdateMapItemClusterSchema,
   onFormSubmit:(() => void) | undefined
 }) {
   const [isPending, startTransition] = React.useTransition()
 
   const form = useForm<UpdateMapItemClusterSchema>({
     resolver: zodResolver(updateMapItemClusterSchema),
-    defaultValues: {
-      id: cluster.id,
-      name: cluster.name,
-      description: cluster.description,
-      companiesInput: cluster.companies,
-      mapItemId
-    },
+    defaultValues: cluster,
     mode: "onChange"
   })
 
   function onSubmit(input: UpdateMapItemClusterSchema) {
     startTransition(async () => {
-      const { data, error } = await updateMapItemCluster(input, cluster.companies)
+      const { data, error } = await updateMapItemCluster(input, cluster.companiesInput)
 
       if (error) {
         toast.error(error)
@@ -52,7 +44,7 @@ export default function UpdateClusterForm({
     })
   }
 
-  const saveDisabled = isPending || !form.formState.isValid
+  const saveDisabled = isPending || !form.formState.isValid || !form.formState.isDirty
 
 
   return (
@@ -78,6 +70,7 @@ export default function UpdateClusterForm({
           name="companiesInput"
           label="Компании"
           isPending={isPending}
+          defaultCompanies={cluster.companiesInput}
         />
         <SheetFooter className="gap-2 pt-2 sm:space-x-0">
           <SheetClose asChild>

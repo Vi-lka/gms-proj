@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types';
-import { type FieldsExtend } from '~/server/db/schema';
+import { type FieldExtend } from '~/server/db/schema';
 import { type getFields } from '~/server/queries/fields'
 import { getColumns } from './fields-table-columns';
 import { useDataTable } from '~/hooks/use-data-table';
@@ -23,14 +23,14 @@ interface FieldsTableProps {
 export default function FieldsTable({ promises }: FieldsTableProps) {
   const [{ data, pageCount }] = React.use(promises)
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FieldsExtend> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FieldExtend> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<FieldsExtend>[] = [
+  const filterFields: DataTableFilterField<FieldExtend>[] = [
     {
       id: "name",
       label: "Название",

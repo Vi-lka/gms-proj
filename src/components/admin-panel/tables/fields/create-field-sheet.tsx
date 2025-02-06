@@ -81,6 +81,13 @@ export default function CreateFieldSheet({
               form={form}
               name="companyId"
               label="Компания"
+              handleClear={() => {
+                form.setValue(
+                  'companyId', 
+                  '', 
+                  {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                )
+              }}
             />
             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
               <SheetClose asChild>

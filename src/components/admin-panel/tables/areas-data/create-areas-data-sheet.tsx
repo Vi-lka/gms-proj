@@ -75,6 +75,14 @@ export default function CreateAreasDataSheet({
                   form={form}
                   name="areaId"
                   label="Лицензионный участок"
+                  handleClear={() => {
+                    form.setValue(
+                      'areaId', 
+                      '', 
+                      {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                    )
+                  }}
+                  className='w-72'
                 />
                 <InputField
                   form={form}

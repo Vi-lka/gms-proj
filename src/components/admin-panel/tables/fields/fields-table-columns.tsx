@@ -8,17 +8,17 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
-import { type FieldsExtend } from "~/server/db/schema";
+import { type FieldExtend } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<FieldsExtend> | null>
+    React.SetStateAction<DataTableRowAction<FieldExtend> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<FieldsExtend>[] {
+}: GetColumnsProps): ColumnDef<FieldExtend>[] {
   return [
     {
       id: "select",

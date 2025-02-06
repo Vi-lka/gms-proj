@@ -80,7 +80,14 @@ export default function CreateLicensedAreaSheet({
             <FieldSelect
               form={form}
               name="fieldId"
-              label="Месторождение"
+              label="Месторождение" 
+              handleClear={() => {
+                form.setValue(
+                  'fieldId', 
+                  '', 
+                  {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                )
+              }}
             />
             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
               <SheetClose asChild>

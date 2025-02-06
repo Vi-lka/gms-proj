@@ -1,5 +1,5 @@
 import { type DataTableRowAction } from "~/lib/types";
-import { type AreasDataExtend } from "../../../../server/db/schema/fields";
+import { type AreaDataExtend } from "../../../../server/db/schema/fields";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
@@ -13,13 +13,13 @@ import { formatApproxNumber, formatDate } from "~/lib/utils";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<AreasDataExtend> | null>
+    React.SetStateAction<DataTableRowAction<AreaDataExtend> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<AreasDataExtend>[] {
+}: GetColumnsProps): ColumnDef<AreaDataExtend>[] {
   return [
     {
       id: "select",

@@ -15,24 +15,25 @@ export async function GET(request: NextRequest) {
 
   const search = searchCompaniesApiLoader(request)
 
-    const where = and(
-      search.hasMapItem === true ? inArray(
-        companies.id,
-        db
-          .select({ companyId: companiesToMapItems.companyId })
-          .from(companiesToMapItems)
-      ) : undefined,
-      search.hasMapItem === false ? notInArray(
-        companies.id,
-        db
-          .select({ companyId: companiesToMapItems.companyId })
-          .from(companiesToMapItems)
-      ) : undefined,
-    )
+  const where = and(
+    search.hasMapItem === true ? inArray(
+      companies.id,
+      db
+        .select({ companyId: companiesToMapItems.companyId })
+        .from(companiesToMapItems)
+    ) : undefined,
+    search.hasMapItem === false ? notInArray(
+      companies.id,
+      db
+        .select({ companyId: companiesToMapItems.companyId })
+        .from(companiesToMapItems)
+    ) : undefined,
+  )
 
   try {
     const data = await db.query.companies.findMany({
-      where
+      where,
+      orderBy: (companies, { asc }) => [asc(companies.name)]
     })
     return Response.json(data)
   } catch (error) {
