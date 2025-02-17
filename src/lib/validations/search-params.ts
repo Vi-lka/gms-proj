@@ -10,7 +10,7 @@ import {
     parseAsBoolean,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type AreaDataExtend, type Company, type FieldExtend, type LicensedAreaExtend, type SessionExtend, type User, users } from "~/server/db/schema";
+import { type AreaDataExtend, type Company, type FieldExtend, FieldMapExtend, type LicensedAreaExtend, type SessionExtend, type User, users } from "~/server/db/schema";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -109,6 +109,24 @@ export const searchAreasData = {
 }
 export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
 
+export const searchFieldsMaps = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<FieldMapExtend>().withDefault([
+    { id: "id", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  name: parseAsString.withDefault(""),
+  fieldId: parseAsString.withDefault(""),
+  fieldName: parseAsString.withDefault(""),
+  companyId: parseAsString.withDefault(""),
+  companyName: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
+}
+export const searchFieldsMapsCache = createSearchParamsCache(searchFieldsMaps)
+
 
 // API Routes
 export const searchClustersApi = {
@@ -123,6 +141,7 @@ export const searchCompaniesApiLoader = createLoader(searchCompaniesApi)
 
 export const searchFieldsApi = {
   hasMapItem: parseAsBoolean,
+  hasFieldMap: parseAsBoolean,
   mapItemId: parseAsString,
   companyId: parseAsString,
   fieldsIds: parseAsArrayOf(parseAsString)

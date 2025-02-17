@@ -6,6 +6,7 @@ export type CompaniesSearchParamsT = {
 }
 export type FieldsSearchParamsT = {
   hasMapItem?: boolean;
+  hasFieldMap?: boolean;
   mapItemId?: string;
   companyId?: string;
   fieldsIds?: string[];

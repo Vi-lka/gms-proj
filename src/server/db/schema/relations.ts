@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { accounts, areasData, authenticators, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems, sessions, users } from ".";
+import { accounts, areasData, authenticators, clusters, companies, companiesToMapItems, fields, fieldsMaps, licensedAreas, mapItems, sessions, users } from ".";
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
@@ -51,7 +51,8 @@ export const companiesToMapItemsRelations = relations(companiesToMapItems, ({ on
 export const fieldsRelations = relations(fields, ({ one, many }) => ({
   company: one(companies, { fields: [fields.companyId], references: [companies.id] }),
   mapItem: one(mapItems, { fields: [fields.mapItemId], references: [mapItems.id] }),
-  licensedAreas: many(licensedAreas)
+  fieldMap: one(fieldsMaps),
+  licensedAreas: many(licensedAreas),
 }));
 
 export const licensedAreasRelations = relations(licensedAreas, ({ one, many }) => ({
@@ -62,3 +63,7 @@ export const licensedAreasRelations = relations(licensedAreas, ({ one, many }) =
 export const areasDataRelations = relations(areasData, ({ one }) => ({
   area: one(licensedAreas, { fields: [areasData.areaId], references: [licensedAreas.id] }),
 }));
+
+export const fieldsMapsRelations = relations(fieldsMaps, ({ one }) => ({
+  field: one(fields, { fields: [fieldsMaps.fieldId], references: [fields.id] }),
+}))

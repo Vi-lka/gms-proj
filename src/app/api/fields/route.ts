@@ -1,10 +1,10 @@
-import { and, eq, inArray, isNotNull, isNull, or } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, isNull, notInArray, or } from "drizzle-orm";
 import { type NextRequest } from "next/server";
 import { restrictUser } from "~/lib/utils";
 import { searchFieldsApiLoader } from "~/lib/validations/search-params";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { fields } from "~/server/db/schema";
+import { type FieldExtend, fields, fieldsMaps } from "~/server/db/schema";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -21,6 +21,18 @@ export async function GET(request: NextRequest) {
       search.hasMapItem === false ? isNull(fields.mapItemId) : undefined,
       search.mapItemId ? eq(fields.mapItemId, search.mapItemId) : undefined,
       search.companyId ? eq(fields.companyId, search.companyId) : undefined,
+      search.hasFieldMap === true ? inArray(
+        fields.id,
+        db
+          .select({ fieldId: fieldsMaps.fieldId })
+          .from(fieldsMaps)
+      ) : undefined,
+      search.hasFieldMap === false ? notInArray(
+        fields.id,
+        db
+          .select({ fieldId: fieldsMaps.fieldId })
+          .from(fieldsMaps)
+      ) : undefined,
     ),
     search.fieldsIds ? inArray(fields.id, search.fieldsIds) : undefined,
   )
@@ -28,9 +40,16 @@ export async function GET(request: NextRequest) {
   try {
     const data = await db.query.fields.findMany({
       where,
+      with: {
+        company: true,
+      },
       orderBy: (fields, { asc }) => [asc(fields.name)]
     })
-    return Response.json(data)
+    const transformData: FieldExtend[] = data.map((item) => ({
+      ...item,
+      companyName: item.company.name
+    }))
+    return Response.json(transformData)
   } catch (error) {
     return Response.json({ message: 'Internal Server Error', error: error }, { status: 500 })
   }

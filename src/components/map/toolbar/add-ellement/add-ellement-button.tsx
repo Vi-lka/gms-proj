@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Check, Database, Map, MapPinCheck, Plus, X } from 'lucide-react'
+import { Check, Database, MapIcon, MapPinCheck, Plus, X } from 'lucide-react'
 import { type MapItemSchema } from '~/lib/validations/forms'
 import { useAtomValue } from 'jotai'
 import { mapContainerDimensions, selectedItemAtom, stageAtom, stageRefAtom } from '~/lib/atoms/main'
@@ -169,19 +169,19 @@ export default function AddEllementButton({
   function getButtonContent() {
     if (mapItem && !openAddEllementSheet) return {
       title: "Подтвердите расположение элемента...",
-      icon: <MapPinCheck className="size-4" aria-hidden="true" />,
+      icon: <MapPinCheck className="size-4 flex-none" aria-hidden="true" />,
     }
     if (mapItem) return { 
       title:"Введите данные", 
-      icon: <Database className="size-4" aria-hidden="true" />
+      icon: <Database className="size-4 flex-none" aria-hidden="true" />
     };
     if (addEllement) return { 
       title: "Кликнете в нужном месте на карте...", 
-      icon: <Map className="size-4" aria-hidden="true" /> 
+      icon: <MapIcon className="size-4 flex-none" aria-hidden="true" /> 
     }
     return {
       title: "Добавить метку",
-      icon: <Plus className="size-4" aria-hidden="true" />
+      icon: <Plus className="size-4 flex-none" aria-hidden="true" />
     }
   }
   

@@ -38,8 +38,8 @@ export function useStageEllementPos(
     const y = yOffset - relativeY
 
     return ({
-        size: {width, height},
-        pos: { x, y }
+      size: {width, height},
+      pos: { x, y }
     });
 }
 

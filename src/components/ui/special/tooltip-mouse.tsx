@@ -8,17 +8,19 @@ export default function TooltipMouse({
   description,
   children,
   open,
+  className,
 }: {
   description: string,
   children: React.ReactNode,
   open: boolean,
+  className?: string;
 }) {
   const { ref, x, y } = useMouse();
   return (
     <TooltipProvider delayDuration={300}>
       <Tooltip open={open}>
         <TooltipTrigger asChild>
-          <div className='' ref={ref}>
+          <div className={className} ref={ref}>
             {children}
           </div>
         </TooltipTrigger>

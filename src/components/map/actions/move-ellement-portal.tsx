@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { useAtomValue } from 'jotai';
 import Konva from 'konva';
 import { Check, Loader, X } from 'lucide-react';
@@ -18,7 +17,7 @@ import { moveMapItem } from '~/server/actions/mapItems';
 interface MoveEllementPortalProps extends React.ComponentPropsWithRef<typeof Portal> {
   id: string,
   open: boolean,
-  onOpenChange(open: boolean): void,
+  onOpenChange: (open: boolean) => void,
   onFormSubmit: (() => void) | undefined,
 }
 

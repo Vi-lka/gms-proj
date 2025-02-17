@@ -29,6 +29,13 @@
       "when": 1738824331492,
       "tag": "0003_dear_franklin_richards",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1738929846781,
+      "tag": "0004_aromatic_power_man",
+      "breakpoints": true
     }
   ]
 }

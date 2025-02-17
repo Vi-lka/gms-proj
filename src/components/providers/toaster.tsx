@@ -1,12 +1,23 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
+import { usePathname } from "next/navigation"
+import { useEffect } from "react"
+import { Toaster as Sonner, toast, useSonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 function Toaster({ ...props }: ToasterProps) {
   const { theme = "system" } = useTheme()
+  const { toasts } = useSonner();
+
+  const pathName = usePathname()
+
+  useEffect(() => {
+    // Dismiss all active toasts on path change
+    toasts.forEach((t) => toast.dismiss(t.id));
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [pathName])
 
   return (
     <Sonner

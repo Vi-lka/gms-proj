@@ -3,10 +3,6 @@ import { cn } from '~/lib/utils'
 import AddEllementButton from './add-ellement/add-ellement-button'
 
 
-// interface MapAdminToolbarProps
-  // extends React.HTMLAttributes<HTMLDivElement> {
-// }
-
 type MapAdminToolbarProps = React.HTMLAttributes<HTMLDivElement>
 
 export default function MapToolbarAdmin({

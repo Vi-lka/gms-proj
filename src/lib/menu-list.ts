@@ -7,7 +7,8 @@ import {
   Pickaxe,
   Database,
   Cookie,
-  Building2
+  Building2,
+  MapPinned
 } from "lucide-react";
 import { type UserRole } from "./types";
 
@@ -51,6 +52,11 @@ export function getMenuList(pathname: string, role: UserRole | undefined): Group
           href: "/dashboard/map",
           label: "Карта - Главная",
           icon: Map,
+        },
+        {
+          href: "/dashboard/fmaps",
+          label: "Карты Месторождений",
+          icon: MapPinned,
         },
       ]
     },
