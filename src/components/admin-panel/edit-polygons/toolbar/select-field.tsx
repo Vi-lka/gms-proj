@@ -4,7 +4,7 @@ import React from 'react'
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { defaultInitState } from '~/components/poly-annotation/store';
-import { usePolyStore } from '~/components/poly-annotation/store/poly-store-provider';
+import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider';
 import { Skeleton } from '~/components/ui/skeleton';
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
 import { type FieldsSearchParamsT, getApiRoute } from '~/lib/validations/api-routes';
@@ -25,8 +25,12 @@ export default function SelectField({
   const {stageConfig, imageConfig, stageRef, ...restDefaultInitState} = defaultInitState
 
   const fieldId = usePolyStore((state) => state.fieldId)
+  const isAddible = usePolyStore((state) => state.isAddible)
+  const editPolygonIndex = usePolyStore((state) => state.editPolygonIndex)
   const setFieldId = usePolyStore((state) => state.setFieldId)
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
+
+  const { clear } = useTemporalStore((state) => state)
 
   const { data, error, isLoading } = useSWR<FieldExtend[], Error>(
     getApiRoute({
@@ -62,7 +66,9 @@ export default function SelectField({
             ...prev,
             ...restDefaultInitState
           }))
+          clear()
         }}
+        disabled={isAddible || editPolygonIndex !== null}
         className={className}
       >
         {selected?.label}
@@ -81,6 +87,7 @@ export default function SelectField({
                   ...restDefaultInitState,
                   fieldId: item.value
                 }))
+                clear()
                 onSelect?.(item.value)
               }}
             >
