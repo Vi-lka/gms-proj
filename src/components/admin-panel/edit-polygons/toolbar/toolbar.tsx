@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils';
 import Image from 'next/image';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Button } from '~/components/ui/button';
-import { Save, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import SaveButton from './save-button';
 
 interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {

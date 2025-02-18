@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { usePolyStore } from '~/components/poly-annotation/store/poly-store-provider';
 import TooltipMouse from '~/components/ui/special/tooltip-mouse';
 import EditPolygonsActions from './actions/edit-polygons-actions';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import SelectField from './toolbar/select-field';
 

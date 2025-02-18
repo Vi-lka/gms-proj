@@ -22,23 +22,23 @@ export const fieldsMaps = createTable(
   })
 )
 
-// export const fieldMapPoints = createTable(
-//   "field-map-points",
-//   {
-//     id: varchar("id", { length: 255 })
-//       .notNull()
-//       .primaryKey()
-//       .$defaultFn(() => crypto.randomUUID()),
-//     fieldMapId: varchar("field_map_id", { length: 255 })
-//       .references(() => fieldsMaps.id, {onDelete: 'cascade'}).notNull(),
-//     areaId: varchar("area_id", { length: 255 })
-//       .references(() => licensedAreas.id, {onDelete: 'cascade'}).notNull(),
-//     points: numericCasted("points", { precision: 100, scale: 20 }).array().notNull(),
-//   }
-// )
+export const fieldMapPoints = createTable(
+  "field-map-points",
+  {
+    id: varchar("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    fieldMapId: varchar("field_map_id", { length: 255 })
+      .references(() => fieldsMaps.id, {onDelete: 'cascade'}).notNull(),
+    areaId: varchar("area_id", { length: 255 })
+      .references(() => licensedAreas.id, {onDelete: 'cascade'}).notNull(),
+    points: numericCasted("points", { precision: 100, scale: 20 }).array().notNull(),
+  }
+)
 
 export type FieldMap = typeof fieldsMaps.$inferSelect
-// export type FieldMapPoints = typeof fieldMapPoints.$inferSelect
+export type FieldMapPoints = typeof fieldMapPoints.$inferSelect
 
 export interface FieldMapExtend extends FieldMap {
   fieldId: Field["id"],
@@ -46,6 +46,6 @@ export interface FieldMapExtend extends FieldMap {
   companyId: Company["id"],
   companyName: Company["name"],
 }
-// export interface FieldMapPointsExtend extends FieldMapPoints {
-//   areaName: LicensedArea["name"],
-// }
+export interface FieldMapPointsExtend extends FieldMapPoints {
+  areaName: LicensedArea["name"],
+}
