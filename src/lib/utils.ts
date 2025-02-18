@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { type UserRestrictions, type UserRole, type ApproxEnumT } from "./types"
 import translateData from "./static/translate-data"
-import { roleEnum } from "~/server/db/schema"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

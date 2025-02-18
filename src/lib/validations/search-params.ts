@@ -10,7 +10,16 @@ import {
     parseAsBoolean,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
-import { type AreaDataExtend, type Company, type FieldExtend, FieldMapExtend, type LicensedAreaExtend, type SessionExtend, type User, users } from "~/server/db/schema";
+import { 
+  type AreaDataExtend, 
+  type Company, 
+  type FieldExtend, 
+  type FieldMapExtend, 
+  type LicensedAreaExtend, 
+  type SessionExtend, 
+  type User, 
+  users 
+} from "~/server/db/schema";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),

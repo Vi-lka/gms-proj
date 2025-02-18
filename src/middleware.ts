@@ -1,6 +1,8 @@
-import { type NextRequest } from 'next/server';
+// import { type NextRequest } from 'next/server';
  
-export default function middleware(request: NextRequest) {
+export default function middleware(
+  // request: NextRequest
+) {
   // const session = request.auth
   
   // if (session?.user && (session.user.role !== "admin") && request.nextUrl.pathname.startsWith('/dashboard')) {
