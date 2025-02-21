@@ -43,6 +43,13 @@
       "when": 1739854725940,
       "tag": "0005_elite_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1740111198473,
+      "tag": "0006_nifty_wallop",
+      "breakpoints": true
     }
   ]
 }

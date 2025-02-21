@@ -103,6 +103,7 @@ export type PolyAnnotationStoreActions = {
       | PolyAnnotationStore
       | ((current: PolyAnnotationStore) => PolyAnnotationStore),
   ) => void,
+  resetState: () => void,
 }
 
 export type PolyAnnotationStore = PolyAnnotationState & PolyAnnotationStoreActions
@@ -217,7 +218,10 @@ export const createPolyStore = (
       },
       setGlobalState: (next) => {
         set((state) => (typeof next === 'function' ? next(state) : next))
-      }
+      },
+      resetState: () => {
+        set(defaultInitState)
+      },
     }),
     {
       // Only fields in return of "partialize" will be in history

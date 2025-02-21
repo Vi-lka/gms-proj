@@ -7,6 +7,7 @@
  * for Docker builds.
  */
 import "./src/env.js";
+import { env } from "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -15,6 +16,18 @@ const config = {
   },
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
+  env: {
+    NEXT_PUBLIC_S3_PATH: env.NEXT_PUBLIC_S3_PATH,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: env.S3_USE_SSL === "true" ? "https" : "http",
+        hostname: env.S3_ENDPOINT,
+        port: env.S3_PORT.toString(),
+      },
+    ],
+  },
   // async headers() {
   //   return [
   //     {

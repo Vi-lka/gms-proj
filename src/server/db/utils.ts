@@ -63,7 +63,7 @@ export function takeFirstOrThrow<TData>(items: TData[]) {
   const first = takeFirst(items)
 
   if (!first) {
-    throw new Error("First item not found")
+    throw new Error("Не найдено")
   }
 
   return first

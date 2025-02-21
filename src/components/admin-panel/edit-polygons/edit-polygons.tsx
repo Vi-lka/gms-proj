@@ -10,6 +10,8 @@ import EditPolygonsActions from './actions/edit-polygons-actions';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import SelectField from './toolbar/select-field';
+import Image from 'next/image';
+import { env } from '~/env';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,

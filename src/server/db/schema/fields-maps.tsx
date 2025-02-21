@@ -3,6 +3,7 @@ import createTable from "./createTable";
 import { type Field, fields, type LicensedArea, licensedAreas } from "./fields";
 import { type Company } from "./map";
 import { numericCasted } from "../utils";
+import { files } from "./files";
 
 export const fieldsMaps = createTable(
   "fields-maps",
@@ -12,13 +13,13 @@ export const fieldsMaps = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 255 }).notNull(),
-    url: varchar("url", { length: 255 }).notNull(),
+    fileId: varchar("file_id", { length: 255 })
+      .references(() => files.id, {onDelete: 'cascade'}).notNull(),
     fieldId: varchar("field_id", { length: 255 })
       .references(() => fields.id, {onDelete: 'cascade'}).notNull(),
   },
   (fieldMap) => ({
     nameIndex: index("field_map_name_idx").on(fieldMap.name),
-    urlIndex: index("field_map_url_idx").on(fieldMap.url),
   })
 )
 
