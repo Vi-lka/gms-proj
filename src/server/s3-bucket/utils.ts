@@ -3,6 +3,7 @@
 import { getErrorMessage } from "~/lib/handle-error"
 import { saveFileInfoInDB } from "./actions"
 import type { PresignedUrlT } from "./types"
+import { env } from "~/env"
 
 /**
  * Uploads file to S3 directly using presigned url
@@ -16,8 +17,10 @@ export const uploadToS3 = async (presignedUrl: PresignedUrlT, file: File) => {
     body: file,
     headers: {
       'Content-Type': file.type,
-      'Access-Control-Allow-Origin': '*',
+      'Origin': env.NEXT_PUBLIC_URL,
+      'Access-Control-Allow-Origin': env.NEXT_PUBLIC_URL,
     },
+    cache: 'no-store'
   })
   return response
 }
@@ -26,12 +29,11 @@ export const uploadToS3 = async (presignedUrl: PresignedUrlT, file: File) => {
  * Uploads files to S3 and saves file info in DB
  * @param files files to upload
  * @param presignedUrls  presigned urls for uploading
- * @param onUploadSuccess callback to execute after successful upload
  * @returns
  */
-export const handleUpload = async (files: File[], presignedUrls: PresignedUrlT[], onUploadSuccess: () => void) => {
+export const handleUpload = async (files: File[], presignedUrls: PresignedUrlT[]) => {
   try {
-    const uploadToS3Response = await Promise.allSettled(
+    await Promise.all(
       presignedUrls.map((presignedUrl) => {
         const file = files.find(
           (file) => file.name === presignedUrl.originalFileName && file.size === presignedUrl.fileSize
@@ -42,16 +44,16 @@ export const handleUpload = async (files: File[], presignedUrls: PresignedUrlT[]
         return uploadToS3(presignedUrl, file)
       })
     )
-  
-    if (uploadToS3Response.some((res) => res.status === 'rejected')) {
-      throw new Error('Загрузка не удалась')
-    }
    
-    await saveFileInfoInDB(presignedUrls)
-    onUploadSuccess()
+    const { data, error } = await saveFileInfoInDB(presignedUrls)
+
+    if (error) return {
+      data: null,
+      error: getErrorMessage(error),
+    }
 
     return {
-      data: null,
+      data,
       error: null
     }
   } catch (err) {

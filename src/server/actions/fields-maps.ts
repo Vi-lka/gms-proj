@@ -8,6 +8,10 @@ import { fieldsMaps } from "../db/schema";
 import { db } from "../db";
 import { inArray } from "drizzle-orm";
 
+// export async function createFieldMap() {
+  
+// }
+
 export async function deleteFieldsMaps(ids: string[]) {
   noStore()
   

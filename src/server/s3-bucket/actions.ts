@@ -45,7 +45,7 @@ export const createPresignedUrls = async (files: FileT[]) => {
     await Promise.all(
       // loop through the files
       files.map(async (file) => {
-        const fileName = `${file?.originalFileName}-${uuidv4()}`
+        const fileName = `${uuidv4()}-${file?.originalFileName}`
       
         // get presigned url using s3 sdk
         const url = await createPresignedUrlToUpload({

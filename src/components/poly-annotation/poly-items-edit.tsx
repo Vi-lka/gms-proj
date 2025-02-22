@@ -4,8 +4,13 @@ import { type KonvaEventObject } from 'konva/lib/Node'
 import { Group, Layer } from 'react-konva'
 import useRelatedRatio from './store/useRelatedRatio'
 import { usePolyStore, useTemporalStore } from './store/poly-store-provider'
+import type { PolygonStyleProps } from './types'
 
-export default function PolyItemsEdit() {
+export default function PolyItemsEdit({
+  polygonStyle
+}: {
+  polygonStyle?: PolygonStyleProps
+}) {
 
   const polygons = usePolyStore((state) => state.polygons)
   const imagePos = usePolyStore((state) => state.imageConfig.pos)
@@ -173,6 +178,7 @@ export default function PolyItemsEdit() {
             licensedArea={polygon.licensedArea}
             active={index === activePolygonIndex}
             editable={index === editPolygonIndex}
+            polygonStyle={polygonStyle}
             handlePointDragMove={(e) => handlePointDragMove(e, index)}
             handlePointDragEnd={(e) => handlePointDragEnd(e, index)}
             handleMouseOverStartPoint={(e) => handleMouseOverStartPoint(e, index)}

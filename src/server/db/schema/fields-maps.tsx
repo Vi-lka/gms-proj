@@ -23,7 +23,7 @@ export const fieldsMaps = createTable(
   })
 )
 
-export const fieldMapPoints = createTable(
+export const fieldMapPolygons = createTable(
   "field-map-points",
   {
     id: varchar("id", { length: 255 })
@@ -39,7 +39,7 @@ export const fieldMapPoints = createTable(
 )
 
 export type FieldMap = typeof fieldsMaps.$inferSelect
-export type FieldMapPoints = typeof fieldMapPoints.$inferSelect
+export type FieldMapPolygons = typeof fieldMapPolygons.$inferSelect
 
 export interface FieldMapExtend extends FieldMap {
   fieldId: Field["id"],
@@ -47,6 +47,6 @@ export interface FieldMapExtend extends FieldMap {
   companyId: Company["id"],
   companyName: Company["name"],
 }
-export interface FieldMapPointsExtend extends FieldMapPoints {
+export interface FieldMapPointsExtend extends FieldMapPolygons {
   areaName: LicensedArea["name"],
 }

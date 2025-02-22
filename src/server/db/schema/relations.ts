@@ -6,7 +6,7 @@ import {
   clusters, 
   companies, 
   companiesToMapItems, 
-  fieldMapPoints, 
+  fieldMapPolygons, 
   fields, 
   fieldsMaps, 
   files, 
@@ -82,12 +82,12 @@ export const areasDataRelations = relations(areasData, ({ one }) => ({
 export const fieldsMapsRelations = relations(fieldsMaps, ({ one, many }) => ({
   field: one(fields, { fields: [fieldsMaps.fieldId], references: [fields.id] }),
   file: one(files, { fields: [fieldsMaps.fileId], references: [files.id] }),
-  fieldMapPoints: many(fieldMapPoints),
+  polygons: many(fieldMapPolygons),
 }))
 
-export const fieldMapPointsRelations = relations(fieldMapPoints, ({ one }) => ({
-  fieldMap: one(fieldsMaps, { fields: [fieldMapPoints.fieldMapId], references: [fieldsMaps.id] }),
-  area: one(licensedAreas, { fields: [fieldMapPoints.areaId], references: [licensedAreas.id] }),
+export const fieldMapPolygonsRelations = relations(fieldMapPolygons, ({ one }) => ({
+  fieldMap: one(fieldsMaps, { fields: [fieldMapPolygons.fieldMapId], references: [fieldsMaps.id] }),
+  area: one(licensedAreas, { fields: [fieldMapPolygons.areaId], references: [licensedAreas.id] }),
 }))
 
 export const filesRelations = relations(files, ({ one }) => ({

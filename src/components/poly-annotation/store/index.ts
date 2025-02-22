@@ -9,6 +9,8 @@ import { throttle } from 'throttle-debounce'
 
 export type PolyAnnotationState = {
   fieldId: string | null;
+  imageUrl: string | undefined;
+  imageFile: File | null;
   stageConfig: StageConfig,
   stageRef: StageT | null,
   imageConfig: ImageConfig,
@@ -36,6 +38,16 @@ export type PolyAnnotationStoreActions = {
     next:
       | PolyAnnotationStore['fieldId']
       | ((current: PolyAnnotationStore['fieldId']) => PolyAnnotationStore['fieldId']),
+  ) => void,
+  setImageUrl: (
+    next:
+      | PolyAnnotationStore['imageUrl']
+      | ((current: PolyAnnotationStore['imageUrl']) => PolyAnnotationStore['imageUrl']),
+  ) => void,
+  setImageFile: (
+    next:
+      | PolyAnnotationStore['imageFile']
+      | ((current: PolyAnnotationStore['imageFile']) => PolyAnnotationStore['imageFile']),
   ) => void,
   setStageConfig: (
     next:
@@ -110,6 +122,8 @@ export type PolyAnnotationStore = PolyAnnotationState & PolyAnnotationStoreActio
 
 export const defaultInitState: PolyAnnotationState = {
   fieldId: null,
+  imageUrl: undefined,
+  imageFile: null,
   stageConfig: {
     width: 0,
     height: 0,
@@ -148,6 +162,17 @@ export const createPolyStore = (
           fieldId: typeof next === 'function' ? next(state.fieldId) : next,
         }))
       },
+      setImageUrl: (next) => {
+        set((state) => ({
+          imageUrl: typeof next === 'function' ? next(state.imageUrl) : next,
+        }))
+      },
+      setImageFile: (next) => {
+        set((state) => ({
+          imageFile: typeof next === 'function' ? next(state.imageFile) : next,
+        }))
+      },
+
       setStageConfig: (next) => {
         set((state) => ({
           stageConfig: typeof next === 'function' ? next(state.stageConfig) : next,

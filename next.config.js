@@ -18,6 +18,7 @@ const config = {
   eslint: { ignoreDuringBuilds: true },
   env: {
     NEXT_PUBLIC_S3_PATH: env.NEXT_PUBLIC_S3_PATH,
+    NEXT_PUBLIC_IS_VERCEL: env.NEXT_PUBLIC_IS_VERCEL
   },
   images: {
     remotePatterns: [

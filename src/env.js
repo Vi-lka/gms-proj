@@ -41,7 +41,12 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_S3_PATH: z.string(),
+    NEXT_PUBLIC_URL: z.string(),
+    NEXT_PUBLIC_S3_PATH: z.string().optional(),
+    NEXT_PUBLIC_IS_VERCEL: z
+    .enum(["true", "false"])
+    .default("true")
+    .optional(),
   },
 
   /**
@@ -67,7 +72,9 @@ export const env = createEnv({
     S3_SECRET_KEY: process.env.S3_SECRET_KEY,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     S3_USE_SSL: process.env.S3_USE_SSL,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     NEXT_PUBLIC_S3_PATH: process.env.NEXT_PUBLIC_S3_PATH,
+    NEXT_PUBLIC_IS_VERCEL: process.env.NEXT_PUBLIC_IS_VERCEL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
