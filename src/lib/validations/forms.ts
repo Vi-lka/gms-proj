@@ -232,9 +232,10 @@ export type UpdateAreasDataSchema = z.infer<typeof updateAreasDataSchema>;
 export const createFieldMapSchema = z.object({
   fieldId: z.string().min(1, "Выберите Месторождение"),
   fileId: z.string().min(1, "Загрузите Фото"),
+  fileName: z.string().min(1, "Загрузите Фото"),
   polygons: z.object({
     areaId: z.string().min(1, "Выберите Лицензионный участок"),
-    points: z.number().array().min(6, { message: "Должен быть хотя бы 1 полигон" })
-  })
+    points: z.number().array().min(6, { message: "Должно быть хотя бы 3 точки" })
+  }).array().min(1, { message: "Должен быть хотя бы 1 полигон" })
 })
 export type CreateFieldMapSchema = z.infer<typeof createFieldMapSchema>;

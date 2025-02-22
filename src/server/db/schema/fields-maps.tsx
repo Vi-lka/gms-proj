@@ -24,7 +24,7 @@ export const fieldsMaps = createTable(
 )
 
 export const fieldMapPolygons = createTable(
-  "field-map-points",
+  "field-map-polygons",
   {
     id: varchar("id", { length: 255 })
       .notNull()
@@ -46,6 +46,7 @@ export interface FieldMapExtend extends FieldMap {
   fieldName: Field["name"],
   companyId: Company["id"],
   companyName: Company["name"],
+  fileUrl: string
 }
 export interface FieldMapPointsExtend extends FieldMapPolygons {
   areaName: LicensedArea["name"],

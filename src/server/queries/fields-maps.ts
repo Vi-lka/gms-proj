@@ -10,6 +10,7 @@ import { companies, fields, fieldsMaps } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
+import { getPresignedUrl } from "../s3-bucket/queries";
 
 export async function getFieldsMaps(
   input: GetFieldsMapsSchema,
@@ -122,14 +123,21 @@ export async function getFieldsMaps(
         }
       })
 
-      const transformData = data.map(({field, ...other}) => ({
-        ...other,
-        fieldName: field.name,
-        companyId: field.company.id,
-        companyName: field.company.name,
-      }))
+      const validData = await Promise.all(
+        data.map(async ({field, ...other}) => {
+          const fileUrl = await getPresignedUrl(other.fileId)
+          if (fileUrl.error !== null) throw new Error(fileUrl.error)
+          return {
+            ...other,
+            fileUrl: fileUrl.data,
+            fieldName: field.name,
+            companyId: field.company.id,
+            companyName: field.company.name,
+          }
+      })
+      )
 
-      const sortedData = orderData(input.sort, transformData)
+      const sortedData = orderData(input.sort, validData)
 
       const pageCount = Math.ceil(total / input.perPage)
       return { data: sortedData, pageCount }

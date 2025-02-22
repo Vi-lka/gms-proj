@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "~/components/ui/credenza";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
@@ -84,36 +84,50 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Название" />
       ),
       cell: ({ row }) => (
-        <div className="flex space-x-2">
-          <span className="max-w-[31.25rem] truncate font-medium">
-            {row.getValue("name")}
-          </span>
+        <div
+          onClick={()=> {
+            void navigator.clipboard.writeText(row.getValue("name"))
+            toast.success('Название скопировано')
+          }}
+        >
+          <TooltipProvider>
+            <Tooltip delayDuration={150}>
+              <TooltipTrigger className="max-w-64 truncate font-medium">
+                {row.getValue("name")}
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                {row.getValue("name")}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       ),
       enableHiding: false,
     },
     {
-      accessorKey: "url",
+      accessorKey: "fileUrl",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Карта" />
       ),
-      cell: ({ row }) => {
+      cell: ({ row }) => (
         <div className="flex">
-          <Credenza>
-              <CredenzaTrigger asChild>
-                <Image 
-                  src={row.getValue("url")}
-                  alt={row.getValue("name")}
-                  width={100}
-                  height={100}
-                  className='ring-ring hover:ring ring-offset-2 rounded-md object-contain mx-auto transition-all duration-300'
-                />
-              </CredenzaTrigger>
-            <CredenzaContent>
-              <CredenzaHeader>
-                <CredenzaTitle>{row.getValue("name")}</CredenzaTitle>
-              </CredenzaHeader>
-              <CredenzaBody>
+          <Dialog>
+            <DialogTrigger>
+              <Image 
+                src={row.getValue("fileUrl")}
+                alt={row.getValue("name")}
+                width={100}
+                height={100}
+                className='hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto transition-all duration-300'
+              />
+            </DialogTrigger>
+            <DialogContent className="flex flex-col max-w-full h-full">
+              <DialogHeader>
+                <DialogTitle className="text-sm truncate">
+                  {row.getValue("name")}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="flex-1">
                 <TransformWrapper 
                   wheel={{
                     smoothStep: 0.0007
@@ -121,7 +135,8 @@ export function getColumns({
                   maxScale={3}
                 >
                   <TransformComponent
-                    wrapperClass='bg-accent'
+                    wrapperClass='bg-accent rounded-xl'
+                    wrapperStyle={{ width: "100%", height: "100%" }}
                     contentStyle={{
                       width: "100%",
                       height: "100%",
@@ -133,26 +148,27 @@ export function getColumns({
                   >
                     <div className="relative h-full w-full">
                       <Image
-                        src={row.getValue("url")}
+                        src={row.getValue("fileUrl")}
                         alt={row.getValue("name")}
                         fill
-                        sizes='100vw'
+                        sizes='200vw'
                         quality={100}
                         className="object-contain"
                       />
                     </div>
                   </TransformComponent>
                 </TransformWrapper>
-              </CredenzaBody>
-              <CredenzaFooter className="gap-2 sm:space-x-0">
-                <CredenzaClose asChild>
+              </div>
+              <DialogFooter className="gap-2 sm:space-x-0">
+                <DialogClose asChild>
                   <Button variant="outline">Закрыть</Button>
-                </CredenzaClose>
-              </CredenzaFooter>
-            </CredenzaContent>
-          </Credenza>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
-      }
+      ),
+      enableSorting: false,
     },
     {
       accessorKey: "fieldName",

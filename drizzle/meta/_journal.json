@@ -50,6 +50,13 @@
       "when": 1740111198473,
       "tag": "0006_nifty_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1740214631709,
+      "tag": "0007_curious_earthquake",
+      "breakpoints": true
     }
   ]
 }

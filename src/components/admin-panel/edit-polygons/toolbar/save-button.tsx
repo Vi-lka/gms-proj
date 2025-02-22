@@ -1,15 +1,18 @@
 "use client"
 
 import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { toast } from 'sonner';
 import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider'
 import { Button } from '~/components/ui/button';
+import { createFieldMap } from '~/server/actions/fields-maps';
 import { createPresignedUrls } from '~/server/s3-bucket/actions';
 import { type FileT } from '~/server/s3-bucket/types';
 import { handleUpload } from '~/server/s3-bucket/utils';
 
 export default function SaveButton() {
+  const fieldId = usePolyStore((state) => state.fieldId)
   const imageFile = usePolyStore((state) => state.imageFile)
   const polygons = usePolyStore((state) => state.polygons)
   const editPolygonIndex = usePolyStore((state) => state.editPolygonIndex)
@@ -18,10 +21,12 @@ export default function SaveButton() {
   
   const { clear } = useTemporalStore((state) => state)
 
+  const router = useRouter();
+
   const [isPending, startTransition] = React.useTransition()
 
   const onSave = React.useCallback(() => {
-    if (polygons.length === 0 || !imageFile) return;
+    if (polygons.length === 0 || !imageFile || !fieldId) return;
 
     startTransition(async () => {
       // validate files
@@ -44,20 +49,40 @@ export default function SaveButton() {
         toast.error(uploadedFiles.error)
         return;
       }
-      if (!uploadedFiles.data || uploadedFiles.data.length === 0) {
+      if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
         toast.error("Файлы не найдены")
+        return;
+      }
+
+      const validPolygons = polygons.map((polygon) => ({
+        areaId: polygon.licensedArea?.id,
+        points: polygon.flattenedPoints,
+      })).filter((polygon) => polygon.areaId !== undefined) as {
+        areaId: string;
+        points: number[];
+      }[]
+
+      const { error } = await createFieldMap({
+        fieldId,
+        polygons: validPolygons,
+        fileName: uploadedFiles.data[0].originalName,
+        fileId: uploadedFiles.data[0].id,
+      })
+
+      if (error) {
+        toast.error(error)
         return;
       }
 
       resetState()
       clear()
-
-      // add field map polygons
-      // const { error } = await addFieldMap()
+  
       toast.success("Сохранено!")
+
+      router.push(`/dashboard/fmaps`)
     })
 
-  }, [polygons, imageFile, resetState, clear])
+  }, [polygons, imageFile, fieldId, router, resetState, clear])
 
   if (polygons.length === 0 || !imageFile) return null;
   

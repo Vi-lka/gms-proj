@@ -6,7 +6,7 @@ import type { FileT, PresignedUrlT } from "./types"
 import { unstable_noStore as noStore } from "next/cache"
 import { getErrorMessage } from "~/lib/handle-error"
 import { v4 as uuidv4 } from 'uuid';
-import { createPresignedUrlToDownload, createPresignedUrlToUpload, deleteFileFromBucket } from "./s3-file-management"
+import { createPresignedUrlToUpload, deleteFileFromBucket } from "./s3-file-management"
 import { env } from "~/env"
 import { db } from "../db"
 import { files } from "../db/schema"
@@ -118,48 +118,6 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
   }
 }
 
-export async function getPresignedUrl(id: string) {
-  noStore()
-  
-  const session = await auth();
-  if (restrictUser(session?.user.role, 'content')) {
-    const err = new Error("No access")
-    return {
-      data: null,
-      error: getErrorMessage(err)
-    }
-  }
-
-  try {
-    const file = await db.query.files.findFirst({
-      where: (files, { eq }) => eq(files.id, id),
-      columns: {
-        fileName: true,
-      }
-    })
-
-    if (!file) throw new Error("Файл не найден", { cause: file })
-    else {
-      // Get presigned url from s3 storage
-      const presignedUrl = await createPresignedUrlToDownload({
-        bucketName: env.S3_BUCKET_NAME,
-        fileName: file.fileName,
-        expiry: 60 * 60, // 1 hour
-      })
-  
-      return {
-        data: presignedUrl,
-        error: null
-      }
-    }
-  } catch (err) {
-    return {
-      data: null,
-      error: getErrorMessage(err),
-    }
-  }
-}
-
 export async function deleteFile(id: string) {
   noStore()
   
@@ -193,6 +151,10 @@ export async function deleteFile(id: string) {
         .where(eq(files.id, id))
         .returning()
         .then(takeFirstOrThrow)
+    }
+    return {
+      data: null,
+      error: null
     }
   } catch (err) {
     return {
