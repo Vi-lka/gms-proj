@@ -134,7 +134,7 @@ export async function getMapItem(id: string) {
 
   const result = await unstable_cache(
     fetchData,
-    [JSON.stringify(id)],
+    [id],
     { revalidate: 60, tags: ["map_items"] }
   )()
 

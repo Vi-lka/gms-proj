@@ -11,6 +11,7 @@ import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import DeleteFieldsMapsDialog from './delete-fields-maps-dialog'
 import FieldsMapsTableToolbarActions from './fields-maps-table-toolbar-actions'
+import OpenImageDialog from './open-image-dialog'
 
 interface FieldsMapsTableProps {
   promises: Promise<
@@ -44,22 +45,22 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
     }
   ]
   
-    const { table } = useDataTable({
-      data,
-      columns,
-      pageCount,
-      filterFields,
-      enableAdvancedFilter: false,
-      initialState: {
-        columnPinning: { 
-          right: ["actions"],
-          left: ["select"]
-        },
+  const { table } = useDataTable({
+    data,
+    columns,
+    pageCount,
+    filterFields,
+    enableAdvancedFilter: false,
+    initialState: {
+      columnPinning: { 
+        right: ["actions"],
+        left: ["select"]
       },
-      getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
-      shallow: false,
-      clearOnDefault: true,
-    })
+    },
+    getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
+    shallow: false,
+    clearOnDefault: true,
+  })
 
   return (
     <>
@@ -76,6 +77,12 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
         fieldsMaps={rowAction?.row.original ? [rowAction?.row.original] : []}
         showTrigger={false}
         onSuccess={() => rowAction?.row.toggleSelected(false)}
+      />
+      <OpenImageDialog
+        open={rowAction?.type === "dialog"}
+        onOpenChange={() => setRowAction(null)}
+        row={rowAction?.row}
+        showTrigger={false}
       />
     </>
   )

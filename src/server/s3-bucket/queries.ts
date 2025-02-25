@@ -5,7 +5,6 @@ import { auth } from "../auth";
 import { db } from "../db";
 import { createPresignedUrlToDownload } from "./s3-file-management";
 import { env } from "~/env";
-import { unstable_cache } from "~/lib/unstable-cache";
 import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getPresignedUrl(id: string) {
@@ -29,7 +28,7 @@ export async function getPresignedUrl(id: string) {
         const presignedUrl = await createPresignedUrlToDownload({
           bucketName: env.S3_BUCKET_NAME,
           fileName: file.fileName,
-          expiry: 60 * 60, // 1 hour
+          expiry: 24 * 60 * 60, // 24 hours
         })
       
         return {
@@ -46,12 +45,8 @@ export async function getPresignedUrl(id: string) {
       };
     }
   }
-    
-  const result = await unstable_cache(
-    fetchData,
-    [id],
-    { revalidate: 1200, tags: ["fields", "map_items"] }
-  )()
+
+  const result = await fetchData()
 
   return result
 }

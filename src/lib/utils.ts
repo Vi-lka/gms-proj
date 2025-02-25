@@ -134,3 +134,14 @@ export function restrictUser(role: UserRole | undefined, restriction: UserRestri
 
   return false
 }
+
+export function splitIntoPairs<T>(array: T[]): T[][] {
+  const result: T[][] = [];
+  
+  for (let i = 0; i < array.length; i += 2) {
+      const pair = array.slice(i, i + 2);
+      result.push(pair);
+  }
+  
+  return result;
+}

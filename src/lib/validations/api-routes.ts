@@ -42,21 +42,21 @@ export function getApiRoute({
 
   switch (route) {
     case "clusters":
-      const mapItemParamClusters = searchParams?.hasMapItem !== undefined 
+      const hasMapItemParamClusters = searchParams?.hasMapItem !== undefined 
         ? `hasMapItem=${searchParams.hasMapItem}`
         : ''
 
-      return `/api/clusters?${mapItemParamClusters}`
+      return `/api/clusters?${hasMapItemParamClusters}`
     
     case "companies":
-      const mapItemParamCompanies = searchParams?.hasMapItem !== undefined 
+      const hasMapItemParamCompanies = searchParams?.hasMapItem !== undefined 
         ? `hasMapItem=${searchParams.hasMapItem}`
         : ''
 
-      return `/api/companies?${mapItemParamCompanies}`
+      return `/api/companies?${hasMapItemParamCompanies}`
 
     case "fields":
-      const mapItemParamFields = searchParams?.hasMapItem !== undefined 
+      const hasMapItemParamFields = searchParams?.hasMapItem !== undefined 
         ? `hasMapItem=${searchParams.hasMapItem}`
         : ''
       const mapItemIdParamFields = searchParams?.mapItemId !== undefined 
@@ -65,14 +65,18 @@ export function getApiRoute({
       const companyIdParamFields = searchParams?.companyId !== undefined
         ? `companyId=${searchParams.companyId}`
         : ''
+      const hasFieldMapParamFields = searchParams?.hasFieldMap !== undefined
+        ? `hasFieldMap=${searchParams.hasFieldMap}`
+        : ''
       const fieldIdsParamFields = searchParams?.fieldsIds !== undefined
         ? `fieldsIds=${searchParams.fieldsIds.toString()}`
         : ''
 
       const fieldsParams = [
-        mapItemParamFields, 
+        hasMapItemParamFields, 
         mapItemIdParamFields, 
         companyIdParamFields, 
+        hasFieldMapParamFields,
         fieldIdsParamFields
       ]
 

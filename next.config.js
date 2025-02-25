@@ -27,6 +27,8 @@ const config = {
         hostname: env.S3_ENDPOINT,
         port: env.S3_PORT.toString(),
       },
+      { hostname: "localhost" },
+      { hostname: env.NEXT_PUBLIC_URL }
     ],
   },
   // async headers() {

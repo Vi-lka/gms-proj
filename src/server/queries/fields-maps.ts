@@ -11,6 +11,7 @@ import { db } from "../db";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { getPresignedUrl } from "../s3-bucket/queries";
+import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getFieldsMaps(
   input: GetFieldsMapsSchema,
@@ -134,7 +135,7 @@ export async function getFieldsMaps(
             companyId: field.company.id,
             companyName: field.company.name,
           }
-      })
+        })
       )
 
       const sortedData = orderData(input.sort, validData)
@@ -154,4 +155,82 @@ export async function getFieldsMaps(
   )()
 
   return result
+}
+
+export async function getFieldMap(
+  id: string,
+) {
+  const session = await auth();
+  if (restrictUser(session?.user.role, 'content')) {
+    throw new Error("No access");
+  }
+
+  const fetchData = async () => {
+    try {
+      const data = await db
+        .query.fieldsMaps.findFirst({
+          with: {
+            polygons: {
+              with: { area: true }
+            },
+            field: {
+              with: { company: true }
+            }
+          },
+          where(fields, operators) {
+            return operators.eq(fields.id, id)
+          },
+        })
+
+      if (!data)  return {
+        data: null,
+        error: "Карта не найдена"
+      }
+
+      return {
+        data,
+        error: null
+      }
+    } catch (err) {
+      console.error(err)
+      return {
+        data: null,
+        error: getErrorMessage(err),
+      }
+    }
+  }
+
+  const result = await unstable_cache(
+    fetchData,
+    [id],
+    { revalidate: 60, tags: ["fields", "map_items"] }
+  )()
+
+  return result
+}
+
+export async function getFieldMapWithImage(id: string) {
+  const result = await getFieldMap(id)
+
+  if (result.error !== null) return {
+    data: null,
+    error: getErrorMessage(result.error)
+  }
+
+  const fileUrl = await getPresignedUrl(result.data.fileId)
+
+  if (fileUrl.error !== null) return {
+    data: null,
+    error: getErrorMessage(fileUrl.error)
+  }
+
+  const validData = {
+    ...result.data,
+    fileUrl: fileUrl.data,
+  }
+
+  return {
+    data: validData,
+    error: null
+  }
 }

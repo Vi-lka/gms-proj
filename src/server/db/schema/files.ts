@@ -19,3 +19,6 @@ export const files = createTable(
     originalNameIndex: index("original_name_idx").on(file.originalName),
   })
 )
+
+// Types
+export type FileDB = typeof files.$inferSelect

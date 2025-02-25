@@ -12,10 +12,12 @@ import { type FieldExtend } from '~/server/db/schema';
 
 export default function SelectField({
   searchParams,
+  disabled,
   className,
   onSelect
 }: {
   searchParams?: FieldsSearchParamsT
+  disabled?: boolean,
   className?: string,
   onSelect?: ((value: string) => void)
 }) {
@@ -68,7 +70,7 @@ export default function SelectField({
           }))
           clear()
         }}
-        disabled={isAddible || editPolygonIndex !== null}
+        disabled={isAddible || editPolygonIndex !== null || disabled}
         className={className}
       >
         {selected?.label}
@@ -79,6 +81,7 @@ export default function SelectField({
             <ComboboxItem
               key={item.value}
               value={item.label} // for CommandInput
+              disabled={isAddible || editPolygonIndex !== null || disabled}
               selectedValue={selected?.label}
               onSelect={() => {
                 setOpen(false)

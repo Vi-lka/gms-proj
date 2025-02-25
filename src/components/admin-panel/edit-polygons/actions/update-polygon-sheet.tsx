@@ -55,16 +55,21 @@ export default function UpdatePolygonSheet({ saveToBackEnd, searchParams, onSubm
     })
   );
 
-  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {
     toast.error(error.message)
     return null;
   }
   if (!data || editPolygonIndex === null) return null;
 
+  console.log(polygons)
+
   const dataForField = data.map(item => {
     return {value: item.id, label: item.name}
-  })
+  }).filter(item => 
+    !polygons.some(polygon => polygon.licensedArea?.id === item.value)
+    ||
+    polygons[editPolygonIndex]?.licensedArea?.id === item.value
+  )
 
   const onSave = () => {
     const copy = [...polygons];
@@ -119,38 +124,42 @@ export default function UpdatePolygonSheet({ saveToBackEnd, searchParams, onSubm
           </SheetDescription>
         </SheetHeader>
         <ScrollArea classNameViewport='p-3'>
-          <Combobox 
-            open={open} 
-            onOpenChange={(open) => {
-              setOpen(open)
-            }}
-            modal
-          >
-            <ComboboxTrigger 
-              placeholder="Лизензионный участок..."
-              selectedValue={selectedItem?.value}
-              handleClear={() => setSelectedItem(undefined)}
+          {isLoading ? (
+            <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
+          ): (
+            <Combobox 
+              open={open} 
+              onOpenChange={(open) => {
+                setOpen(open)
+              }}
+              modal
             >
-              {selectedItem?.label}
-            </ComboboxTrigger>
-            <ComboboxContent>
-              <ComboboxGroup>
-                {dataForField.map((item) => (
-                  <ComboboxItem
-                    key={item.value}
-                    value={item.label} // for CommandInput
-                    selectedValue={selectedItem?.label}
-                    onSelect={() => {
-                      setSelectedItem(item)
-                      setOpen(false)
-                    }}
-                  >
-                    {item.label}
-                  </ComboboxItem>
-                ))}
-              </ComboboxGroup>
-            </ComboboxContent>
-          </Combobox>
+              <ComboboxTrigger 
+                placeholder="Лизензионный участок..."
+                selectedValue={selectedItem?.value}
+                handleClear={() => setSelectedItem(undefined)}
+              >
+                {selectedItem?.label}
+              </ComboboxTrigger>
+              <ComboboxContent>
+                <ComboboxGroup>
+                  {dataForField.map((item) => (
+                    <ComboboxItem
+                      key={item.value}
+                      value={item.label} // for CommandInput
+                      selectedValue={selectedItem?.label}
+                      onSelect={() => {
+                        setSelectedItem(item)
+                        setOpen(false)
+                      }}
+                    >
+                      {item.label}
+                    </ComboboxItem>
+                  ))}
+                </ComboboxGroup>
+              </ComboboxContent>
+            </Combobox>
+          )}
         </ScrollArea>
         <SheetFooter>
           <SheetClose asChild>

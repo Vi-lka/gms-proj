@@ -239,3 +239,16 @@ export const createFieldMapSchema = z.object({
   }).array().min(1, { message: "Должен быть хотя бы 1 полигон" })
 })
 export type CreateFieldMapSchema = z.infer<typeof createFieldMapSchema>;
+
+export const updateFieldMapSchema = z.object({
+  id: z.string().min(1),
+  fieldId: z.string().min(1, "Выберите Месторождение"),
+  fileId: z.string().optional(),
+  fileName: z.string().optional(),
+  polygons: z.object({
+    id: z.string().min(1),
+    areaId: z.string().min(1, "Выберите Лицензионный участок"),
+    points: z.number().array().min(6, { message: "Должно быть хотя бы 3 точки" })
+  }).array().min(1, { message: "Должен быть хотя бы 1 полигон" })
+})
+export type UpdateFieldMapSchema = z.infer<typeof updateFieldMapSchema>;

@@ -2,11 +2,6 @@ import React from 'react'
 import ToolbarHistory from './toolbar-history';
 import AddPolygon from '../add-polygon';
 import { cn } from '~/lib/utils';
-import Image from 'next/image';
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { Button } from '~/components/ui/button';
-import { X } from 'lucide-react';
-import SaveButton from './save-button';
 import ToolbarImage from './toolbar-image';
 
 interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -16,6 +11,7 @@ interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Toolbar({
   showControls,
   className,
+  children,
   ...props
 }: ToolbarProps) {
   return (
@@ -33,7 +29,7 @@ export default function Toolbar({
 
       {showControls && <AddPolygon />}
 
-      <SaveButton />
+      {children}
     </div>
   )
 }

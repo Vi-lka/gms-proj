@@ -9,6 +9,9 @@ import TooltipMouse from '~/components/ui/special/tooltip-mouse';
 import EditPolygonsActions from './actions/edit-polygons-actions';
 import SelectField from './toolbar/select-field';
 import UploadFile from './upload-file';
+import SaveButton from './toolbar/save-button';
+import UpdateButton from './toolbar/update-button';
+import { type DefaultEditDataT } from '~/components/poly-annotation/types';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,
@@ -22,7 +25,20 @@ const Toolbar = dynamic(() => import('./toolbar/toolbar'), {
   loading: () => <p>Loading...</p>,
 });
 
-export default function EditPolygons({ className }: { className?: string }) {
+type EditPolygonsConditionalProps =
+  | {
+      type: "create",
+    }
+  | {
+      type: "update",
+      defaultData: DefaultEditDataT | undefined,
+    };
+
+type EditPolygonsProps = EditPolygonsConditionalProps & {
+  className?: string
+}
+
+export default function EditPolygons(props: EditPolygonsProps) {
   const { dimensions, ref } = useElementDimensions();
 
   const tooltip = usePolyStore((state) => state.tooltip)
@@ -41,10 +57,20 @@ export default function EditPolygons({ className }: { className?: string }) {
     }
   }, [dimensions, setStageConfig])
 
+  const title = (props.type === "update" && props.defaultData)
+    ? `${props.defaultData.fieldName} (${props.defaultData.companyName})`
+    : null
+
   return (
-    <div className={cn("relative flex flex-col gap-2 flex-grow w-full h-full", className)}>
-      <SelectField searchParams={{ hasFieldMap: false }} />
-      <Toolbar showControls={fieldId !== null && imageUrl !== undefined} />
+    <div className={cn("relative flex flex-col gap-2 flex-grow w-full h-full", props.className)}>
+      {props.type === "update" 
+        ? <p className='w-full truncate'>{title}</p>
+        : <SelectField searchParams={{ hasFieldMap: false }} />
+      }
+      <Toolbar showControls={fieldId !== null && imageUrl !== undefined}>
+        {props.type === "create" && <SaveButton />}
+        {props.type === "update" && <UpdateButton defaultData={props.defaultData} />}
+      </Toolbar>
       <TooltipMouse open={!!tooltip} description={tooltip ?? ''} className='flex flex-col w-full h-full flex-grow'>
         <div ref={ref} className='block w-full h-full flex-grow'>
           <Content fieldId={fieldId} imageUrl={imageUrl} />

@@ -62,3 +62,21 @@ export interface ImageConfig {
   naturalSize: {width: number, height: number},
   naturalRatio: number,
 }
+
+export type DefaultEditDataT = {
+  id: string;
+  fieldId: string;
+  fieldName: string;
+  companyName: string;
+  imageUrl: string;
+  polygons: {
+    id: string;
+    points: number[][];
+    flattenedPoints: number[];
+    isFinished: boolean;
+    licensedArea: {
+        id: string;
+        name: string;
+    };
+  }[];
+}

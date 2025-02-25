@@ -32,7 +32,6 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
     })
   );
 
-  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {
     toast.error(error.message)
     return null;
@@ -41,7 +40,11 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
 
   const dataForField = data.map(item => {
     return {value: item.id, label: item.name}
-  })
+  }).filter(item => 
+    !polygons.some(polygon => polygon.licensedArea?.id === item.value)
+    ||
+    polygons[activePolygonIndex]?.licensedArea?.id === item.value
+  )
 
   const onSelect = (id: string, name: string) => {
     const copy = [...polygons];
@@ -95,38 +98,42 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
           </SheetDescription>
         </SheetHeader>
         <ScrollArea classNameViewport='p-3'>
-          <Combobox 
-            open={open} 
-            onOpenChange={(open) => {
-              setOpen(open)
-            }}
-            modal
-          >
-            <ComboboxTrigger 
-              placeholder="Лизензионный участок..."
-              selectedValue={selectedValue?.value}
-              handleClear={handleClear}
+          {isLoading ? (
+            <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
+          ) : (
+            <Combobox 
+              open={open} 
+              onOpenChange={(open) => {
+                setOpen(open)
+              }}
+              modal
             >
-              {selectedValue?.label}
-            </ComboboxTrigger>
-            <ComboboxContent>
-              <ComboboxGroup>
-                {dataForField.map((item) => (
-                  <ComboboxItem
-                    key={item.value}
-                    value={item.label} // for CommandInput
-                    selectedValue={selectedValue?.label}
-                    onSelect={() => {
-                      onSelect(item.value, item.label)
-                      setOpen(false)
-                    }}
-                  >
-                    {item.label}
-                  </ComboboxItem>
-                ))}
-              </ComboboxGroup>
-            </ComboboxContent>
-          </Combobox>
+              <ComboboxTrigger 
+                placeholder="Лизензионный участок..."
+                selectedValue={selectedValue?.value}
+                handleClear={handleClear}
+              >
+                {selectedValue?.label}
+              </ComboboxTrigger>
+              <ComboboxContent>
+                <ComboboxGroup>
+                  {dataForField.map((item) => (
+                    <ComboboxItem
+                      key={item.value}
+                      value={item.label} // for CommandInput
+                      selectedValue={selectedValue?.label}
+                      onSelect={() => {
+                        onSelect(item.value, item.label)
+                        setOpen(false)
+                      }}
+                    >
+                      {item.label}
+                    </ComboboxItem>
+                  ))}
+                </ComboboxGroup>
+              </ComboboxContent>
+            </Combobox>
+          )}
         </ScrollArea>
         <SheetFooter>
           <SheetClose asChild>

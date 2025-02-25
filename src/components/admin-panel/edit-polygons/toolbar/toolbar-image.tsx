@@ -9,7 +9,7 @@ import { defaultInitState } from '~/components/poly-annotation/store'
 
 export default function ToolbarImage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {stageConfig, imageConfig, stageRef, ...restDefaultInitState} = defaultInitState
+  const {stageConfig, imageConfig, stageRef, fieldId, polygons, ...restDefaultInitState} = defaultInitState
 
   const imageUrl = usePolyStore((state) => state.imageUrl)
   const isAddible = usePolyStore((state) => state.isAddible)
@@ -18,6 +18,15 @@ export default function ToolbarImage() {
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
   
   const { clear } = useTemporalStore((state) => state)
+
+  const handleDelete = () => {
+    setImageUrl(undefined)
+    setGlobalState((prev) => ({
+      ...prev,
+      ...restDefaultInitState
+    }))
+    clear()
+  }
 
   if (!imageUrl) return null;
 
@@ -32,8 +41,8 @@ export default function ToolbarImage() {
           width={36}
           height={36}
           className={cn(
-            'object-cover flex-none aspect-square h-full max-h-9 cursor-pointer overflow-hidden rounded-md ring-ring ring-offset-2 ring-offset-muted transition-all',
-            !disabled && 'hover:ring-1'
+            'object-cover aspect-square h-full max-h-9 overflow-hidden rounded-md ring-ring ring-offset-2 ring-offset-muted transition-all opacity-50',
+            !disabled && 'hover:ring-1 cursor-pointer opacity-100'
           )}
         />
       </PopoverTrigger>
@@ -41,14 +50,7 @@ export default function ToolbarImage() {
         <Button 
           variant="destructive" 
           size="sm"
-          onClick={() => {
-            setImageUrl(undefined)
-            setGlobalState((prev) => ({
-              ...prev,
-              ...restDefaultInitState
-            }))
-            clear()
-          }}
+          onClick={handleDelete}
           disabled={disabled}
           className='gap-1 py-1 px-2 h-fit'
         >
