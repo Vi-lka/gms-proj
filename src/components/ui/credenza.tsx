@@ -31,7 +31,8 @@ interface BaseProps {
 
 interface RootCredenzaProps extends BaseProps {
   open?: boolean
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void,
+  modal?: boolean;
 }
 
 interface CredenzaProps extends BaseProps {

@@ -210,19 +210,19 @@ export default function AddPolygon({
   function getButtonContent() {
     if (askAcceptPos) return {
       title: "Подтвердите расположение элемента...",
-      icon: <MapPinCheck className="size-4 flex-none" aria-hidden="true" />,
+      icon: <MapPinCheck className="size-4 flex-none" />,
     }
     if (openSheet) return { 
       title:"Введите данные", 
-      icon: <Database className="size-4 flex-none" aria-hidden="true" />
+      icon: <Database className="size-4 flex-none" />
     };
     if (isAddible) return { 
       title: "Кликнете в нужном месте на карте...", 
-      icon: <MapIcon className="size-4 flex-none" aria-hidden="true" /> 
+      icon: <MapIcon className="size-4 flex-none" /> 
     }
     return {
       title: "Добавить полигон",
-      icon: <Plus className="size-4 flex-none" aria-hidden="true" />
+      icon: <Plus className="size-4 flex-none" />
     }
   }
 

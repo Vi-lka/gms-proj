@@ -100,7 +100,7 @@ export default function EditPolygonsActions() {
                         className="size-8 hover:border mr-2"
                         onClick={() => setEditPolygonAction("update")}
                       >
-                        <Edit className="size-4 shrink-0" aria-hidden="true" />
+                        <Edit className="size-4 shrink-0"/>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -118,7 +118,7 @@ export default function EditPolygonsActions() {
                         className="size-8 hover:border"
                         onClick={() => setEditPolygonAction("move")}
                       >
-                        <Move className="size-4 shrink-0" aria-hidden="true" />
+                        <Move className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -139,7 +139,7 @@ export default function EditPolygonsActions() {
                         className="size-8 hover:border"
                         onClick={() => setEditPolygonAction("delete")}
                       >
-                        <Trash2 className="size-4 shrink-0" aria-hidden="true" />
+                        <Trash2 className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -160,7 +160,7 @@ export default function EditPolygonsActions() {
                         className="size-8 hover:border"
                         onClick={clearSelection}
                       >
-                        <X className="size-4 shrink-0" aria-hidden="true" />
+                        <X className="size-4 shrink-0"/>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">

@@ -1,9 +1,11 @@
-import { type Cluster, type CompanyExtend, type Field } from "~/server/db/schema";
+import { type FieldWithLicensedAreas, type AreaData, type Cluster, type CompanyWithListedAreas, type Profitability } from "~/server/db/schema";
 
 export type MapItemT = {
   id: string,
-  companies: CompanyExtend[];
-  fields: Field[]
+  companies: CompanyWithListedAreas[];
+  areasData: AreaData[]
+  maxElements: MaxValue<Profitability>[]
+  fields: FieldWithLicensedAreas[]
   cluster: Cluster | null;
   x: number;
   y: number;
@@ -22,3 +24,11 @@ export type SingleItemGroupT = {
   data: MapItemT
 }
 export type MapGroupT = IntersectionGroupT | SingleItemGroupT
+
+export type RelevanceKeys<T> = keyof T;
+
+export type MaxValue<T> = {
+  key: RelevanceKeys<T>, 
+  originalValue: number, 
+  weightedValue: number
+}

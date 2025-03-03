@@ -9,28 +9,34 @@ import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms
 import { useStageEllementPos } from '~/hooks/use-stage-ellement-pos'
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
 import { buttonVariants } from '~/components/ui/button'
-import { cn } from '~/lib/utils'
+import { cn, idToSentenceCase } from '~/lib/utils'
 import { Separator } from '~/components/ui/separator'
 import useOutsideClick from '~/hooks/use-outside-click'
+import { Badge } from '~/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
+import { useElementsSearch, useMapItemsSearch } from '../filters/hooks'
 
 export default function SingleItem({
   data,
   onClick,
   handleClickOutside,
-  className
+  className,
+  htmlClassName
 }: {
   data: MapItemT,
   onClick?: React.MouseEventHandler<HTMLDivElement>,
   handleClickOutside?: () => void,
-  className?: string
+  className?: string,
+  htmlClassName?: string,
 }) {
   const stage = useAtomValue(stageAtom)
-
   const selectedItem = useAtomValue(selectedItemAtom)
+  const { width: windowW } = useAtomValue(mapContainerDimensions);
 
   const ref = useOutsideClick(100, handleClickOutside);
 
-  const { width: windowW } = useAtomValue(mapContainerDimensions);
+  const [elementsSearch] = useElementsSearch()
+  const [{elements: elementsComparison}] = useMapItemsSearch()
 
   const { width, height, x, y } = data
 
@@ -53,8 +59,6 @@ export default function SingleItem({
     minw: 0.3,
   })
 
-  data.companies.sort((a, b) => a.name.localeCompare(b.name))
-
   return (
     <Html
       groupProps={{
@@ -65,7 +69,7 @@ export default function SingleItem({
         scale: {x: scale, y: scale}
       }}
       divProps={{
-        className: "hover:!z-[1000]"
+        className: cn("hover:!z-[120]", htmlClassName)
       }}
     >
       <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
@@ -83,6 +87,41 @@ export default function SingleItem({
         >
           <CircleDot className='mx-auto !w-5 !h-5 group-hover:text-foreground' />
           <div className='relative font-medium text-xs text-left cursor-pointer'>
+            <div className='absolute top-[-54px] -left-0.5 flex gap-1 items-end mb-1 transition-all duration-300'>
+              <TooltipProvider delayDuration={150}>
+                {data.maxElements.map((value, index) => {
+
+                  const inSearch = 
+                  elementsSearch?.some(element => element === value.key)
+                  ??
+                  elementsComparison?.some(item => item.element === value.key)
+
+                  return (
+                    <Tooltip key={index}>
+                      <TooltipTrigger asChild>
+                        <Badge 
+                          className={cn(
+                            'relative p-0 px-0.5 h-fit rounded-sm shadow transition-all duration-300',
+                            (inSearch && selectedItem?.id !== data.id) && "transition-none outline-dashed outline-2 outline-yellow"
+                          )}
+                          style={{
+                            fontSize: 12 - index*1.1,
+                            lineHeight: 2,
+                            borderColor: `hsl(var(--border) / ${1 - index*0.25})`,
+                            backgroundColor: `hsl(var(--primary) / ${1 - index*0.15})`,
+                          }}
+                        >
+                          {idToSentenceCase(value.key)}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {value.originalValue}
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                })}
+              </TooltipProvider>
+            </div>
             <div className={cn(
               'absolute whitespace-pre top-[-21px] block w-max max-w-32 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
               selectedItem?.id === data.id ? "left-7" : "left-6"

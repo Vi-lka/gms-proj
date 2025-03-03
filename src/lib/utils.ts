@@ -1,10 +1,20 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { type UserRestrictions, type UserRole, type ApproxEnumT } from "./types"
+import { type UserRestrictions, type UserRole, type ApproxEnumT, type RelevanceKeys, type MaxValue } from "./types"
 import translateData from "./static/translate-data"
+import { type Profitability } from "~/server/db/schema"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+export function intervalToString(
+  start: number | string | null, 
+  end: number | string | null
+): string {
+  if (!start) return ""
+  if (!end) return start.toString()
+  return `${start} - ${end}`
 }
 
 export function formatDate(
@@ -144,4 +154,130 @@ export function splitIntoPairs<T>(array: T[]): T[][] {
   }
   
   return result;
+}
+
+export const testProfitability: Profitability = {
+  id: "testProfitability",
+  lithium: 1,
+  rubidium: 1,
+  cesium: 1,
+  boron: 1,
+  iodine: 1,
+  sodium: 1,
+  calcium: 1,
+  magnesium: 1,
+  potassium: 1,
+  chlorine: 1,
+  bromine: 1,
+  strontium: 1,
+  barium: 1,
+  aluminum: 1,
+  selenium: 1,
+  silicon: 1,
+  manganese: 1,
+  copper: 1,
+  zinc: 1,
+  silver: 1,
+  tungsten: 1,
+  titanium: 1,
+  vanadium: 1,
+  chromium: 1,
+  cobalt: 1,
+  nickel: 1,
+  arsenic: 1,
+  molybdenum: 1,
+  plumbum: 1,
+  bismuth: 1,
+  sulfateIon: 1,
+  bicarbonate: 1,
+  carbonateIon: 1,
+  ammonium: 1,
+  fluorine: 1,
+  nitrogenDioxide: 1,
+  nitrate: 1,
+  phosphate: 1,
+  ferrum: 1,
+}
+
+
+export function findMaxValuesByRelevance<T extends Record<string, string | number | null>>(
+  data: Array<Partial<Record<RelevanceKeys<T>, number | null>>>,
+  relevanceObj: T
+): MaxValue<T>[] {
+  if (typeof relevanceObj !== 'object' || relevanceObj === null) {
+    throw new Error('relevanceObj must be an object');
+  }
+
+  if (!Array.isArray(data)) {
+    throw new Error('data must be an array');
+  }
+
+  const maxValues: MaxValue<T>[] = [];
+
+  // go through each key from relevanceObj
+  for (const key in relevanceObj) {
+    let maxWeightedValue = -Infinity;
+    let maxOriginalValue: number | undefined;
+
+    // finding the maximum value for the current key
+    data.forEach(item => {
+      if (
+        key in item
+        && 
+        typeof item[key] === 'number' && typeof relevanceObj[key] === 'number'
+      ) {
+        const weightedValue = item[key] / relevanceObj[key];
+        if (weightedValue > maxWeightedValue) {
+          maxWeightedValue = weightedValue;
+          maxOriginalValue = item[key]; 
+        }
+      }
+    });
+
+    // write down the maximum value
+    if (maxOriginalValue !== undefined) {
+      maxValues.push({key, originalValue: maxOriginalValue, weightedValue: maxWeightedValue});
+    }
+  }
+
+  maxValues.sort((a, b) => b.weightedValue - a.weightedValue);
+
+  return maxValues;
+}
+
+export function setNullByKeys<T extends Record<string, unknown>>(
+  objectsArray: T[],
+  keysArray: string[]
+): T[] {
+  return objectsArray.map(obj => {
+    const newObj = { ...obj };
+    Object.keys(obj).forEach(key => {
+      if (!keysArray.includes(key)) {
+        (newObj as Record<string, unknown>)[key] = null;
+      }
+    });
+    return newObj;
+  });
+}
+
+export function extractKeys<T extends string>(
+  objectsArray: Array<Partial<Record<T, number | null>>>,
+  keysArray: T[]
+): Array<Partial<Record<T, number | null>>> {
+
+  const result: Array<Partial<Record<T, number | null>>> = [];
+  
+  objectsArray.forEach(obj => {
+
+    const newObj: Partial<Record<T, number | null>> = {};
+
+    Object.keys(obj).forEach(key => {
+      if (keysArray.includes(key as T)) {
+        newObj[key as T] = obj[key as T]
+      }
+    });
+    result.push(newObj);
+  });
+
+  return result
 }

@@ -178,6 +178,9 @@ export interface LicensedAreaExtend extends LicensedArea {
 export interface FieldExtend extends Field {
   companyName: Company["name"]
 }
+export interface FieldWithLicensedAreas extends Field {
+  licensedAreas: LicensedArea[]
+}
 export interface AreaDataExtend extends AreaData {
   areaName: LicensedArea["name"],
   fieldId: Field["id"],

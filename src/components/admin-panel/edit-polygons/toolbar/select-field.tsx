@@ -49,7 +49,7 @@ export default function SelectField({
   if (!data) return null
 
   const dataForField = data.map(item => {
-    return {value: item.id, label: item.name + ` (${item.companyName})`}
+    return {value: item.id, label: item.name, description: `(${item.companyName})`}
   })
 
   const selected = dataForField.find(item => item.value === fieldId)
@@ -94,7 +94,10 @@ export default function SelectField({
                 onSelect?.(item.value)
               }}
             >
-              {item.label}
+              <div className='flex flex-col'>
+                {item.label}
+                <span className='line-clamp-2 text-[9px] leading-3 text-muted-foreground'>{item.description}</span>
+              </div>
             </ComboboxItem>
           ))}
         </ComboboxGroup>

@@ -7,6 +7,7 @@ import { type PageProps } from '~/lib/types'
 import { auth } from '~/server/auth';
 import { getMap, getMapItems } from '~/server/queries/map';
 import Map from "./Map";
+import DefaultLoading from '~/components/loadings/default';
 
 export default async function MapPage(props: PageProps) {
   const session = await auth();
@@ -41,7 +42,7 @@ export default async function MapPage(props: PageProps) {
       </Breadcrumb>
       <div className="mt-6 flex flex-col flex-grow">
         <React.Suspense
-          fallback={"Loading..."}
+          fallback={<DefaultLoading />}
         >
           <Map promises={promises} />
         </React.Suspense>

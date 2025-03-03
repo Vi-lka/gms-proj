@@ -12,17 +12,19 @@ import UploadFile from './upload-file';
 import SaveButton from './toolbar/save-button';
 import UpdateButton from './toolbar/update-button';
 import { type DefaultEditDataT } from '~/components/poly-annotation/types';
+import DefaultLoading from '~/components/loadings/default';
+import { Skeleton } from '~/components/ui/skeleton';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => <DefaultLoading />,
 });
 const PolyItemsEdit = dynamic(() => import('~/components/poly-annotation/poly-items-edit'), {
   ssr: false,
 });
 const Toolbar = dynamic(() => import('./toolbar/toolbar'), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => <Skeleton className='w-full' />,
 });
 
 type EditPolygonsConditionalProps =

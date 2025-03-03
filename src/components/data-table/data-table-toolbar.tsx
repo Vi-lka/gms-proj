@@ -97,7 +97,7 @@ export function DataTableToolbar<TData>({
             onClick={() => table.resetColumnFilters()}
           >
             Сброс
-            <X className="ml-2 size-4" aria-hidden="true" />
+            <X className="ml-2 size-4" />
           </Button>
         )}
       </div>

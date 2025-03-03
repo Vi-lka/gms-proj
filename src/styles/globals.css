@@ -95,6 +95,30 @@
     -webkit-appearance: none;
     margin: 0;
   }
+
+  /**
+  * Note: this is needed to prevent the popover from being cut off
+  * by the viewport when the popover is nested inside another popover
+  */
+  div[data-radix-popper-content-wrapper]:has(> div[data-side='right']) {
+    left: calc(
+      min(
+        0px,
+        var(--radix-popper-available-width) +
+          (-1.2 * var(--radix-popper-anchor-width))
+      )
+    ) !important;
+  }
+  
+  div[data-radix-popper-content-wrapper]:has(> div[data-side='left']) {
+    left: calc(
+      max(
+        0px,
+        (-1.2 * var(--radix-popper-available-width)) +
+          var(--radix-popper-anchor-width)
+      )
+    ) !important;
+  }
 }
 
 .rdp-vhidden {

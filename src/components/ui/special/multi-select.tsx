@@ -68,6 +68,8 @@ interface MultiSelectProps
     label: string;
     /** The unique value associated with the option. */
     value: string;
+    /** Optional description to display alongside the option. */
+    description?: string;
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>;
   }[];
@@ -325,7 +327,10 @@ export const MultiSelect = React.forwardRef<
                         {option.icon && (
                           <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                         )}
-                        <span className="line-clamp-2">{option.label}</span>
+                        <div className='flex flex-col'>
+                          <span className="line-clamp-2">{option.label}</span>
+                          <span className='line-clamp-2 text-[9px] leading-3 text-muted-foreground'>{option.description}</span>
+                        </div>
                       </CommandItem>
                     );
                   })}

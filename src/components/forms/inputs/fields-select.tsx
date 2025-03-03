@@ -7,7 +7,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 import { MultiSelect } from '~/components/ui/special/multi-select';
 import { cn } from '~/lib/utils';
 import { getApiRoute, type FieldsSearchParamsT } from '~/lib/validations/api-routes'
-import { type Field } from '~/server/db/schema';
+import { type FieldExtend } from '~/server/db/schema';
 
 export default function FieldsSelect<TData extends FieldValues>({
   form,
@@ -28,7 +28,7 @@ export default function FieldsSelect<TData extends FieldValues>({
   onOpenChange?(open: boolean): void,
   className?: string,
 }) {
-  const { data, error, isLoading } = useSWR<Field[], Error>(
+  const { data, error, isLoading } = useSWR<FieldExtend[], Error>(
     getApiRoute({
       route: "fields", 
       searchParams
@@ -43,7 +43,7 @@ export default function FieldsSelect<TData extends FieldValues>({
   if (!data) return null
 
   const dataForField = data.map(item => {
-    return {value: item.id, label: item.name}
+    return {value: item.id, label: item.name, description: `(${item.companyName})`}
   })
 
   return (

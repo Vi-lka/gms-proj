@@ -145,13 +145,8 @@ export default function MoveEllementPortal({
         position: "bottom-center",
         action: {
           label: isPending 
-           ? (
-            <Loader
-              className="mr-2 size-4 animate-spin"
-              aria-hidden="true"
-            />
-          ) 
-          : <Check className="size-4" />,
+            ? <Loader className="mr-2 size-4 animate-spin" />
+            : <Check className="size-4" />,
           onClick: onAccept,
         },
         cancel: {
@@ -206,7 +201,7 @@ export default function MoveEllementPortal({
                       className="size-8 hover:border"
                       onClick={() => onOpenChange(false)}
                     >
-                      <X className="size-4 shrink-0" aria-hidden="true" />
+                      <X className="size-4 shrink-0" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">

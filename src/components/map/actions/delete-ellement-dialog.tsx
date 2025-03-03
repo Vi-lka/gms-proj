@@ -50,12 +50,7 @@ export default function DeleteEllementDialog({ item, onFormSubmit, ...props }: D
             variant="destructive"
             onClick={onDelete}
           >
-            {isPending && (
-              <Loader
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
+            {isPending && <Loader className="mr-2 size-4 flex-none animate-spin" />}
             Удалить
           </Button>
         </CredenzaFooter>

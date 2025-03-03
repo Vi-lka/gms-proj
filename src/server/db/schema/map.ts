@@ -1,7 +1,7 @@
 import { boolean, index, primaryKey, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { numericCasted } from "../utils";
-import { type Field } from "./fields";
+import { FieldWithLicensedAreas, type Field } from "./fields";
 
 export const mapData = createTable("map_data", {
   id: varchar("id", { length: 255 })
@@ -80,6 +80,9 @@ export type MapItem = typeof mapItems.$inferSelect
 export type Company = typeof companies.$inferSelect
 export type CompanyExtend = Company & {
   fields: Field[]
+}
+export type CompanyWithListedAreas = Company & {
+  fields: FieldWithLicensedAreas[]
 }
 export type Cluster = typeof clusters.$inferSelect
 

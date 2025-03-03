@@ -7,10 +7,14 @@ import {
   type TableConfig,
   type AnyColumn,
   type SQL,
+  lte,
+  gte,
 } from "drizzle-orm"
 import { type PgTableWithColumns, type PgColumn } from "drizzle-orm/pg-core"
 import { type ExtendedColumnSort, type ExtendedSortingState } from "~/lib/types"
 import { customType } from 'drizzle-orm/pg-core'
+import { type ElementsSearchSchema } from "~/lib/validations/search-params"
+import { type areasData } from "./schema"
 
 export type NumericConfig = {
 	precision?: number
@@ -202,11 +206,17 @@ export function fieldSorter<TData extends object>(
   };
 }
 
-export function intervalToString(
-  start: number | string | null, 
-  end: number | string | null
-): string {
-  if (!start) return ""
-  if (!end) return start.toString()
-  return `${start} - ${end}`
+export function compareElements(
+  table: typeof areasData,
+  input: ElementsSearchSchema[]
+) {
+  const compare: (SQLWrapper | undefined)[] = []
+
+  input.forEach(item => {
+    if (item.element === null) return;
+    if (item.max !== null) compare.push(lte(table[item.element], item.max))
+    if (item.min !== null) compare.push(gte(table[item.element], item.min))
+  })
+
+  return compare
 }

@@ -42,7 +42,7 @@ export default function DeleteAreasDataDialog({
       {showTrigger ? (
         <CredenzaTrigger asChild>
           <Button variant="outline" size="sm">
-            <Trash className="mr-2 size-4" aria-hidden="true" />
+            <Trash className="mr-2 size-4" />
             Удалить ({areasData.length})
           </Button>
         </CredenzaTrigger>
@@ -65,12 +65,7 @@ export default function DeleteAreasDataDialog({
             onClick={onDelete}
             disabled={isPending}
           >
-            {isPending && (
-              <Loader
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
+            {isPending && <Loader className="mr-2 size-4 animate-spin" />}
             Удалить
           </Button>
         </CredenzaFooter>

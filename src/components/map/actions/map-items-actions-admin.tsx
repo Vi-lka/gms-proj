@@ -90,7 +90,7 @@ export default function MapItemsActionsAdmin() {
                         className="size-8 hover:border mr-2"
                         onClick={() => setItemAction("update")}
                       >
-                        <Edit className="size-4 shrink-0" aria-hidden="true" />
+                        <Edit className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -108,7 +108,7 @@ export default function MapItemsActionsAdmin() {
                         className="size-8 hover:border"
                         onClick={() => setItemAction("move")}
                       >
-                        <Move className="size-4 shrink-0" aria-hidden="true" />
+                        <Move className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -129,7 +129,7 @@ export default function MapItemsActionsAdmin() {
                         className="size-8 hover:border"
                         onClick={() => setItemAction("delete")}
                       >
-                        <Trash2 className="size-4 shrink-0" aria-hidden="true" />
+                        <Trash2 className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">
@@ -150,7 +150,7 @@ export default function MapItemsActionsAdmin() {
                         className="size-8 hover:border"
                         onClick={() => setSelectedItem(null)}
                       >
-                        <X className="size-4 shrink-0" aria-hidden="true" />
+                        <X className="size-4 shrink-0" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground">

@@ -81,12 +81,7 @@ export default function CompanyToClusterForm({
             </Button>
           </SheetClose>
           <Button disabled={saveDisabled}>
-            {isPending && (
-              <Loader
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
+            {isPending && <Loader className="mr-2 size-4 animate-spin" />}
             Сохранить
           </Button>
         </SheetFooter>

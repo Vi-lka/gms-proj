@@ -106,12 +106,7 @@ export default function UpdateButton({
       disabled={isAddible || editPolygonIndex !== null || isPending}
       onClick={onSave}
     >
-      {isPending && (
-        <Loader
-          className="flex-none mr-2 size-4 animate-spin"
-          aria-hidden="true"
-        />
-      )}
+      {isPending && <Loader className="flex-none mr-2 size-4 animate-spin" />}
       Сохранить
     </Button>
   )

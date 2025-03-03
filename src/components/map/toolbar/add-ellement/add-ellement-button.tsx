@@ -169,19 +169,19 @@ export default function AddEllementButton({
   function getButtonContent() {
     if (mapItem && !openAddEllementSheet) return {
       title: "Подтвердите расположение элемента...",
-      icon: <MapPinCheck className="size-4 flex-none" aria-hidden="true" />,
+      icon: <MapPinCheck className="size-4 flex-none" />,
     }
     if (mapItem) return { 
       title:"Введите данные", 
-      icon: <Database className="size-4 flex-none" aria-hidden="true" />
+      icon: <Database className="size-4 flex-none" />
     };
     if (addEllement) return { 
       title: "Кликнете в нужном месте на карте...", 
-      icon: <MapIcon className="size-4 flex-none" aria-hidden="true" /> 
+      icon: <MapIcon className="size-4 flex-none" /> 
     }
     return {
       title: "Добавить метку",
-      icon: <Plus className="size-4 flex-none" aria-hidden="true" />
+      icon: <Plus className="size-4 flex-none" />
     }
   }
   

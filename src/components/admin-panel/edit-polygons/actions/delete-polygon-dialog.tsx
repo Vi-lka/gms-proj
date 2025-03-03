@@ -67,12 +67,7 @@ export default function DeletePolygonDialog({ saveToBackEnd, onSubmit, ...props 
             variant="destructive"
             onClick={onDelete}
           >
-            {isPending && (
-              <Loader
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
+            {isPending && <Loader className="mr-2 size-4 animate-spin" />}
             Удалить
           </Button>
         </CredenzaFooter>

@@ -8,8 +8,8 @@ import { unstable_cache } from "~/lib/unstable-cache";
 import { and, count, ilike, inArray, or, eq } from "drizzle-orm";
 import { areasData, companies, fields, licensedAreas } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, intervalToString, orderData } from "../db/utils";
-import { restrictUser } from "~/lib/utils";
+import { getRelationOrderBy, orderData } from "../db/utils";
+import { intervalToString, restrictUser } from "~/lib/utils";
 
 export async function getAreasData(
   input: GetAreasDataSchema,

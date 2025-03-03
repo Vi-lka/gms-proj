@@ -8,6 +8,7 @@ import {
     parseAsString,
     parseAsStringEnum,
     parseAsBoolean,
+    parseAsJson,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
 import { 
@@ -20,6 +21,7 @@ import {
   type User, 
   users 
 } from "~/server/db/schema";
+import { ELEMENTS } from "../static/elements";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -50,6 +52,23 @@ export const searchParamsSessions = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
 export const searchParamsSessionsCache = createSearchParamsCache(searchParamsSessions)
+
+export const elementsSearchSchema = z.object({
+  id: z.string(),
+  element: z.nativeEnum(ELEMENTS).nullable(),
+  max: z.number().nullable(),
+  min: z.number().nullable(),
+})
+export type ElementsSearchSchema = z.infer<typeof elementsSearchSchema>;
+
+export const searchParamsMapItems = {
+  search: parseAsString,
+  comapniesIds: parseAsArrayOf(parseAsString),
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  elements: parseAsArrayOf(parseAsJson(elementsSearchSchema.parse)),
+}
+export const loadSearchParamsMapItems = createLoader(searchParamsMapItems)
+export const searchParamsMapItemsCache = createSearchParamsCache(searchParamsMapItems)
 
 export const searchParamsCompanies = {
   page: parseAsInteger.withDefault(1),

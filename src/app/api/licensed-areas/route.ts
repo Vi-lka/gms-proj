@@ -4,7 +4,7 @@ import { restrictUser } from "~/lib/utils";
 import { searchLicensedAreasApiLoader } from "~/lib/validations/search-params";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { licensedAreas } from "~/server/db/schema";
+import { type LicensedAreaExtend, licensedAreas } from "~/server/db/schema";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -22,9 +22,20 @@ export async function GET(request: NextRequest) {
   try {
     const data = await db.query.licensedAreas.findMany({
       where,
+      with: {
+        field: {
+          with: { company: true }
+        }
+      },
       orderBy: (licensedAreas, { asc }) => [asc(licensedAreas.name)]
     })
-    return Response.json(data)
+    const transformData: LicensedAreaExtend[] = data.map((item) => ({
+      ...item,
+      fieldName: item.field.name,
+      companyId: item.field.company.id,
+      companyName: item.field.company.name,
+    }))
+    return Response.json(transformData)
   } catch (error) {
     return Response.json({ message: 'Internal Server Error', error: error }, { status: 500 })
   }

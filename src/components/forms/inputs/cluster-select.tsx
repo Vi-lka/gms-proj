@@ -62,6 +62,7 @@ export default function ClusterSelect<TData extends FieldValues>({
           <FormLabel>{label}</FormLabel>
           <Combobox 
             open={open} 
+            modal
             onOpenChange={(open) => {
               setOpen(open)
               if (onOpenChange) onOpenChange(open)

@@ -22,7 +22,7 @@ export default async function RootLayout({
     >
       <body className="font-sans">
         <Providers>
-          <div vaul-drawer-wrapper="" className="bg-background">
+          <div className="bg-background">
             {children}
           </div>
         </Providers>

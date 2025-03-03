@@ -16,7 +16,7 @@ export default function MapItems({
   items: MapItemT[]
 }) {
   const router = useRouter();
-  
+
   const stage = useAtomValue(stageAtom);
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
@@ -57,14 +57,15 @@ export default function MapItems({
                 : "outline-transparent",
                 "!outline-dashed !outline-2 !outline-offset-2 transition-all"
               )}
+              htmlClassName={selectedItem?.id === item.data.id ? "!z-[100]" : ""}
               onClick={(e) => {
                 e.stopPropagation()
                 setSelectedItem(item.data)
-                router.push(`/${item.data.id}`)
+                router.prefetch(`/${item.data.id}`)
               }}
-              handleClickOutside={() => {
-                setSelectedItem(null)
-              }}
+              // handleClickOutside={() => {
+              //   setSelectedItem(null)
+              // }}
             />
           )
       )

@@ -8,7 +8,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Skeleton } from '~/components/ui/skeleton'
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
 import { getApiRoute, type LicensedAreasSearchParamsT } from '~/lib/validations/api-routes'
-import { type LicensedArea } from '~/server/db/schema'
+import { type LicensedAreaExtend } from '~/server/db/schema'
 
 interface AddPolygonSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -25,7 +25,7 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
 
   const { clear } = useTemporalStore((state) => state)
 
-  const { data, error, isLoading } = useSWR<LicensedArea[], Error>(
+  const { data, error, isLoading } = useSWR<LicensedAreaExtend[], Error>(
     getApiRoute({
       route: "licensed-areas", 
       searchParams
@@ -39,7 +39,7 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
   if (!data || !polygons[activePolygonIndex]) return null
 
   const dataForField = data.map(item => {
-    return {value: item.id, label: item.name}
+    return {value: item.id, label: item.name, description: `(${item.fieldName} - ${item.companyName})`}
   }).filter(item => 
     !polygons.some(polygon => polygon.licensedArea?.id === item.value)
     ||
@@ -127,7 +127,10 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
                         setOpen(false)
                       }}
                     >
-                      {item.label}
+                      <div className='flex flex-col'>
+                        {item.label}
+                        <span className='line-clamp-2 text-[9px] leading-3 text-muted-foreground'>{item.description}</span>
+                      </div>
                     </ComboboxItem>
                   ))}
                 </ComboboxGroup>
