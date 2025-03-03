@@ -8,7 +8,7 @@ import { db } from "../db";
 import { restrictUser } from "~/lib/utils";
 import { type GetMapItemsSchema } from "~/lib/validations/map-items";
 import { and, ilike, inArray, or } from "drizzle-orm";
-import { areasData, companies, companiesToMapItems, fields, licensedAreas, mapItems } from "../db/schema";
+import { areasData, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems } from "../db/schema";
 import { compareElements } from "../db/utils";
 
 export async function getMap() {
@@ -81,6 +81,13 @@ export async function getMapItems(
                       .where(ilike(companies.name, `%${input.search}%`))
                   ),
                 )
+            ),
+            inArray(
+              mapItems.id,
+              db
+                .select({ id: clusters.id })
+                .from(clusters)
+                .where(ilike(clusters.name, `%${input.search}%`))
             ),
             inArray(
               mapItems.id,

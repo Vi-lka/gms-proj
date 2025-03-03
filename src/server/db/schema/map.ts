@@ -1,7 +1,7 @@
 import { boolean, index, primaryKey, text, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { numericCasted } from "../utils";
-import { FieldWithLicensedAreas, type Field } from "./fields";
+import { type FieldWithLicensedAreas, type Field } from "./fields";
 
 export const mapData = createTable("map_data", {
   id: varchar("id", { length: 255 })
