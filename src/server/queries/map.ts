@@ -83,7 +83,7 @@ export async function getMapItems(
                 )
             ),
             inArray(
-              mapItems.id,
+              mapItems.clusterId,
               db
                 .select({ id: clusters.id })
                 .from(clusters)
