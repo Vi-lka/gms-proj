@@ -9,10 +9,11 @@ import useElementDimensions from '~/hooks/use-ellement-dimensions'
 import { useSetAtom } from 'jotai'
 import { mapContainerDimensions } from '~/lib/atoms/main'
 import MapItemsFilters from '~/components/map/filters/map-items-filters'
-import { extractKeys, findMaxValuesByRelevance, testProfitability } from '~/lib/utils'
+import { extractKeys, findMaxValuesByRelevance } from '~/lib/utils'
 import { useElementsSearch, useMapItemsSearch } from '~/components/map/filters/hooks'
-import { type AreaData } from '~/server/db/schema'
+import { type AreaData, type Profitability } from '~/server/db/schema'
 import MapItemDrawer from '~/components/map/map-item-info/map-item-drawer'
+import { type getProfitability } from '~/server/queries/profitability'
 
 const MapStage = dynamic(() => import('~/components/map/map-stage'), {
   ssr: false,
@@ -24,8 +25,9 @@ const MapItems = dynamic(() => import('~/components/map/map-items'), {
 interface MapProps {
   promises: Promise<
     [
-      Awaited<ReturnType<typeof getMap>>,
       Awaited<ReturnType<typeof getMapItems>>,
+      Awaited<ReturnType<typeof getMap>>,
+      Awaited<ReturnType<typeof getProfitability>>,
     ]
   >
 }
@@ -38,7 +40,7 @@ export default function Map({ promises }: MapProps) {
     if (dimensions) setContainerDimensions(dimensions)
   }, [dimensions, setContainerDimensions])
 
-  const [{ data: mapData }, data] = React.use(promises)
+  const [data, { data: mapData }, { data: profitability }] = React.use(promises)
 
   const [elementsSearch] = useElementsSearch()
 
@@ -46,25 +48,30 @@ export default function Map({ promises }: MapProps) {
 
   const getMaxValuesByRelevance = React.useCallback(
     (areasData: AreaData[]) => {
+      if (!profitability[0]) return {
+        original: [],
+        filtered: []
+      };
+
       const filteredAreasData = !!elementsSearch && elementsSearch.length > 0
         ? extractKeys(areasData, elementsSearch)
         : areasData
 
-      const original = findMaxValuesByRelevance(areasData, testProfitability)
-      const filtered = findMaxValuesByRelevance(filteredAreasData, testProfitability)
+      const original = findMaxValuesByRelevance(areasData, profitability[0])
+      const filtered = findMaxValuesByRelevance(filteredAreasData, profitability[0])
 
       return {
         original,
         filtered,
       }
     },
-    [elementsSearch]
+    [elementsSearch, profitability]
   )
 
   const getFirstFiveMaxValues = React.useCallback(
     (maxValues: {
-      original: MaxValue<typeof testProfitability>[],
-      filtered: MaxValue<typeof testProfitability>[],
+      original: MaxValue<Profitability>[],
+      filtered: MaxValue<Profitability>[],
     }) => {
       const original = maxValues.original.splice(0, 5).sort((a, b) => b.weightedValue - a.weightedValue)
       const firstFiveMaxValues = maxValues.filtered.slice(0, 5);

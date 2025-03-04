@@ -8,6 +8,7 @@ import { auth } from '~/server/auth';
 import { getMap, getMapItems } from '~/server/queries/map';
 import Map from "./Map";
 import DefaultLoading from '~/components/loadings/default';
+import { getProfitability } from '~/server/queries/profitability';
 
 export default async function MapPage(props: PageProps) {
   const session = await auth();
@@ -15,8 +16,9 @@ export default async function MapPage(props: PageProps) {
   if (!session) redirect("/dashboard");
 
   const promises = Promise.all([
-    getMap(),
     getMapItems(),
+    getMap(),
+    getProfitability()
   ])
 
   return (

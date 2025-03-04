@@ -9,6 +9,7 @@ import { Ban } from "lucide-react";
 import Navbar from "~/components/main-content/navbar";
 import { searchParamsMapItemsCache } from "~/lib/validations/search-params";
 import DefaultLoading from "~/components/loadings/default";
+import { getProfitability } from "~/server/queries/profitability";
 
 type SearchParams = Promise<{ callbackUrl: string | undefined, code: string | undefined }>
 
@@ -27,8 +28,9 @@ export default async function HomePage(props: {
   
   if (!restrictUser(session.user.role, "content")) {
     const promises = Promise.all([
-      getMap(),
       getMapItems(search),
+      getMap(),
+      getProfitability()
     ])
 
     return (

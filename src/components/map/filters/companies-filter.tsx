@@ -51,7 +51,7 @@ export default function CompaniesFilter() {
     })
   );
 
-  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
+  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-8 w-full'/>
   if (error) {
     toast.error(error.message)
     return null;

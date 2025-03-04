@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { type UserRestrictions, type UserRole, type ApproxEnumT, type RelevanceKeys, type MaxValue } from "./types"
 import translateData from "./static/translate-data"
-import { type Profitability } from "~/server/db/schema"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -155,50 +154,6 @@ export function splitIntoPairs<T>(array: T[]): T[][] {
   
   return result;
 }
-
-export const testProfitability: Profitability = {
-  id: "testProfitability",
-  lithium: 1,
-  rubidium: 1,
-  cesium: 1,
-  boron: 1,
-  iodine: 1,
-  sodium: 1,
-  calcium: 1,
-  magnesium: 1,
-  potassium: 1,
-  chlorine: 1,
-  bromine: 1,
-  strontium: 1,
-  barium: 1,
-  aluminum: 1,
-  selenium: 1,
-  silicon: 1,
-  manganese: 1,
-  copper: 1,
-  zinc: 1,
-  silver: 1,
-  tungsten: 1,
-  titanium: 1,
-  vanadium: 1,
-  chromium: 1,
-  cobalt: 1,
-  nickel: 1,
-  arsenic: 1,
-  molybdenum: 1,
-  plumbum: 1,
-  bismuth: 1,
-  sulfateIon: 1,
-  bicarbonate: 1,
-  carbonateIon: 1,
-  ammonium: 1,
-  fluorine: 1,
-  nitrogenDioxide: 1,
-  nitrate: 1,
-  phosphate: 1,
-  ferrum: 1,
-}
-
 
 export function findMaxValuesByRelevance<T extends Record<string, string | number | null>>(
   data: Array<Partial<Record<RelevanceKeys<T>, string | number | null>>>,
