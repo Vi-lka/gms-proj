@@ -17,6 +17,7 @@ import {
   type FieldExtend, 
   type FieldMapExtend, 
   type LicensedAreaExtend, 
+  Profitability, 
   type SessionExtend, 
   type User, 
   users 
@@ -154,6 +155,11 @@ export const searchFieldsMaps = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
 }
 export const searchFieldsMapsCache = createSearchParamsCache(searchFieldsMaps)
+
+export const searchParamsProfitability = {
+  id: parseAsString.withDefault(""),
+}
+export const searchParamsProfitabilityCache = createSearchParamsCache(searchParamsProfitability)
 
 
 // API Routes

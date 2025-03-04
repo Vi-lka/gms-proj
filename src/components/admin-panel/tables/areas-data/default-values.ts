@@ -1,4 +1,4 @@
-import { type ElementsSchema, type CreateAreasDataSchema } from "~/lib/validations/forms";
+import { type CreateAreasDataSchema, type ElementsWithApproxSchema } from "~/lib/validations/forms";
 
 export const defaultValuesElements = [
     {lithium: null, lithiumApprox: null},
@@ -43,7 +43,7 @@ export const defaultValuesElements = [
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const elementsObj: ElementsSchema = Object.assign({}, ...defaultValuesElements);
+const elementsObj: ElementsWithApproxSchema = Object.assign({}, ...defaultValuesElements);
 
 const defaultValues: CreateAreasDataSchema = {
     areaId: "",

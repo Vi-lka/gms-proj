@@ -8,7 +8,8 @@ import {
   Database,
   Cookie,
   Building2,
-  MapPinned
+  MapPinned,
+  AlignEndHorizontal
 } from "lucide-react";
 import { type UserRole } from "./types";
 
@@ -82,6 +83,11 @@ export function getMenuList(pathname: string, role: UserRole | undefined): Group
           href: "/dashboard/areas-data",
           label: "Данные ЛУ",
           icon: Database,
+        },
+        {
+          href: "/dashboard/profitability",
+          label: "Рентабельная добыча",
+          icon: AlignEndHorizontal,
         },
       ]
     }

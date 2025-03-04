@@ -117,87 +117,91 @@ export type UpdateLicensedAreaSchema = z.infer<typeof updateLicensedAreaSchema>
 // AREAS DATA
 export const elementsSchema = z.object({
   lithium: z.number().nullable(),
-  lithiumApprox: approxEnumSchema.nullable(),
   rubidium: z.number().nullable(),
-  rubidiumApprox: approxEnumSchema.nullable(), 
   cesium: z.number().nullable(),
-  cesiumApprox: approxEnumSchema.nullable(), 
   boron: z.number().nullable(),
-  boronApprox: approxEnumSchema.nullable(), 
   iodine: z.number().nullable(),
-  iodineApprox: approxEnumSchema.nullable(), 
   sodium: z.number().nullable(),
-  sodiumApprox: approxEnumSchema.nullable(), 
   calcium: z.number().nullable(),
-  calciumApprox: approxEnumSchema.nullable(), 
   magnesium: z.number().nullable(),
-  magnesiumApprox: approxEnumSchema.nullable(), 
   potassium: z.number().nullable(),
-  potassiumApprox: approxEnumSchema.nullable(), 
   chlorine: z.number().nullable(),
-  chlorineApprox: approxEnumSchema.nullable(), 
   bromine: z.number().nullable(),
-  bromineApprox: approxEnumSchema.nullable(), 
   strontium: z.number().nullable(),
-  strontiumApprox: approxEnumSchema.nullable(), 
   barium: z.number().nullable(),
-  bariumApprox: approxEnumSchema.nullable(), 
   aluminum: z.number().nullable(),
-  aluminumApprox: approxEnumSchema.nullable(), 
   selenium: z.number().nullable(),
-  seleniumApprox: approxEnumSchema.nullable(), 
   silicon: z.number().nullable(),
-  siliconApprox: approxEnumSchema.nullable(), 
   manganese: z.number().nullable(),
-  manganeseApprox: approxEnumSchema.nullable(), 
   copper: z.number().nullable(),
-  copperApprox: approxEnumSchema.nullable(), 
   zinc: z.number().nullable(),
-  zincApprox: approxEnumSchema.nullable(), 
   silver: z.number().nullable(),
-  silverApprox: approxEnumSchema.nullable(), 
   tungsten: z.number().nullable(),
-  tungstenApprox: approxEnumSchema.nullable(), 
   titanium: z.number().nullable(),
-  titaniumApprox: approxEnumSchema.nullable(), 
   vanadium: z.number().nullable(),
-  vanadiumApprox: approxEnumSchema.nullable(), 
   chromium: z.number().nullable(),
-  chromiumApprox: approxEnumSchema.nullable(), 
   cobalt: z.number().nullable(),
-  cobaltApprox: approxEnumSchema.nullable(), 
   nickel: z.number().nullable(),
-  nickelApprox: approxEnumSchema.nullable(), 
   arsenic: z.number().nullable(),
-  arsenicApprox: approxEnumSchema.nullable(), 
   molybdenum: z.number().nullable(),
-  molybdenumApprox: approxEnumSchema.nullable(), 
   plumbum: z.number().nullable(),
-  plumbumApprox: approxEnumSchema.nullable(), 
   bismuth: z.number().nullable(),
-  bismuthApprox: approxEnumSchema.nullable(), 
   sulfateIon: z.number().nullable(),
-  sulfateIonApprox: approxEnumSchema.nullable(), 
   bicarbonate: z.number().nullable(),
-  bicarbonateApprox: approxEnumSchema.nullable(), 
   carbonateIon: z.number().nullable(),
-  carbonateIonApprox: approxEnumSchema.nullable(), 
   ammonium: z.number().nullable(),
-  ammoniumApprox: approxEnumSchema.nullable(), 
   fluorine: z.number().nullable(),
-  fluorineApprox: approxEnumSchema.nullable(), 
   nitrogenDioxide: z.number().nullable(),
-  nitrogenDioxideApprox: approxEnumSchema.nullable(), 
   nitrate: z.number().nullable(),
-  nitrateApprox: approxEnumSchema.nullable(), 
   phosphate: z.number().nullable(),
-  phosphateApprox: approxEnumSchema.nullable(), 
   ferrum: z.number().nullable(),
-  ferrumApprox: approxEnumSchema.nullable(),
 })
 export type ElementsSchema = z.infer<typeof elementsSchema>
 
-export const createAreasDataSchema = elementsSchema.extend({
+export const elementsWithApproxSchema = elementsSchema.extend({
+  lithiumApprox: approxEnumSchema.nullable(),
+  rubidiumApprox: approxEnumSchema.nullable(), 
+  cesiumApprox: approxEnumSchema.nullable(), 
+  boronApprox: approxEnumSchema.nullable(), 
+  iodineApprox: approxEnumSchema.nullable(), 
+  sodiumApprox: approxEnumSchema.nullable(), 
+  calciumApprox: approxEnumSchema.nullable(), 
+  magnesiumApprox: approxEnumSchema.nullable(), 
+  potassiumApprox: approxEnumSchema.nullable(), 
+  chlorineApprox: approxEnumSchema.nullable(), 
+  bromineApprox: approxEnumSchema.nullable(), 
+  strontiumApprox: approxEnumSchema.nullable(), 
+  bariumApprox: approxEnumSchema.nullable(), 
+  aluminumApprox: approxEnumSchema.nullable(), 
+  seleniumApprox: approxEnumSchema.nullable(), 
+  siliconApprox: approxEnumSchema.nullable(), 
+  manganeseApprox: approxEnumSchema.nullable(), 
+  copperApprox: approxEnumSchema.nullable(), 
+  zincApprox: approxEnumSchema.nullable(), 
+  silverApprox: approxEnumSchema.nullable(), 
+  tungstenApprox: approxEnumSchema.nullable(), 
+  titaniumApprox: approxEnumSchema.nullable(), 
+  vanadiumApprox: approxEnumSchema.nullable(), 
+  chromiumApprox: approxEnumSchema.nullable(), 
+  cobaltApprox: approxEnumSchema.nullable(), 
+  nickelApprox: approxEnumSchema.nullable(), 
+  arsenicApprox: approxEnumSchema.nullable(), 
+  molybdenumApprox: approxEnumSchema.nullable(), 
+  plumbumApprox: approxEnumSchema.nullable(), 
+  bismuthApprox: approxEnumSchema.nullable(), 
+  sulfateIonApprox: approxEnumSchema.nullable(), 
+  bicarbonateApprox: approxEnumSchema.nullable(), 
+  carbonateIonApprox: approxEnumSchema.nullable(), 
+  ammoniumApprox: approxEnumSchema.nullable(), 
+  fluorineApprox: approxEnumSchema.nullable(), 
+  nitrogenDioxideApprox: approxEnumSchema.nullable(), 
+  nitrateApprox: approxEnumSchema.nullable(), 
+  phosphateApprox: approxEnumSchema.nullable(), 
+  ferrumApprox: approxEnumSchema.nullable(),
+})
+export type ElementsWithApproxSchema = z.infer<typeof elementsWithApproxSchema>
+
+export const createAreasDataSchema = elementsWithApproxSchema.extend({
   areaId: z.string().min(1, "Выберите Лицензионный участок"),
   bush: z.string().nullable(),
   hole: z.string().nullable(),
@@ -229,6 +233,8 @@ export const updateAreasDataSchema = createAreasDataSchema.extend({
 })
 export type UpdateAreasDataSchema = z.infer<typeof updateAreasDataSchema>;
 
+
+// FIELD MAP
 export const createFieldMapSchema = z.object({
   fieldId: z.string().min(1, "Выберите Месторождение"),
   fileId: z.string().min(1, "Загрузите Фото"),
@@ -252,3 +258,13 @@ export const updateFieldMapSchema = z.object({
   }).array().min(1, { message: "Должен быть хотя бы 1 полигон" })
 })
 export type UpdateFieldMapSchema = z.infer<typeof updateFieldMapSchema>;
+
+
+// PROFITABILITY
+export const createProfitabilitySchema = elementsSchema
+export type CreateProfitabilitySchema = z.infer<typeof createProfitabilitySchema>;
+
+export const updateProfitabilitySchema = createProfitabilitySchema.extend({
+  id: z.string().min(1),
+})
+export type UpdateProfitabilitySchema = z.infer<typeof updateProfitabilitySchema>;

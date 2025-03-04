@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
-import { type ElementsSchema, updateAreasDataSchema, type UpdateAreasDataSchema } from '~/lib/validations/forms'
+import { type ElementsWithApproxSchema, updateAreasDataSchema, type UpdateAreasDataSchema } from '~/lib/validations/forms'
 import { type AreaDataExtend } from '~/server/db/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateAreasData } from '~/server/actions/areas-data'
@@ -171,8 +171,8 @@ export default function UpdateAreasDataSheet({
                     <NumberApproxField
                       key={"element-"+indx.toString()}
                       form={form}
-                      name={keys[0] as keyof ElementsSchema}
-                      nameApprox={keys[1] as keyof ElementsSchema}
+                      name={keys[0] as keyof ElementsWithApproxSchema}
+                      nameApprox={keys[1] as keyof ElementsWithApproxSchema}
                       label={idToSentenceCase(keys[0]!)}
                     />
                   )

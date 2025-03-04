@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
-import { createAreasDataSchema, type ElementsSchema, type CreateAreasDataSchema } from '~/lib/validations/forms'
+import { createAreasDataSchema, type ElementsWithApproxSchema, type CreateAreasDataSchema } from '~/lib/validations/forms'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Loader, Plus } from 'lucide-react'
@@ -165,8 +165,8 @@ export default function CreateAreasDataSheet({
                     <NumberApproxField
                       key={"element-"+indx.toString()}
                       form={form}
-                      name={keys[0] as keyof ElementsSchema}
-                      nameApprox={keys[1] as keyof ElementsSchema}
+                      name={keys[0] as keyof ElementsWithApproxSchema}
+                      nameApprox={keys[1] as keyof ElementsWithApproxSchema}
                       label={idToSentenceCase(keys[0]!)}
                     />
                   )
