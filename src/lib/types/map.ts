@@ -4,7 +4,10 @@ export type MapItemT = {
   id: string,
   companies: CompanyWithListedAreas[];
   areasData: AreaData[]
-  maxElements: MaxValue<Profitability>[]
+  maxElements: {
+    filtered: MaxValue<Profitability>[],
+    original: MaxValue<Profitability>[]
+  }
   fields: FieldWithLicensedAreas[]
   cluster: Cluster | null;
   x: number;

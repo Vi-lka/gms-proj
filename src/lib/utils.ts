@@ -201,7 +201,7 @@ export const testProfitability: Profitability = {
 
 
 export function findMaxValuesByRelevance<T extends Record<string, string | number | null>>(
-  data: Array<Partial<Record<RelevanceKeys<T>, number | null>>>,
+  data: Array<Partial<Record<RelevanceKeys<T>, string | number | null>>>,
   relevanceObj: T
 ): MaxValue<T>[] {
   if (typeof relevanceObj !== 'object' || relevanceObj === null) {
@@ -261,19 +261,26 @@ export function setNullByKeys<T extends Record<string, unknown>>(
 }
 
 export function extractKeys<T extends string>(
-  objectsArray: Array<Partial<Record<T, number | null>>>,
-  keysArray: T[]
+  objectsArray: Array<Partial<Record<T, unknown>>>,
+  keysArray: T[],
+  type?: "exclude" | "include"
 ): Array<Partial<Record<T, number | null>>> {
 
   const result: Array<Partial<Record<T, number | null>>> = [];
   
   objectsArray.forEach(obj => {
-
     const newObj: Partial<Record<T, number | null>> = {};
 
     Object.keys(obj).forEach(key => {
-      if (keysArray.includes(key as T)) {
-        newObj[key as T] = obj[key as T]
+      const value = obj[key as T]
+      if (typeof value !== "number") return;
+
+      const shouldInclude = type === "exclude" 
+        ? !keysArray.includes(key as T) 
+        : keysArray.includes(key as T);
+      
+      if (shouldInclude) {
+        newObj[key as T] = value;
       }
     });
     result.push(newObj);

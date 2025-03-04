@@ -47,30 +47,43 @@ export default function Map({ promises }: MapProps) {
   const getMaxValuesByRelevance = React.useCallback(
     (areasData: AreaData[]) => {
       const filteredAreasData = !!elementsSearch && elementsSearch.length > 0
-      ? extractKeys(areasData, elementsSearch)
-      : areasData
+        ? extractKeys(areasData, elementsSearch)
+        : areasData
 
-      return findMaxValuesByRelevance(filteredAreasData, testProfitability)
+      const original = findMaxValuesByRelevance(areasData, testProfitability)
+      const filtered = findMaxValuesByRelevance(filteredAreasData, testProfitability)
+
+      return {
+        original,
+        filtered,
+      }
     },
     [elementsSearch]
   )
 
   const getFirstFiveMaxValues = React.useCallback(
-    (maxValues: MaxValue<typeof testProfitability>[]) => {
-      const firstFiveMaxValues = maxValues.slice(0, 5);
+    (maxValues: {
+      original: MaxValue<typeof testProfitability>[],
+      filtered: MaxValue<typeof testProfitability>[],
+    }) => {
+      const original = maxValues.original.splice(0, 5).sort((a, b) => b.weightedValue - a.weightedValue)
+      const firstFiveMaxValues = maxValues.filtered.slice(0, 5);
 
       if (elementsComparison && elementsComparison.length > 0) {
         elementsComparison.forEach((comparison, searchIndx) => {
-          const index = maxValues.findIndex(item => item.key === comparison.element)
-          if (index > 5 && !!maxValues[index]) {
-            firstFiveMaxValues.splice(4 - searchIndx, 1, maxValues[index])
+          const index = maxValues.filtered.findIndex(item => item.key === comparison.element)
+          if (index > 5 && !!maxValues.filtered[index]) {
+            firstFiveMaxValues.splice(4 - searchIndx, 1, maxValues.filtered[index])
           }
         })
 
         firstFiveMaxValues.sort((a, b) => b.weightedValue - a.weightedValue);
       }
 
-      return firstFiveMaxValues
+      return {
+        original,
+        filtered: firstFiveMaxValues
+      }
     },
     [elementsComparison]
   )
@@ -97,7 +110,7 @@ export default function Map({ promises }: MapProps) {
         width: DEFAULT_ITEM_SIZE.width,
         height: DEFAULT_ITEM_SIZE.height,
       }
-    }).filter((item) => item.maxElements.length !== 0),
+    }).filter((item) => item.maxElements.filtered.length !== 0),
     [data, getFirstFiveMaxValues, getMaxValuesByRelevance]
   );
 

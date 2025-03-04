@@ -107,8 +107,8 @@ export default function MapItemDrawer() {
                 </CardHeader>
                 <CardContent className='flex gap-2 items-end justify-center h-2/3'>
                   <TooltipProvider delayDuration={150}> 
-                    {selectedItem.maxElements.map((el, index) => (
-                      <ElementBadge key={index} element={el} index={index} maxValue={selectedItem.maxElements[0]?.weightedValue} />
+                    {selectedItem.maxElements.original.map((el, index) => (
+                      <ElementBadge key={index} element={el} index={index} maxValue={selectedItem.maxElements.original[0]?.weightedValue} />
                     ))}
                   </TooltipProvider>
                 </CardContent>

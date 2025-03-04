@@ -75,6 +75,7 @@
     "react-konva": "^19.0.2",
     "react-konva-utils": "^1.0.7",
     "react-redux": "^9.2.0",
+    "react-scan": "^0.2.8",
     "react-svg": "^16.3.0",
     "react-zoom-pan-pinch": "^3.7.0",
     "redux-undo": "^1.1.0",

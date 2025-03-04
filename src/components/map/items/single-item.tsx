@@ -89,7 +89,7 @@ export default function SingleItem({
           <div className='relative font-medium text-xs text-left cursor-pointer'>
             <div className='absolute top-[-54px] -left-0.5 flex gap-1 items-end mb-1 transition-all duration-300'>
               <TooltipProvider delayDuration={150}>
-                {data.maxElements.map((value, index) => {
+                {data.maxElements.filtered.map((value, index) => {
 
                   const inSearch = 
                   elementsSearch?.some(element => element === value.key)
