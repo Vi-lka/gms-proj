@@ -2,25 +2,50 @@ import * as React from "react"
 
 import { cn } from "~/lib/utils"
 
+type ExtendT = {
+  inScrollArea?: boolean
+};
+
+type TableT = React.HTMLAttributes<HTMLTableElement> & ExtendT;
+
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  TableT
+>(({ inScrollArea,  className, ...props }, ref) => {
+  if (inScrollArea) return (
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("relative w-full caption-bottom text-sm", className)}
       {...props}
     />
-  </div>
-))
+  ) 
+  else return(
+    <div className="relative w-full overflow-auto">
+      <table
+        ref={ref}
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  )
+})
 Table.displayName = "Table"
+
+type TableHeaderT = React.HTMLAttributes<HTMLTableSectionElement> & ExtendT;
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  TableHeaderT
+>(({ inScrollArea, className, ...props }, ref) => (
+  <thead 
+    ref={ref} 
+    className={cn(
+      "[&_tr]:border-b", 
+      inScrollArea && "sticky top-0 z-40",
+      className
+    )} 
+    {...props} 
+  />
 ))
 TableHeader.displayName = "TableHeader"
 

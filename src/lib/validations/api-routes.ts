@@ -1,3 +1,6 @@
+import { GetAreasDataSchema } from "./areas-data"
+import { searchAreasDataSerialize } from "./search-params"
+
 export type ClustersSearchParamsT = {
   hasMapItem?: boolean
 }
@@ -32,6 +35,10 @@ type ApiRouteT =
   | {
       route: "licensed-areas";
       searchParams?: LicensedAreasSearchParamsT
+    }
+  | {
+      route: "areas-data";
+      searchParams?: GetAreasDataSchema
     }
 
 
@@ -90,6 +97,10 @@ export function getApiRoute({
       const areasParams = [fieldIdParamAreas]
 
       return `/api/licensed-areas?${areasParams.join('&')}`
+
+    case "areas-data":
+      if (searchParams) return searchAreasDataSerialize('/api/areas-data', searchParams)
+      return '/api/areas-data'
   
     default:
       return ''

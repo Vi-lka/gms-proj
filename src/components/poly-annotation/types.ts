@@ -36,12 +36,13 @@ export type PolygonProps = {
   active?: boolean;
   editable?: boolean;
   polygonStyle?: PolygonStyleProps;
-  handlePointDragMove: (e: KonvaEventObject<DragEvent>) => void;
-  handlePointDragEnd: (e: KonvaEventObject<DragEvent>) => void;
-  handleGroupDragEnd: (e: KonvaEventObject<DragEvent>) => void;
-  handleMouseOverStartPoint: (e: KonvaEventObject<MouseEvent>) => void;
-  handleMouseOutStartPoint: (e: KonvaEventObject<MouseEvent>) => void;
+  handlePointDragMove?: (e: KonvaEventObject<DragEvent>) => void;
+  handlePointDragEnd?: (e: KonvaEventObject<DragEvent>) => void;
+  handleGroupDragEnd?: (e: KonvaEventObject<DragEvent>) => void;
+  handleMouseOverStartPoint?: (e: KonvaEventObject<MouseEvent>) => void;
+  handleMouseOutStartPoint?: (e: KonvaEventObject<MouseEvent>) => void;
   onClick?: (e: KonvaEventObject<MouseEvent>) => void
+  onMouseEnter?: (e: KonvaEventObject<MouseEvent>) => void
 };
 
 export interface ContainerConfig {

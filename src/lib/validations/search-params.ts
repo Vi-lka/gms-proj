@@ -9,6 +9,7 @@ import {
     parseAsStringEnum,
     parseAsBoolean,
     parseAsJson,
+    createSerializer,
   } from "nuqs/server"
 import { getFiltersStateParser, getSortingStateParser } from "~/lib/parsers";
 import { 
@@ -137,6 +138,7 @@ export const searchAreasData = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
 }
 export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
+export const searchAreasDataSerialize = createSerializer(searchAreasData)
 
 export const searchFieldsMaps = {
   page: parseAsInteger.withDefault(1),
@@ -186,3 +188,5 @@ export const searchLicensedAreasApi = {
   fieldId: parseAsString,
 }
 export const searchLicensedAreasApiLoader = createLoader(searchLicensedAreasApi)
+
+export const searchAreasDataApiLoader = createLoader(searchAreasData)

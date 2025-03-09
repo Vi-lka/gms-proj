@@ -14,6 +14,7 @@ import { type MaxValue } from '~/lib/types'
 import { type Profitability } from '~/server/db/schema'
 import useOutsideClick from '~/hooks/use-outside-click'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function MapItemDrawer() {
   const router = useRouter();
@@ -117,19 +118,22 @@ export default function MapItemDrawer() {
           </ScrollArea>
         </div>
         <DrawerFooter className='flex flex-row justify-between gap-2'>
-          <Button 
-            type="button" 
-            disabled={isPending}
-            className='w-[calc(50%-0.25rem)]'
-            onClick={() => {
-              startTransition(() => {
-                router.push(`/${selectedItem.id}`)
-                setSelectedItem(null)
-              })
-            }}
-          >
-            {isPending ? <Loader size={16} className="animate-spin" /> : "Перейти"}
-          </Button>
+          <Link passHref href={`/maps/${selectedItem.id}`} className='w-[calc(50%-0.25rem)]'>
+            <Button 
+              type="button" 
+              disabled={isPending}
+              className='w-full'
+              // onMouseEnter={() => router.prefetch(`maps/${selectedItem.id}`)}
+              onClick={() => {
+                startTransition(() => {
+                  // router.push(`maps/${selectedItem.id}`)
+                  setSelectedItem(null)
+                })
+              }}
+            >
+              {isPending ? <Loader size={16} className="animate-spin" /> : "Перейти"}
+            </Button>
+          </Link>
           <DrawerClose asChild>
             <Button 
               type="button" 

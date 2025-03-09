@@ -64,9 +64,7 @@ export default function Content({ promises }: EditFieldMapContentProps) {
     resume();
   }, [result, pause, resume, setGlobalState])
 
-  if (result.error !== null) return (
-    <div>Не найдено</div>
-  )
+  if (result.error !== null) throw new Error(result.error)
 
   return (
     <EditPolygons type='update' defaultData={defaultData} />

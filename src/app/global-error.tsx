@@ -5,6 +5,7 @@ import React from 'react'
 import { useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import { Button } from '~/components/ui/button'
+import Link from 'next/link'
 
 export default function GlobalError({
   error,
@@ -32,7 +33,9 @@ export default function GlobalError({
           <Button onClick={() => reset()} variant="outline">
             Попробовать снова
           </Button>
-          <Button onClick={() => (window.location.href = "/")}>Вернуться на главную</Button>
+          <Link href="/" passHref>
+            <Button>Вернуться на главную</Button>
+          </Link>
         </div>
       </div>
     </div>

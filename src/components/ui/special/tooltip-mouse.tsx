@@ -10,7 +10,7 @@ export default function TooltipMouse({
   open,
   className,
 }: {
-  description: string,
+  description: React.ReactNode,
   children: React.ReactNode,
   open: boolean,
   className?: string;

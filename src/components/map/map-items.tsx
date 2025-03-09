@@ -61,7 +61,7 @@ export default function MapItems({
               onClick={(e) => {
                 e.stopPropagation()
                 setSelectedItem(item.data)
-                router.prefetch(`/${item.data.id}`)
+                router.prefetch(`maps/${item.data.id}`)
               }}
               // handleClickOutside={() => {
               //   setSelectedItem(null)

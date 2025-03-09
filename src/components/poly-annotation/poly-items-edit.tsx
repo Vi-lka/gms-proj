@@ -20,6 +20,7 @@ export default function PolyItemsEdit({
   const setPolygons = usePolyStore((state) => state.setPolygons)
   const setIsMouseOverPoint = usePolyStore((state) => state.setIsMouseOverPoint)
   const setEditPolygonIndex = usePolyStore((state) => state.setEditPolygonIndex)
+  const setTooltip = usePolyStore((state) => state.setTooltip)
 
   const { pause, resume, clear } = useTemporalStore((state) => state)
 
@@ -156,6 +157,7 @@ export default function PolyItemsEdit({
   const onPolygonClick = (index: number) => {
     if (isAddible || index === editPolygonIndex) return;
     setEditPolygonIndex(index)
+    setTooltip(undefined)
     clear()
   }
 

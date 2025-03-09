@@ -10,6 +10,7 @@ import { type GetMapItemsSchema } from "~/lib/validations/map-items";
 import { and, ilike, inArray, or } from "drizzle-orm";
 import { areasData, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems } from "../db/schema";
 import { compareElements } from "../db/utils";
+import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getMap() {
   const session = await auth();
@@ -259,6 +260,12 @@ export async function getMapItem(id: string) {
         .query.mapItems.findFirst({
           with: {
             cluster: true,
+            fields: {
+              with: {
+                company: true,
+                fieldMap: true
+              },
+            },
             companiesToMapItems: {
               with: {
                 company: true
@@ -270,9 +277,12 @@ export async function getMapItem(id: string) {
           },
         })
 
-      return data
-    } catch (err) {
-      console.error(err)
+      if (!data) return { data: null, error: "Не найдено" }
+
+      return { data, error: null }
+    } catch (error) {
+      console.error(error)
+      return { data: null, error: getErrorMessage(error) }
     }
   }
 

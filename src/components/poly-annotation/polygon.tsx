@@ -28,6 +28,7 @@ export default function Polygon({
   handleMouseOutStartPoint,
   handlePointDragMove,
   onClick,
+  onMouseEnter,
 }: PolygonProps) {
   const { vertexRadius, lineWidth, lineColor, fillColor, vertexColor, vertexStrokeWidth, selectedColor } = polygonStyle;
   const isAddible = usePolyStore((state) => state.isAddible)
@@ -101,10 +102,9 @@ export default function Polygon({
       // dragBoundFunc={groupDragBoundFunc}
       onMouseOver={groupMouseOver}
       onMouseOut={groupMouseOut}
-      onClick={(e) => {
-        setTooltip(undefined)
-        onClick?.(e)
-      }}
+      onClick={onClick}
+      onTap={onClick}
+      onMouseEnter={onMouseEnter}
     >
       <Line
         name="line"
