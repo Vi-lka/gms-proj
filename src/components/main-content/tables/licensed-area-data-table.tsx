@@ -51,7 +51,12 @@ export default function LicensedAreaDataTable({
   return (
     <DataTable table={table} scrollAreaClassName={className} disabled={isPending}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        {isPending && <Loader className="mx-2 animate-spin" />}
+        {isPending && (
+          <div className='flex items-center gap-1 mx-2'>
+            <Loader size={18} className="flex-none animate-spin" />
+            <span className='text-sm font-light md:block hidden'>Загрузка...</span>
+          </div>
+        )}
         <DataTableSortList table={table} disabled={isPending}/>
       </DataTableToolbar>
     </DataTable>

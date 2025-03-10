@@ -18,6 +18,8 @@ export default function PolyItems({
 
   const polygons = usePolyStore((state) => state.polygons)
   const imagePos = usePolyStore((state) => state.imageConfig.pos)
+  const hoverPolygonIndex = usePolyStore((state) => state.hoverPolygonIndex)
+  const setHoverPolygonIndex = usePolyStore((state) => state.setHoverPolygonIndex)
 
   const relatedRatio = useRelatedRatio();
 
@@ -31,16 +33,27 @@ export default function PolyItems({
         x={imagePos.x}
         y={imagePos.y}
       >
-        {polygons?.map(polygon => (
+        {polygons?.map((polygon, indx) => (
           <Polygon
             key={polygon.id}
             isFinished={polygon.isFinished}
             points={polygon.points}
             flattenedPoints={polygon.flattenedPoints}
             licensedArea={polygon.licensedArea}
+            hovered={hoverPolygonIndex === indx}
             polygonStyle={polygonStyle}
             onClick={() => !disabled && onPolygonClick?.(polygon)}
-            onMouseEnter={() => !disabled && onPolygonHover?.(polygon)}
+            handleGroupMouseOver={() => {
+              if (!disabled) {
+                setHoverPolygonIndex(indx)
+                onPolygonHover?.(polygon)
+              }
+            }}
+            handleGroupMouseOut={() => {
+              if (!disabled) {
+                setHoverPolygonIndex(null)
+              }}
+            }
           />
         ))}
       </Group>

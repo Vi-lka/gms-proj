@@ -277,7 +277,7 @@ export async function getMapItem(id: string) {
           },
         })
 
-      if (!data) return { data: null, error: "Не найдено" }
+      if (!data) return { data: null, error: "Not Found" }
 
       return { data, error: null }
     } catch (error) {

@@ -17,7 +17,7 @@ export default function TooltipMouse({
 }) {
   const { ref, x, y } = useMouse();
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={150}>
       <Tooltip open={open}>
         <TooltipTrigger asChild>
           <div className={className} ref={ref}>

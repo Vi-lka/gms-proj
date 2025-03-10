@@ -22,7 +22,7 @@ export async function getPresignedUrl(id: string) {
         }
       })
     
-      if (!file) throw new Error("Файл не найден", { cause: file })
+      if (!file) throw new Error("Not found", { cause: file })
       else {
         // Get presigned url from s3 storage
         const presignedUrl = await createPresignedUrlToDownload({

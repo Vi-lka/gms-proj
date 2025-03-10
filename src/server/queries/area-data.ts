@@ -10,8 +10,6 @@ import { areasData, companies, fields, licensedAreas } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { intervalToString, restrictUser } from "~/lib/utils";
-import { error } from "console";
-import { get } from "http";
 import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getAreasData(
@@ -194,12 +192,15 @@ export async function getAreasData(
       const sortedData = orderData(input.sort, transformData)
 
       const pageCount = Math.ceil(total / input.perPage)
-      return { data: sortedData, pageCount }
+      
+      return { data: sortedData, pageCount, error: null }
     } catch (err) {
       console.error(err)
-      return { data: [], pageCount: 0 }
+      return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
+
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   const result = await unstable_cache(
     fetchData,

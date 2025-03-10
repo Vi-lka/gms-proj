@@ -13,7 +13,7 @@ type Props = {
   }[],
 };
 
-export default function TabsCustom(props: Props) {
+export default function TabsClient(props: Props) {
   const defaultValue = props.defaultValue ? props.defaultValue : props.tabs[0]?.value
   const defaultTab = props.tabs.find(tab => tab.value === defaultValue)
 
@@ -38,7 +38,7 @@ export default function TabsCustom(props: Props) {
               <TabsTrigger 
                 key={tab.value} 
                 value={tab.value}
-                className='py-2 lg:px-6 md:text-sm text-xs rounded-lg'
+                className='py-2 lg:px-6 md:text-sm text-xs rounded-lg hover:text-foreground'
                 onClick={() => setSelectedTab(tab)}
               >
                 {tab.title}

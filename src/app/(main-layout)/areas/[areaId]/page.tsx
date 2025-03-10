@@ -1,5 +1,6 @@
 import { Slash } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { ContentLayout } from '~/components/main-content/content-layout'
 import LicensedAreaDataTable from '~/components/main-content/tables/licensed-area-data-table'
@@ -33,7 +34,10 @@ export default async function AreaPage({
   })
   
   // handle errors by next.js error or not found pages
-  if (result.error !== null) throw new Error(result.error);
+  if (result.error !== null) {
+    if (result.error === "Not Found") notFound();
+    else throw new Error(result.error);
+  };
   
   const { mapItem, areaData, names } = result.data
 

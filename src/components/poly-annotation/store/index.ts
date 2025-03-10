@@ -23,7 +23,8 @@ export type PolyAnnotationState = {
   askAcceptPos: boolean;
   openSheet: boolean;
   editPolygonIndex: number | null;
-  editPolygonAction: "update" | "delete" | "move" | null
+  editPolygonAction: "update" | "delete" | "move" | null;
+  hoverPolygonIndex: number | null;
 };
 
 export type PolyAnnotationTemporalState = {
@@ -110,6 +111,11 @@ export type PolyAnnotationStoreActions = {
       | PolyAnnotationStore['editPolygonAction']
       | ((current: PolyAnnotationStore['editPolygonAction']) => PolyAnnotationStore['editPolygonAction']),
   ) => void,
+  setHoverPolygonIndex: (
+    next:
+      | PolyAnnotationStore['hoverPolygonIndex']
+      | ((current: PolyAnnotationStore['hoverPolygonIndex']) => PolyAnnotationStore['hoverPolygonIndex']),
+  ) => void,
   setGlobalState: (
     next:
       | PolyAnnotationStore
@@ -149,6 +155,7 @@ export const defaultInitState: PolyAnnotationState = {
   openSheet: false,
   editPolygonIndex: null,
   editPolygonAction: null,
+  hoverPolygonIndex: null,
 }
 
 export const createPolyStore = (
@@ -239,6 +246,11 @@ export const createPolyStore = (
       setEditPolygonAction: (next) => {
         set((state) => ({
           editPolygonAction: typeof next === 'function' ? next(state.editPolygonAction) : next,
+        }))
+      },
+      setHoverPolygonIndex: (next) => {
+        set((state) => ({
+          hoverPolygonIndex: typeof next === 'function' ? next(state.hoverPolygonIndex) : next,
         }))
       },
       setGlobalState: (next) => {

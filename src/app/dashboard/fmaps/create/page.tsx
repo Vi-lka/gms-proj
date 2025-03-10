@@ -7,6 +7,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 import { auth } from '~/server/auth';
 import { PolyStoreProvider } from '~/components/poly-annotation/store/poly-store-provider';
 import EditPolygons from '~/components/admin-panel/edit-polygons/edit-polygons';
+import { Loader } from 'lucide-react';
 
 export default async function CreateFieldsMapsPage() {
   const session = await auth();
@@ -42,7 +43,11 @@ export default async function CreateFieldsMapsPage() {
       </Breadcrumb>
       <div className="mt-6 flex flex-col flex-grow">
         <React.Suspense
-          fallback={<Skeleton className='w-full min-h-[calc(100vh-290px)]' />}
+          fallback={
+            <div className='w-full min-h-[calc(100vh-290px)] flex items-center justify-center'>
+              <Loader className="h-8 w-8 animate-spin" />
+            </div>
+          }
         >
           <PolyStoreProvider>
             <EditPolygons type='create' />

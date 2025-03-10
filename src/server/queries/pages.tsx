@@ -3,7 +3,6 @@
 import "server-only"
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
-import { notFound } from "next/navigation";
 import { getErrorMessage } from "~/lib/handle-error";
 import { getFieldMapWithImage } from "./fields-maps";
 import { getMapItem } from "./map";
@@ -26,7 +25,7 @@ export async function getMapItemPage(id: string) {
 
       if (mapItem.error !== null) throw new Error(mapItem.error);
       // if no mapItem found or it`s doesn't have companies throw to NotFound page
-      if (!mapItem.data.companiesToMapItems[0]) notFound();
+      if (!mapItem.data.companiesToMapItems[0]) throw new Error("Not Found");
 
       const title = mapItem.data.cluster?.name ?? mapItem.data.companiesToMapItems[0].company.name
 
@@ -50,7 +49,7 @@ export async function getMapItemPage(id: string) {
         })
       )
 
-      if (fieldMaps.length === 0) notFound();
+      if (fieldMaps.length === 0) throw new Error("Not Found");
 
       return { 
         data: { title, fieldMaps },
@@ -118,7 +117,7 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
         where: eq(licensedAreas.id, input.areaId)
       })
 
-      if (!licensedArea) notFound();
+      if (!licensedArea) throw new Error("Not Found");
 
       const mapItem = await db.query.mapItems.findFirst({
         with: {
@@ -143,7 +142,7 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
         ),
       })
 
-      if (!mapItem?.companiesToMapItems[0]) notFound();
+      if (!mapItem?.companiesToMapItems[0]) throw new Error("Not Found");
 
       const titleMapItem = mapItem.cluster?.name ?? mapItem.companiesToMapItems[0].company.name
     
@@ -172,7 +171,6 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
   }
 
   // await new Promise((resolve) => setTimeout(resolve, 2000))
-
 
   const result = await unstable_cache(
     fetchData,

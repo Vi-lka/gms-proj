@@ -11,6 +11,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import AreasDataTableToolbarActions from './areas-data-table-toolbar-actions'
 import DeleteAreasDataDialog from './delete-areas-data-dialog'
 import UpdateAreasDataSheet from './update-areas-data-sheet'
+import { toast } from 'sonner'
 
 interface AreasDataTableProps {
   promises: Promise<
@@ -21,7 +22,12 @@ interface AreasDataTableProps {
 }
 
 export default function AreasDataTable({ promises }: AreasDataTableProps) {
-  const [{ data, pageCount }] = React.use(promises)
+  const [{ data, pageCount, error }] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "areas-data-error" })
+    return () => { toast.dismiss("areas-data-error") }
+  }, [error])
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaDataExtend> | null>(null);
 

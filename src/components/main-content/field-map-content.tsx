@@ -7,10 +7,17 @@ import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/sto
 import { type Polygon } from '~/components/poly-annotation/types';
 import TooltipMouse from '~/components/ui/special/tooltip-mouse'
 import useElementDimensions from '~/hooks/use-ellement-dimensions';
-import { splitIntoPairs } from '~/lib/utils';
+import { cn, splitIntoPairs } from '~/lib/utils';
 import { type getFieldMapWithImage } from '~/server/queries/fields-maps';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Separator } from '../ui/separator';
+import { Button } from '../ui/button';
+import Link from 'next/link';
+import { ScrollArea } from '../ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { List } from 'lucide-react';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,
@@ -23,32 +30,39 @@ const PolyItems = dynamic(() => import('~/components/poly-annotation/poly-items'
 type ReturnDataT = Awaited<ReturnType<typeof getFieldMapWithImage>>
 
 interface FieldMapContentProps {
-  data: NonNullable<ReturnDataT["data"]>
+  data: NonNullable<ReturnDataT["data"]>,
+  className?: string
 }
 
 export default function FieldMapContent({
-  data
+  data,
+  className
 }: FieldMapContentProps) {
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
   const { pause, resume } = useTemporalStore((state) => state)
+
+  const polygons = React.useMemo(() => {
+    return data.polygons.map((polygon) => {
+      const points = splitIntoPairs(polygon.points)
+      return {
+        id: polygon.id,
+        points,
+        flattenedPoints: polygon.points,
+        isFinished: true,
+        licensedArea: {
+          id: polygon.area.id,
+          name: polygon.area.name,
+        }
+      }
+    }).sort((a, b) => a.licensedArea.name.localeCompare(b.licensedArea.name))
+
+  }, [data.polygons])
 
   React.useEffect(() => {
     const dataForState = {
       fieldId: data.fieldId,
       imageUrl: data.fileUrl,
-      polygons: data.polygons.map((polygon) => {
-        const points = splitIntoPairs(polygon.points)
-        return {
-          id: polygon.id,
-          points,
-          flattenedPoints: polygon.points,
-          isFinished: true,
-          licensedArea: {
-            id: polygon.area.id,
-            name: polygon.area.name,
-          }
-        }
-      })
+      polygons,
     }
     pause();
     setGlobalState((prev) => ({
@@ -56,17 +70,33 @@ export default function FieldMapContent({
       ...dataForState
     }));
     resume();
-  }, [data, pause, resume, setGlobalState])
+  }, [data, polygons, pause, resume, setGlobalState])
 
   return (
-    <Content imageUrl={data.fileUrl} />
+    <div className={cn('flex gap-6 relative', className)}>
+      <FieldMap imageUrl={data.fileUrl} className='lg:w-3/4 md:w-2/3 w-full' />
+
+      <FieldList polygons={polygons} className='lg:w-1/4 md:w-1/3 md:block hidden' />
+      <Popover>
+        <PopoverTrigger asChild className='md:hidden block'>
+          <Button variant="outline" className='md:hidden block absolute right-2 top-2 w-fit h-fit p-2 dark:border-primary/20 shadow rounded-full z-50'>
+            <List />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align='start' side='left' className='md:hidden block min-[425px]:w-72 min-[320px]:w-60 p-0 border-none rounded-xl shadow-md'>
+          <FieldList polygons={polygons} className='w-full' />
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }
 
-function Content({
-  imageUrl
+function FieldMap({
+  imageUrl,
+  className
 }: {
-  imageUrl: string
+  imageUrl: string,
+  className?: string
 }) {
   const router = useRouter();
 
@@ -96,22 +126,66 @@ function Content({
   }
 
   return (
-    <TooltipMouse 
-      open={!!tooltip} 
-      description={tooltip ?? ''} 
-      className='flex flex-col w-full h-full flex-grow min-h-[calc(100vh-280px)]'
+    <TooltipMouse
+      open={!!tooltip}
+      description={tooltip ?? ''}
+      className={cn('flex flex-col w-full h-full flex-grow min-h-[calc(100vh-280px)]', className)}
     >
       <div ref={ref} className='flex w-full h-full flex-grow'>
         <CanvasStage
-          imageUrl={imageUrl} 
-          className="h-full dark:bg-background/20 bg-primary/10 shadow-inner border border-foreground/20"
+          imageUrl={imageUrl}
+          className="h-full dark:bg-background/20 bg-primary/5 shadow-inner border border-foreground/10"
         >
-          <PolyItems 
+          <PolyItems
             onPolygonClick={onPolygonClick}
             onPolygonHover={onPolygonHover}
           />
         </CanvasStage>
       </div>
     </TooltipMouse>
+  )
+}
+
+function FieldList({
+  polygons,
+  className
+}: {
+  polygons: Polygon[];
+  className?: string
+}) {
+  const setHoverPolygonIndex = usePolyStore((state) => state.setHoverPolygonIndex)
+
+  const licensedAreas = polygons
+    .map(polygon => polygon.licensedArea)
+    .filter((area) => area !== null)
+
+  return (
+    <Card className={cn("flex-grow h-full md:min-h-[calc(100vh-280px)] dark:bg-background/20 shadow-md border border-foreground/10", className)}>
+      <CardHeader className="p-0">
+        <CardContent className="p-0">
+          <CardTitle className='p-6 text-center md:text-base text-sm'>Лицензионные участки</CardTitle>
+          <Separator className='bg-foreground/10' />
+        </CardContent>
+      </CardHeader>
+      <ScrollArea classNameViewport='max-h-[calc(100vh-345px)] [&>div]:!block'>
+        <CardContent className="p-0">
+          {licensedAreas.map((area, indx) => (
+            <div key={area.id}>
+              <Link key={area.id} href={`/areas/${area.id}`} passHref className='w-full h-fit'>
+                <Button 
+                  variant="ghost" 
+                  className='w-full h-full whitespace-normal text-left py-8 px-6 justify-start text-sm rounded-none transition-all'
+                  onMouseOver={() => setHoverPolygonIndex(indx)}
+                  onMouseOut={() => setHoverPolygonIndex(null)}
+                >
+                  {area.name}
+                </Button>
+              </Link>
+              {indx < licensedAreas.length - 1 && <Separator key={`sep-${area.id}`} className='bg-foreground/10' />}
+            </div>
+          ))}
+        </CardContent>
+      </ScrollArea>
+    </Card>
   )
 }

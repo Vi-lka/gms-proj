@@ -17,8 +17,7 @@ import {
   type Company, 
   type FieldExtend, 
   type FieldMapExtend, 
-  type LicensedAreaExtend, 
-  Profitability, 
+  type LicensedAreaExtend,
   type SessionExtend, 
   type User, 
   users 
@@ -135,7 +134,7 @@ export const searchAreasData = {
   companyName: parseAsString.withDefault(""),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
-  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
 export const searchAreasDataCache = createSearchParamsCache(searchAreasData)
 export const searchAreasDataSerialize = createSerializer(searchAreasData)
@@ -190,3 +189,12 @@ export const searchLicensedAreasApi = {
 export const searchLicensedAreasApiLoader = createLoader(searchLicensedAreasApi)
 
 export const searchAreasDataApiLoader = createLoader(searchAreasData)
+
+
+// TABS
+export const searchParamsTabs = {
+  tab: parseAsString,
+}
+export const searchParamsTabsCache = createSearchParamsCache(searchParamsTabs)
+export const searchParamsTabsLoader = createLoader(searchParamsTabs)
+export const searchParamsTabsSerialize = createSerializer(searchParamsTabs)

@@ -1,4 +1,4 @@
-import { Slash } from "lucide-react"
+import { notFound } from "next/navigation"
 import React, { Suspense } from "react"
 import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton"
 import LicensedAreaDataTable from "~/components/main-content/tables/licensed-area-data-table"
@@ -20,11 +20,9 @@ export default async function AreaModalPage({
   const searchParamsRes = await searchParams
   return (
     <InterseptingModal modal={false} title={"Данные"} className="h-[calc(100vh-60px)]">
-      <Suspense fallback={
+      <Suspense key={licensedAreaId} fallback={
         <>
           <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
-            <Skeleton className='w-1/2 h-5' />
-            <Slash size={16} className='text-muted-foreground/50 -rotate-45 flex-none' />
             <Skeleton className='w-1/2 h-5' />
           </div>
           <div className="mt-6 flex flex-col flex-grow p-8 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/20">
@@ -66,15 +64,16 @@ async function Content({
   })
   
   // handle errors by next.js error or not found pages
-  if (result.error !== null) throw new Error(result.error);
-  
+  if (result.error !== null) {
+    if (result.error === "Not Found") notFound();
+    else throw new Error(result.error);
+  };
+
   const { areaData, names } = result.data
 
   return (
     <>
       <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
-        <p className="w-1/2 line-clamp-1">{names.fieldName}</p>
-        <Slash size={16} className='text-muted-foreground/50 -rotate-45 flex-none' />
         <p className="w-1/2 line-clamp-1">{names.areaName}</p>
       </div>
       <div className="mt-6 flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/20">

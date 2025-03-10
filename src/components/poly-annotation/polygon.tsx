@@ -21,14 +21,16 @@ export default function Polygon({
   licensedArea,
   active,
   editable,
+  hovered,
   polygonStyle = defaultPolygonStyle,
+  handleGroupMouseOver,
+  handleGroupMouseOut,
   handlePointDragEnd,
   handleGroupDragEnd,
   handleMouseOverStartPoint,
   handleMouseOutStartPoint,
   handlePointDragMove,
   onClick,
-  onMouseEnter,
 }: PolygonProps) {
   const { vertexRadius, lineWidth, lineColor, fillColor, vertexColor, vertexStrokeWidth, selectedColor } = polygonStyle;
   const isAddible = usePolyStore((state) => state.isAddible)
@@ -44,6 +46,9 @@ export default function Polygon({
     const stage = e.target.getStage();
     if (isAddible || !isFinished || !stage) return;
     stage.container().style.cursor = 'pointer';
+
+    handleGroupMouseOver?.(e)
+
     if (editPolygonIndex === null) {
       setTooltip(licensedArea?.name)
     }
@@ -53,6 +58,9 @@ export default function Polygon({
     const stage = e.target.getStage();
     if (isAddible || !stage) return;
     stage.container().style.cursor = 'default';
+
+    handleGroupMouseOut?.(e)
+
     if (editPolygonIndex === null) {
       setTooltip(undefined)
     }
@@ -104,7 +112,6 @@ export default function Polygon({
       onMouseOut={groupMouseOut}
       onClick={onClick}
       onTap={onClick}
-      onMouseEnter={onMouseEnter}
     >
       <Line
         name="line"
@@ -112,7 +119,7 @@ export default function Polygon({
         stroke={lineColor}
         strokeWidth={lineWidth}
         closed={isFinished}
-        fill={!!editable ? selectedColor : fillColor}
+        fill={(!!editable || !!hovered) ? selectedColor : fillColor}
       />
       {showPoints && points.map((point, index) => {
         const x = point[0];

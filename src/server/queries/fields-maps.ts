@@ -184,7 +184,7 @@ export async function getFieldMap(
 
       if (!data)  return {
         data: null,
-        error: "Карта не найдена"
+        error: "Not Found",
       }
 
       return {
@@ -214,14 +214,14 @@ export async function getFieldMapWithImage(id: string) {
 
   if (result.error !== null) return {
     data: null,
-    error: getErrorMessage(result.error)
+    error: result.error
   }
 
   const fileUrl = await getPresignedUrl(result.data.fileId)
 
   if (fileUrl.error !== null) return {
     data: null,
-    error: getErrorMessage(fileUrl.error)
+    error: fileUrl.error
   }
 
   const validData = {
