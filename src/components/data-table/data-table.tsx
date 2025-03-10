@@ -30,6 +30,8 @@ interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   floatingBar?: React.ReactNode | null,
 
   scrollAreaClassName?: string
+
+  disabled?: boolean
 }
 
 export function DataTable<TData>({
@@ -38,6 +40,7 @@ export function DataTable<TData>({
   children,
   className,
   scrollAreaClassName,
+  disabled,
   ...props
 }: DataTableProps<TData>) {
   return (
@@ -47,7 +50,7 @@ export function DataTable<TData>({
     >
       {children}
       <div className="overflow-hidden rounded-md border">
-        <ScrollArea type="always" classNameViewport={cn("max-h-none", scrollAreaClassName)} classNameBar="z-50">
+        <ScrollArea type="always" classNameViewport={cn("", scrollAreaClassName)} classNameBar="z-50">
           <Table inScrollArea>
             <TableHeader inScrollArea>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -73,7 +76,7 @@ export function DataTable<TData>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className={cn(disabled && "opacity-30")}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow

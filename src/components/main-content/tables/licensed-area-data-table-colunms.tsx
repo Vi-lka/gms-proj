@@ -11,7 +11,7 @@ export function getColumns(): ColumnDef<AreaDataExtend>[] {
     {
       accessorKey: "areaName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Лицензионный участок" />
+        <DataTableColumnHeader column={column} title="Лицензионный участок" className="min-w-44" />
       ),
       cell: ({ row }) => (
         <div className="flex space-x-2">

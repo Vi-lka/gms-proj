@@ -17,6 +17,7 @@ interface DataTableColumnHeaderProps<TData, TValue>
   column: Column<TData, TValue>
   title: string
   titleNode?: React.ReactNode
+  disabled?: boolean
 }
 
 export function DataTableColumnHeader<TData, TValue>({
@@ -24,6 +25,7 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   titleNode,
   className,
+  disabled
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort() && !column.getCanHide()) {
     return <div className={cn(className)}>{titleNode ?? title}</div>
@@ -48,6 +50,7 @@ export function DataTableColumnHeader<TData, TValue>({
           else if (value === descValue) column.toggleSorting(true)
           else if (value === hideValue) column.toggleVisibility(false)
         }}
+      disabled={disabled}
       >
         <SelectTrigger
           aria-label={

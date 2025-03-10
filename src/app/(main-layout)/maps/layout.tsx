@@ -8,9 +8,9 @@ export default function MainLayout({
   modal: React.ReactNode
  }>) {
   return (
-    <>
-      {modal}
+    <div>
       {children}
-    </>
+      {modal}
+    </div>
   )
 }

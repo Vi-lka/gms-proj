@@ -121,6 +121,8 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
    * overlay={<Skeleton className="w-full h-8" />}
    */
   overlay?: React.ReactNode | null
+
+  disabled?: boolean
 }
 
 function Sortable<TData extends { id: UniqueIdentifier }>({
@@ -133,6 +135,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>({
   orientation = "vertical",
   overlay,
   children,
+  disabled,
   ...props
 }: SortableProps<TData>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null)
@@ -166,7 +169,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>({
       collisionDetection={collisionDetection}
       {...props}
     >
-      <SortableContext items={value} strategy={strategy ?? config.strategy}>
+      <SortableContext disabled={disabled} items={value} strategy={strategy ?? config.strategy}>
         {children}
       </SortableContext>
       {overlay ? (

@@ -11,7 +11,6 @@ import { splitIntoPairs } from '~/lib/utils';
 import { type getFieldMapWithImage } from '~/server/queries/fields-maps';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { map } from 'zod';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,
@@ -25,12 +24,10 @@ type ReturnDataT = Awaited<ReturnType<typeof getFieldMapWithImage>>
 
 interface FieldMapContentProps {
   data: NonNullable<ReturnDataT["data"]>
-  mapItemId: string
 }
 
 export default function FieldMapContent({
-  data,
-  mapItemId
+  data
 }: FieldMapContentProps) {
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
   const { pause, resume } = useTemporalStore((state) => state)
@@ -62,16 +59,14 @@ export default function FieldMapContent({
   }, [data, pause, resume, setGlobalState])
 
   return (
-    <Content imageUrl={data.fileUrl} mapItemId={mapItemId} />
+    <Content imageUrl={data.fileUrl} />
   )
 }
 
 function Content({
-  imageUrl,
-  mapItemId
+  imageUrl
 }: {
-  imageUrl: string,
-  mapItemId: string
+  imageUrl: string
 }) {
   const router = useRouter();
 
@@ -92,11 +87,11 @@ function Content({
   }, [dimensions, setStageConfig])
 
   const onPolygonHover = (polygon: Polygon) => {
-    if (polygon.licensedArea !== null) router.prefetch(`/maps/${mapItemId}/${polygon.licensedArea.id}`)
+    if (polygon.licensedArea !== null) router.prefetch(`/areas/${polygon.licensedArea.id}`)
   }
 
   const onPolygonClick = (polygon: Polygon) => {
-    if (polygon.licensedArea !== null) router.push(`/maps/${mapItemId}/${polygon.licensedArea.id}`)
+    if (polygon.licensedArea !== null) router.push(`/areas/${polygon.licensedArea.id}`)
     else toast.error('Нет Лицензионного участка')
   }
 

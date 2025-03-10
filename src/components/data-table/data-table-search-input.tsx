@@ -10,6 +10,7 @@ interface DataTableSearchInputProps<TData> {
   table: Table<TData>,
   columnId: Extract<keyof TData, string>,
   placeholder?: string,
+  disabled?: boolean
   className?: string,
 }
 
@@ -18,6 +19,7 @@ export default function DataTableSearchInput<TData>({
   table,
   columnId,
   placeholder,
+  disabled,
   className,
 }: DataTableSearchInputProps<TData>) {
   const searchParams = useSearchParams();
@@ -40,6 +42,7 @@ export default function DataTableSearchInput<TData>({
       placeholder={placeholder}
       value={searchValue}
       onChange={(event) => setSearchValue(event.target.value)}
+      disabled={disabled}
       className={cn("h-8 w-40 lg:w-64", className)}
     />
   )

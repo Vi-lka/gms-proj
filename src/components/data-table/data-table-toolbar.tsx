@@ -74,6 +74,7 @@ export function DataTableToolbar<TData>({
                   table={table}
                   columnId={column.id}
                   placeholder={column.placeholder}
+                  // disabled={column.disabled}
                 />
               )
           )}
@@ -85,6 +86,7 @@ export function DataTableToolbar<TData>({
                   key={String(column.id)}
                   column={table.getColumn(column.id ? String(column.id) : "")}
                   title={column.label}
+                  disabled={column.disabled}
                   options={column.options ?? []}
                 />
               )

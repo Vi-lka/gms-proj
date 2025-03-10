@@ -15,8 +15,6 @@ export default async function MapItemPage({
 }) {
   const mapItemId = (await params).mapItemId
 
-  console.log(mapItemId)
-
   const result = await getMapItemPage(mapItemId)
 
   // handle errors by next.js error or not found pages
@@ -48,7 +46,7 @@ export default async function MapItemPage({
               content: item.hasMap
                 ? (
                   <PolyStoreProvider key={item.fieldId}>
-                    <FieldMapContent data={item} mapItemId={mapItemId} />
+                    <FieldMapContent data={item} />
                   </PolyStoreProvider>
                 )
                 : <p>{item.fieldName}</p>

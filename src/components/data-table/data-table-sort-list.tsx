@@ -51,13 +51,15 @@ import {
 interface DataTableSortListProps<TData> {
   table: Table<TData>
   debounceMs?: number
-  shallow?: boolean
+  shallow?: boolean,
+  disabled?: boolean
 }
 
 export function DataTableSortList<TData>({
   table,
   debounceMs = 300,
   shallow = false,
+  disabled
 }: DataTableSortListProps<TData>) {
   const id = React.useId()
 
@@ -154,6 +156,7 @@ export function DataTableSortList<TData>({
           <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
         </div>
       }
+      disabled={disabled}
     >
       <Popover>
         <PopoverTrigger asChild>
@@ -252,6 +255,7 @@ export function DataTableSortList<TData>({
                                   <CommandItem
                                     key={column.id}
                                     value={column.id}
+                                    disabled={disabled}
                                     onSelect={(value) => {
                                       const newFieldTriggerId = `${id}-sort-${value}-field-trigger`
 
@@ -345,7 +349,7 @@ export function DataTableSortList<TData>({
               className="h-[1.85rem] rounded"
               onClick={addSort}
               // disabled={sorting.length >= sortableColumns.length}
-              disabled={sortableColumns.length === 0}
+              disabled={sortableColumns.length === 0 || disabled}
             >
               Добавить
             </Button>

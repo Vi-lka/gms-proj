@@ -24,12 +24,14 @@ import { Separator } from "~/components/ui/separator"
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
   title?: string
+  disabled?: boolean
   options: Option[]
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
+  disabled,
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const unknownValue = column?.getFilterValue()
@@ -90,6 +92,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 return (
                   <CommandItem
                     key={option.value}
+                    disabled={disabled}
                     onSelect={() => {
                       if (isSelected) {
                         selectedValues.delete(option.value)
@@ -134,6 +137,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandGroup>
                   <CommandItem
                     onSelect={() => column?.setFilterValue(undefined)}
+                    disabled={disabled}
                     className="justify-center text-center"
                   >
                     Сброс

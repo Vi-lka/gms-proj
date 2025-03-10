@@ -8,13 +8,19 @@ import { type DataTableFilterField } from '~/lib/types';
 import { type AreaDataExtend } from '~/server/db/schema';
 import { type getAreasData } from '~/server/queries/area-data';
 import { getColumns } from './licensed-area-data-table-colunms';
+import { Loader } from 'lucide-react';
+import { DataTableSortList } from '~/components/data-table/data-table-sort-list';
 
 export default function LicensedAreaDataTable({
-  areaData
+  areaData,
+  className
 }: {
-  areaData: Awaited<ReturnType<typeof getAreasData>>
+  areaData: Awaited<ReturnType<typeof getAreasData>>,
+  className?: string
 }) {
   const { data, pageCount } = areaData;
+
+  const [isPending, startTransition] = React.useTransition()
   
   const columns = React.useMemo(
     () => getColumns(),
@@ -26,6 +32,7 @@ export default function LicensedAreaDataTable({
       id: "areaName",
       label: "Название",
       placeholder: "Поиск...",
+      disabled: isPending
     }
   ]
   
@@ -37,13 +44,15 @@ export default function LicensedAreaDataTable({
     enableAdvancedFilter: false,
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
+    startTransition,
     clearOnDefault: true,
   })
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} scrollAreaClassName={className} disabled={isPending}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        {/* <AreasDataTableToolbarActions table={table} /> */}
+        {isPending && <Loader className="mx-2 animate-spin" />}
+        <DataTableSortList table={table} disabled={isPending}/>
       </DataTableToolbar>
     </DataTable>
   )

@@ -53,6 +53,7 @@ export interface DataTableFilterField<TData> {
   id: StringKeyOf<TData>
   label: string
   placeholder?: string
+  disabled?: boolean
   options?: Option[]
 }
 
