@@ -66,7 +66,7 @@ export default async function AreaPage({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="mt-6 flex flex-col flex-grow p-8 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/20">
+      <div className="mt-6 flex flex-col flex-grow p-8 rounded-xl dark:bg-background/50 shadow-inner border border-foreground/10">
         <LicensedAreaDataTable areaData={areaData} />
       </div> 
     </ContentLayout>

@@ -51,6 +51,7 @@ export const providerMap = providers.map((provider) => {
 export const authConfig = {
   secret: env.AUTH_SECRET,
   providers,
+  trustHost: true,
   // pages: {
     // signIn: "/sign-in"
   // },

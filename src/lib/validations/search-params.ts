@@ -191,9 +191,10 @@ export const searchLicensedAreasApiLoader = createLoader(searchLicensedAreasApi)
 export const searchAreasDataApiLoader = createLoader(searchAreasData)
 
 
-// TABS
+// TABS and VIEW
 export const searchParamsTabs = {
   tab: parseAsString,
+  view: parseAsStringEnum(["first", "second"]).withDefault("first"),
 }
 export const searchParamsTabsCache = createSearchParamsCache(searchParamsTabs)
 export const searchParamsTabsLoader = createLoader(searchParamsTabs)

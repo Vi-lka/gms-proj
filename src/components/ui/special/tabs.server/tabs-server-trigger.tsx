@@ -18,7 +18,7 @@ export default function TabsServerTrigger({
   pageUrl: string
   defaultValue?: string
 }) {
-  const [{ tab }] = useQueryStates(searchParamsTabs, { shallow: false })
+  const [{ tab, view }] = useQueryStates(searchParamsTabs, { shallow: false })
 
   const [isPending, startTransition] = React.useTransition()
 
@@ -46,7 +46,7 @@ export default function TabsServerTrigger({
       onClick={() => {
         if (!isPending && tab !== value) {
           startTransition(async () => {
-            router.push(`${pageUrl}?tab=${value}`, { scroll: false })
+            router.push(`${pageUrl}?tab=${value}&view=${view}`, { scroll: false })
             // await setTab({tab: value})
           })  
         }

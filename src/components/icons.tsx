@@ -1,3 +1,4 @@
+import { MapIcon, Table2 } from "lucide-react";
 import { type SVGProps } from "react";
 import { FaYandexInternational } from "react-icons/fa";
 
@@ -34,6 +35,12 @@ export const Icons = {
       </path>
     </svg>
   ),
+  map: (props: SVGProps<SVGSVGElement>) => (
+    <MapIcon {...props} />
+  ),
+  table: (props: SVGProps<SVGSVGElement>) => (
+    <Table2 {...props} />
+  )
 }
 
 interface IconByNameProps extends SVGProps<SVGSVGElement> {
@@ -43,11 +50,15 @@ interface IconByNameProps extends SVGProps<SVGSVGElement> {
 export function IconByName(props: IconByNameProps) {
   const { name, ...rest } = props
 
-  switch (name) {
+  const iconName = name as keyof typeof Icons
+
+  switch (iconName) {
     case "github": return <Icons.github {...rest}/>;
     case "google": return <Icons.google {...rest}/>;
     case "yandex": return <Icons.yandex {...rest}/>;
     case "vk": return <Icons.vk {...rest}/>;
+    case "map": return <Icons.map {...rest}/>;
+    case "table": return <Icons.table {...rest}/>;
     case "spinner": return <Icons.spinner {...rest}/>;
     default: return null;
   }

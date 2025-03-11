@@ -40,7 +40,7 @@ export function DataTable<TData>({
   children,
   className,
   scrollAreaClassName,
-  disabled,
+  // disabled,
   ...props
 }: DataTableProps<TData>) {
   return (
@@ -76,7 +76,7 @@ export function DataTable<TData>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className={cn(disabled && "opacity-30")}>
+            <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow

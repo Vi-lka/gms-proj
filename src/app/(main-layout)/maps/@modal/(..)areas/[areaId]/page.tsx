@@ -25,7 +25,7 @@ export default async function AreaModalPage({
           <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
             <Skeleton className='w-1/2 h-5' />
           </div>
-          <div className="mt-6 flex flex-col flex-grow p-8 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/20">
+          <div className="mt-6 flex flex-col flex-grow p-8 rounded-xl dark:bg-background/50 shadow-inner border border-foreground/10">
             <DataTableSkeleton
               columnCount={6}
               rowCount={5}
@@ -76,8 +76,10 @@ async function Content({
       <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
         <p className="w-1/2 line-clamp-1">{names.areaName}</p>
       </div>
-      <div className="mt-6 flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/20">
-        <LicensedAreaDataTable areaData={areaData} className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" />
+      <div className="mt-6 bg-secondary rounded-2xl">
+        <div className="flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/10">
+          <LicensedAreaDataTable areaData={areaData} className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" />
+        </div>
       </div>
     </>
   )

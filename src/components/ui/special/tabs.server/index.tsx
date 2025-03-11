@@ -56,7 +56,7 @@ export default async function TabsServer(props: Props) {
         ? (
             <TabsContent 
               value={selectedTab.value} 
-              className='mt-6 w-full flex flex-col flex-grow'
+              className='w-full flex flex-col flex-grow'
               forceMount
             >
               {selectedTab.content}
@@ -65,7 +65,7 @@ export default async function TabsServer(props: Props) {
         : (
           <TabsContent 
             value={defaultTab.value} 
-            className='mt-6 w-full flex flex-col flex-grow'
+            className='w-full flex flex-col flex-grow'
             forceMount
           >
             {defaultTab.content}

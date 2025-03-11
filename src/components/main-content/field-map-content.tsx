@@ -134,7 +134,7 @@ function FieldMap({
       <div ref={ref} className='flex w-full h-full flex-grow'>
         <CanvasStage
           imageUrl={imageUrl}
-          className="h-full dark:bg-background/20 bg-primary/5 shadow-inner border border-foreground/10"
+          className="h-full dark:bg-background/50 shadow-inner border border-foreground/10"
         >
           <PolyItems
             onPolygonClick={onPolygonClick}
@@ -160,10 +160,10 @@ function FieldList({
     .filter((area) => area !== null)
 
   return (
-    <Card className={cn("flex-grow h-full md:min-h-[calc(100vh-280px)] dark:bg-background/20 shadow-md border border-foreground/10", className)}>
+    <Card className={cn("flex-grow h-full md:min-h-[calc(100vh-280px)] dark:bg-background/50 shadow-md border border-foreground/10", className)}>
       <CardHeader className="p-0">
         <CardContent className="p-0">
-          <CardTitle className='p-6 text-center md:text-base text-sm'>Лицензионные участки</CardTitle>
+          <CardTitle className='md:p-6 p-3 text-center md:text-base text-sm'>Лицензионные участки</CardTitle>
           <Separator className='bg-foreground/10' />
         </CardContent>
       </CardHeader>
@@ -174,7 +174,7 @@ function FieldList({
               <Link key={area.id} href={`/areas/${area.id}`} passHref className='w-full h-fit'>
                 <Button 
                   variant="ghost" 
-                  className='w-full h-full whitespace-normal text-left py-8 px-6 justify-start text-sm rounded-none transition-all'
+                  className='w-full h-full whitespace-normal text-left md:py-8 md:px-6 py-4 px-3 justify-start text-sm rounded-none transition-all'
                   onMouseOver={() => setHoverPolygonIndex(indx)}
                   onMouseOut={() => setHoverPolygonIndex(null)}
                 >

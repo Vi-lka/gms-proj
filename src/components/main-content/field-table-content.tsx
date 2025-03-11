@@ -3,6 +3,7 @@ import { getValidFilters } from '~/lib/data-table-func'
 import { type SearchParams } from '~/lib/types'
 import { searchAreasDataCache } from '~/lib/validations/search-params'
 import { getAreasData } from '~/server/queries/area-data'
+import LicensedAreaDataTable from './tables/licensed-area-data-table'
 
 export default async function FieldTableContent({
   fieldId,
@@ -19,21 +20,13 @@ export default async function FieldTableContent({
   
   const validFilters = getValidFilters(dataSearch.filters)
 
-  // const { data, pageCount, error } = await getAreasData({
-  //   ...dataSearch,
-  //   fieldId,
-  //   filters: validFilters,
-  // })
-    
-  const promises = Promise.all([
-    getAreasData({
-      ...dataSearch,
-      fieldId,
-      filters: validFilters,
-    }),
-  ])
+  const result = await getAreasData({
+    ...dataSearch,
+    fieldId,
+    filters: validFilters,
+  })
 
   return (
-    <div>field-table-content</div>
+    <LicensedAreaDataTable areaData={result} />
   )
 }

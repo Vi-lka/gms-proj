@@ -25,8 +25,10 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "areas-data-error" })
-    return () => { toast.dismiss("areas-data-error") }
+    if (error !== null) toast.error(error, { id: "areas-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("areas-data-error")
+    }
   }, [error])
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaDataExtend> | null>(null);

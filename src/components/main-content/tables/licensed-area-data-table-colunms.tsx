@@ -11,17 +11,16 @@ export function getColumns(): ColumnDef<AreaDataExtend>[] {
     {
       accessorKey: "areaName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Лицензионный участок" className="min-w-44" />
+        <DataTableColumnHeader column={column} title="Лицензионный участок" className="min-w-44 ml-2" />
       ),
       cell: ({ row }) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 ml-2">
           <span className="max-w-[31.25rem] truncate font-medium">
             {row.getValue("areaName")}
           </span>
         </div>
       ),
       enableHiding: false,
-      enableSorting: false,
     },
     {
       accessorKey: "fieldName",
@@ -35,7 +34,6 @@ export function getColumns(): ColumnDef<AreaDataExtend>[] {
           </span>
         </div>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: "companyName",
@@ -49,7 +47,6 @@ export function getColumns(): ColumnDef<AreaDataExtend>[] {
           </span>
         </div>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: "bush",

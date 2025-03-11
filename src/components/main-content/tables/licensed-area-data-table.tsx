@@ -10,6 +10,7 @@ import { type getAreasData } from '~/server/queries/area-data';
 import { getColumns } from './licensed-area-data-table-colunms';
 import { Loader } from 'lucide-react';
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list';
+import { toast } from 'sonner';
 
 export default function LicensedAreaDataTable({
   areaData,
@@ -18,7 +19,14 @@ export default function LicensedAreaDataTable({
   areaData: Awaited<ReturnType<typeof getAreasData>>,
   className?: string
 }) {
-  const { data, pageCount } = areaData;
+  const { data, pageCount, error } = areaData;
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "areas-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("areas-data-error")
+    }
+  }, [error])
 
   const [isPending, startTransition] = React.useTransition()
   

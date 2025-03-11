@@ -200,7 +200,7 @@ export async function getAreasData(
     }
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 2000))
+  // await new Promise((resolve) => setTimeout(resolve, 2000))
 
   const result = await unstable_cache(
     fetchData,
