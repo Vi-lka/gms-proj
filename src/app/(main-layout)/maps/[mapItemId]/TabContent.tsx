@@ -19,7 +19,7 @@ export default function TabContent({
 
   if (data.hasMap) return (
     <ChildrensSwitch 
-      className='relative mt-4 sm:pl-0 pl-4'
+      className='relative mt-4 sm:pl-0 pl-4 flex flex-col flex-grow'
       classNameSwitch='absolute w-fit rotate-90 sm:left-[-62px] left-[-46px] top-10 [&>svg]:-rotate-90'
       firstIcon="map" 
       secondIcon="table"
@@ -36,7 +36,8 @@ export default function TabContent({
             searchableColumnCount={1}
             filterableColumnCount={2}
             cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem", "8rem"]}
-            shrinkZero />}>
+            shrinkZero />
+          }>
             <FieldTableContent fieldId={data.fieldId} searchParams={searchParams} />
           </React.Suspense>
         </div>

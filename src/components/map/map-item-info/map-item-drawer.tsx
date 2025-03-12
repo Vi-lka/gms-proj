@@ -9,16 +9,13 @@ import { cn, idToSentenceCase } from '~/lib/utils'
 import { Database, LandPlot, Loader, Pickaxe } from 'lucide-react'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Badge } from '~/components/ui/badge'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
+import { TooltipProvider } from '~/components/ui/tooltip'
 import { type MaxValue } from '~/lib/types'
 import { type Profitability } from '~/server/db/schema'
-import useOutsideClick from '~/hooks/use-outside-click'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import TooltipClick from '~/components/ui/special/tooltip-click'
 
 export default function MapItemDrawer() {
-  const router = useRouter();
-
   const [isPending, startTransition] = React.useTransition()
 
   const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
@@ -123,10 +120,8 @@ export default function MapItemDrawer() {
               type="button" 
               disabled={isPending}
               className='w-full'
-              // onMouseEnter={() => router.prefetch(`maps/${selectedItem.id}`)}
               onClick={() => {
                 startTransition(() => {
-                  // router.push(`maps/${selectedItem.id}`)
                   setSelectedItem(null)
                 })
               }}
@@ -159,23 +154,14 @@ function ElementBadge({
   index: number,
   maxValue: number | undefined,
 }) {
-  const [tooltipOpen, setTooltipOpen] = React.useState(false)
-  const ref = useOutsideClick(100, () => setTooltipOpen(false));
-
   if (!maxValue) return null;
 
   const coficience = (100/maxValue) * element.weightedValue
 
   return (
-    <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-      <TooltipTrigger 
-        asChild
-        onClick={(e) => {
-          e.stopPropagation()
-          e.preventDefault()
-          setTooltipOpen(true)
-        }}
-      >
+    <TooltipClick 
+      triggerAsChild
+      trigger={
         <Badge 
           className='relative p-0 px-0.5 h-fit min-h-3 rounded-sm shadow transition-all duration-300'
           style={{
@@ -187,14 +173,10 @@ function ElementBadge({
         >
           {idToSentenceCase(element.key)}
         </Badge>
-      </TooltipTrigger>
-      <TooltipContent 
-        ref={ref}
-        className='z-[200]'
-        onPointerOut={() => setTooltipOpen(false)}
-      >
-        {element.originalValue}
-      </TooltipContent>
-    </Tooltip>
+      } 
+      classNameContent='z-[200]'
+    >
+      {element.originalValue}
+    </TooltipClick>
   )
 }

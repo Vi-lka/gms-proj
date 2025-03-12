@@ -1,19 +1,18 @@
 import React from 'react'
 import { useMapItemsSearch } from '../hooks'
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '~/components/ui/dropdown-menu'
-import { CircleHelp, Delete, Loader, Plus, XIcon } from 'lucide-react'
+import { Delete, Loader, Plus, XIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { cn, idToSentenceCase } from '~/lib/utils'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import { Separator } from '~/components/ui/separator'
 import ElementsFilterInputs from './elements-filter-inputs'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { v4 as uuidv4 } from 'uuid';
+import TooltipHelp from '~/components/ui/special/tooltip-help'
 
 export default function ElementsFilter() {
   const [open, setOpen] = React.useState(false)
-  const [tooltipOpen, setTooltipOpen] = React.useState(false)
 
   const [accordionValue, setAccordionValue] = React.useState<string>("0")
 
@@ -26,32 +25,16 @@ export default function ElementsFilter() {
       <DropdownMenuSubTrigger className='flex items-center justify-between' classNameChevron="ml-0">
         Значения Элементов
         {!open && isPending ? <Loader className='ml-2 text-muted-foreground flex-none animate-spin' /> : null}
-        <TooltipProvider delayDuration={300}>
-          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-            <TooltipTrigger 
-              className='ml-auto p-1 cursor-help' 
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setTooltipOpen(true)
-              }}
-            >
-              <CircleHelp className='!w-3 !h-3 text-muted-foreground/60'/>
-            </TooltipTrigger>
-            <TooltipContent sideOffset={10} asChild onPointerOut={() => setTooltipOpen(false)}>
-              <div className="backdrop-blur supports-[backdrop-filter]:bg-muted/60 dark:shadow-secondary bg-muted/60 shadow rounded-md p-1.5">
-                <p className='text-foreground text-xs font-light'>
-                  Фильтрация по значениям <span className='font-medium'>добываемых элементов</span> 
-                  <br/>
-                  <br/>
-                  Элементы, не вошедшие в первые 5, появятся на карте
-                  <br/>
-                  на месте минимального значения.
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <TooltipHelp>
+          <p className='text-foreground text-xs font-light'>
+            Фильтрация по значениям <span className='font-medium'>добываемых элементов</span> 
+            <br/>
+            <br/>
+            Элементы, не вошедшие в первые 5, появятся на карте
+            <br/>
+            на месте минимального значения.
+          </p>
+        </TooltipHelp>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent 
         alignOffset={-20} 

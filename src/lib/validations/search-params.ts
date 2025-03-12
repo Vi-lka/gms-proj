@@ -123,12 +123,13 @@ export const searchAreasData = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<AreaDataExtend>().withDefault([
-    { id: "id", desc: false }
+    { id: "companyName", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   areaName: parseAsString.withDefault(""),
   areaId: parseAsString.withDefault(""),
   fieldId: parseAsString.withDefault(""),
+  fieldsIds: parseAsArrayOf(parseAsString),
   fieldName: parseAsString.withDefault(""),
   companyId: parseAsString.withDefault(""),
   companyName: parseAsString.withDefault(""),

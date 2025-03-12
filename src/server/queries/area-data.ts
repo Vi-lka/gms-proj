@@ -98,6 +98,23 @@ export async function getAreasData(
                 )
             )
           ) : undefined,
+          (input.fieldsIds && input.fieldsIds.length > 0) ? (
+            inArray(
+              areasData.areaId,
+              db
+                .select({ id: licensedAreas.id })
+                .from(licensedAreas)
+                .where(
+                  inArray(
+                    licensedAreas.fieldId,
+                    db
+                      .select({ id: fields.id })
+                      .from(fields)
+                      .where(inArray(fields.id, input.fieldsIds))
+                  ),
+                )
+            )
+          ) : undefined,
           input.companyId ? (
             inArray(
               areasData.areaId,

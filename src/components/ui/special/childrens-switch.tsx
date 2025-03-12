@@ -1,5 +1,6 @@
 "use client"
 
+import { Loader } from 'lucide-react'
 import { useQueryStates } from 'nuqs'
 import React from 'react'
 import { IconByName, type Icons } from '~/components/icons'
@@ -35,7 +36,7 @@ export default function ChildrensSwitch({
         )}/>
         <Switch 
           className='data-[state=unchecked]:bg-muted-foreground shadow-inner'
-          classNameThumb='shadow'
+          classNameThumb='relative shadow'
           disabled={isPending}
           checked={view === "second"}
           onCheckedChange={(checked) => {
@@ -44,6 +45,11 @@ export default function ChildrensSwitch({
               else await setChildren({ view: "first" })
             })
           }}
+          loading={isPending && (
+            <div className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-50'>
+              <Loader size={14} className='animate-spin' />
+            </div>
+          )}
         />
         <IconByName name={secondIcon} className={cn(
           "w-5 h-5 text-muted-foreground transition-all", 

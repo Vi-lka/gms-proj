@@ -6,15 +6,14 @@ import { useMapItemsSearch } from './hooks';
 import { Skeleton } from '~/components/ui/skeleton';
 import { toast } from 'sonner';
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '~/components/ui/dropdown-menu';
-import { Check, CircleHelp, Loader, XIcon } from 'lucide-react';
+import { Check, Loader, XIcon } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command';
 import { cn } from '~/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
+import TooltipHelp from '~/components/ui/special/tooltip-help';
 
 export default function CompaniesFilter() {
   const [open, setOpen] = React.useState(false)
-  const [tooltipOpen, setTooltipOpen] = React.useState(false)
 
   const [isPending, startTransition] = React.useTransition()
 
@@ -67,27 +66,11 @@ export default function CompaniesFilter() {
       <DropdownMenuSubTrigger className='flex items-center justify-between' classNameChevron="ml-0">
         Компании
         {!open && isPending ? <Loader className='ml-2 text-muted-foreground flex-none animate-spin' /> : null}
-        <TooltipProvider delayDuration={300}>
-          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-            <TooltipTrigger 
-              className='ml-auto p-1 cursor-help' 
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setTooltipOpen(true)
-              }}
-            >
-              <CircleHelp className='!w-3 !h-3 text-muted-foreground/60'/>
-            </TooltipTrigger>
-            <TooltipContent sideOffset={10} asChild onPointerOut={() => setTooltipOpen(false)}>
-              <div className="backdrop-blur supports-[backdrop-filter]:bg-muted/60 dark:shadow-secondary bg-muted/60 shadow rounded-md p-1.5">
-                <p className='text-foreground text-xs font-light'>
-                  Фильтрация по <span className='font-medium'>Компаниям</span>
-                </p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <TooltipHelp>
+          <p className='text-foreground text-xs font-light'>
+            Фильтрация по <span className='font-medium'>Компаниям</span>
+          </p>
+        </TooltipHelp>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent className='relative max-w-64 z-10' alignOffset={-10} sideOffset={4}>
         <Button 

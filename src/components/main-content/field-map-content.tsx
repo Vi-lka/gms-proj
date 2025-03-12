@@ -74,9 +74,9 @@ export default function FieldMapContent({
 
   return (
     <div className={cn('flex gap-6 relative', className)}>
-      <FieldMap imageUrl={data.fileUrl} className='lg:w-3/4 md:w-2/3 w-full' />
+      <FieldMap imageUrl={data.fileUrl} className='lg:w-3/4 md:w-2/3 w-full md:min-h-[calc(100vh-250px)] min-h-[calc(100vh-280px)]' />
 
-      <FieldList polygons={polygons} className='lg:w-1/4 md:w-1/3 md:block hidden' />
+      <FieldList polygons={polygons} className='lg:w-1/4 md:w-1/3 md:block hidden md:min-h-[calc(100vh-250px)]' />
       <Popover>
         <PopoverTrigger asChild className='md:hidden block'>
           <Button variant="outline" className='md:hidden block absolute right-2 top-2 w-fit h-fit p-2 dark:border-primary/20 shadow rounded-full z-50'>
@@ -129,7 +129,7 @@ function FieldMap({
     <TooltipMouse
       open={!!tooltip}
       description={tooltip ?? ''}
-      className={cn('flex flex-col w-full h-full flex-grow min-h-[calc(100vh-280px)]', className)}
+      className={cn('flex flex-col w-full h-full flex-grow', className)}
     >
       <div ref={ref} className='flex w-full h-full flex-grow'>
         <CanvasStage
@@ -160,7 +160,7 @@ function FieldList({
     .filter((area) => area !== null)
 
   return (
-    <Card className={cn("flex-grow h-full md:min-h-[calc(100vh-280px)] dark:bg-background/50 shadow-md border border-foreground/10", className)}>
+    <Card className={cn("flex-grow h-full dark:bg-background/50 shadow-md border border-foreground/10", className)}>
       <CardHeader className="p-0">
         <CardContent className="p-0">
           <CardTitle className='md:p-6 p-3 text-center md:text-base text-sm'>Лицензионные участки</CardTitle>

@@ -13,7 +13,7 @@ import { eq, inArray } from "drizzle-orm";
 import { fields, licensedAreas, mapItems } from "../db/schema";
 import { unstable_cache } from "~/lib/unstable-cache";
 
-export async function getMapItemPage(id: string) {
+export async function getMapItemPage(id: string, fetchImages = true) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
@@ -31,7 +31,7 @@ export async function getMapItemPage(id: string) {
 
       const fieldMaps = await Promise.all(
         mapItem.data.fields.map(async ({id, name, fieldMap}) => {
-          if (fieldMap) {
+          if (fieldMap && fetchImages) {
             const fieldMapWithImage = await getFieldMapWithImage(fieldMap.id)
             if (fieldMapWithImage.error !== null) throw new Error(fieldMapWithImage.error);
             return {

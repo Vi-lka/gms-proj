@@ -33,7 +33,7 @@ export default function ClearFiltersButton({
   if (searchParams.size === 0) return null;
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
