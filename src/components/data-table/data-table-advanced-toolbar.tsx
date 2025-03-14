@@ -8,6 +8,7 @@ import { DataTableFilterList } from "~/components/data-table/data-table-filter-l
 import { DataTableSortList } from "~/components/data-table/data-table-sort-list"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import { type DataTableAdvancedFilterField } from "~/lib/types"
+import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 
 interface DataTableAdvancedToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -53,6 +54,14 @@ interface DataTableAdvancedToolbarProps<TData>
    * @default true
    */
   shallow?: boolean
+
+  prepend?: React.ReactNode
+
+  append?: React.ReactNode
+
+  disabled?: boolean,
+
+  draggableList?: boolean,
 }
 
 export function DataTableAdvancedToolbar<TData>({
@@ -60,35 +69,46 @@ export function DataTableAdvancedToolbar<TData>({
   filterFields = [],
   debounceMs = 300,
   shallow = true,
+  disabled,
   children,
+  prepend,
+  append,
+  draggableList,
   className,
   ...props
 }: DataTableAdvancedToolbarProps<TData>) {
   return (
-    <div
-      className={cn(
-        "flex w-full items-center justify-between gap-2 overflow-auto p-1",
-        className
-      )}
-      {...props}
-    >
-      <div className="flex items-center gap-2">
-        <DataTableFilterList
-          table={table}
-          filterFields={filterFields}
-          debounceMs={debounceMs}
-          shallow={shallow}
-        />
-        <DataTableSortList
-          table={table}
-          debounceMs={debounceMs}
-          shallow={shallow}
-        />
+    <ScrollArea type="always" className="pb-2" classNameViewport="max-h-12" classNameBar="z-50">
+      <div
+        className={cn(
+          "flex w-full items-center justify-between gap-2 overflow-auto p-1",
+          className
+        )}
+        {...props}
+      >
+        <div className="flex items-center gap-2">
+          {prepend}
+          <DataTableFilterList
+            table={table}
+            filterFields={filterFields}
+            debounceMs={debounceMs}
+            shallow={shallow}
+            draggable={draggableList}
+          />
+          {append}
+        </div>
+        <div className="flex items-center gap-2">
+          {children}
+          <DataTableSortList
+            table={table}
+            debounceMs={debounceMs}
+            shallow={shallow}
+            disabled={disabled}
+          />
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
-    </div>
+      <ScrollBar orientation="horizontal" className="z-50" />
+    </ScrollArea>
   )
 }

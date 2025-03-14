@@ -11,6 +11,7 @@ import { db } from "../db";
 import { getRelationOrderBy, orderData } from "../db/utils";
 import { intervalToString, restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
+import { filterColumns } from "~/lib/filter-columns";
 
 export async function getAreasData(
   input: GetAreasDataSchema,
@@ -24,7 +25,15 @@ export async function getAreasData(
     try {
       const offset = (input.page - 1) * input.perPage
 
+      const advancedWhere = filterColumns({
+        table: areasData,
+        filters: input.filters,
+        joinOperator: input.joinOperator,
+      });
+
       const where = and(
+        advancedWhere,
+        and(
           input.areaName ? or(
             ilike(areasData.id, `%${input.areaName}%`),
             ilike(areasData.bush, `%${input.areaName}%`),
@@ -141,6 +150,7 @@ export async function getAreasData(
             )
           ): undefined
         )
+      )
 
       const { orderBy } = getRelationOrderBy(input.sort, areasData, areasData.id)
 

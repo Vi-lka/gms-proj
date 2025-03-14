@@ -247,3 +247,39 @@ export function extractKeys<T extends string>(
 
   return result
 }
+
+interface InputObject {
+  value: string;
+  label: string;
+}
+interface OutputObject {
+  value: string;
+  label: string;
+  count: number;
+}
+export function getUniqueValuesWithCount(arr: InputObject[]): OutputObject[] {
+  const valueCountMap = new Map<string, { count: number; label: string }>();
+
+  arr.forEach(item => {
+      if (valueCountMap.has(item.value)) {
+          const existing = valueCountMap.get(item.value)!;
+          valueCountMap.set(item.value, {
+              ...existing,
+              count: existing.count + 1
+          });
+      } else {
+          valueCountMap.set(item.value, {
+              count: 1,
+              label: item.label
+          });
+      }
+  });
+
+  const result: OutputObject[] = Array.from(valueCountMap.entries()).map(([value, data]) => ({
+      value,
+      label: data.label,
+      count: data.count
+  }));
+
+  return result;
+}

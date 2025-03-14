@@ -8,7 +8,9 @@ import type {
 } from "~/lib/types"
 import type { SortDirection, Table } from "@tanstack/react-table"
 import {
+  ArrowDown,
   ArrowDownUp,
+  ArrowUp,
   Check,
   ChevronsUpDown,
   GripVertical,
@@ -316,7 +318,13 @@ export function DataTableSortList<TData>({
                         >
                           {dataTableConfig.sortOrders.map((order) => (
                             <SelectItem key={order.value} value={order.value}>
-                              {order.label}
+                              <p className="flex items-center gap-1">
+                                {order.value === "asc" 
+                                  ? <ArrowUp size={14} className="text-muted-foreground"/> 
+                                  : <ArrowDown size={14} className="text-muted-foreground"/>
+                                }
+                                {order.label}
+                              </p>
                             </SelectItem>
                           ))}
                         </SelectContent>

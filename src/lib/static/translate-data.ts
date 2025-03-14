@@ -1,4 +1,6 @@
 const data = {
+  and: "и",
+  or: "или",
   id: "ID",
   name: "Название",
   email: "Email",
@@ -16,6 +18,7 @@ const data = {
   fieldName: "Месторождение",
   licensedAreaId: "ID Лицензионного участка",
   licensedAreaName: "Лицензионный участок",
+  areaId: "ID Лицензионного участка",
   areaName: "Лицензионный участок",
   expires: "Истекает",
   bush: "Куст",
@@ -23,6 +26,8 @@ const data = {
   plast: "Пласт",
   horizon: "Горизонт",
   retinue: "Свита",
+  occurrenceIntervalStart: "Интервал залегания (м) от",
+  occurrenceIntervalEnd: "Интервал залегания (м) до",
   occurrenceInterval: "Интервал залегания (м)",
   samplingDate: "Дата отбора пробы",
   analysisDate: "Дата анализа",

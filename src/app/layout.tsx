@@ -22,7 +22,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${GeistSans.variable}`}
     >
-      {/* {env.NODE_ENV === "development" && <ReactScan />} */}
+      {env.NODE_ENV === "development" && <ReactScan />}
       <body className="font-sans">
         <Providers>
           <div className="bg-background">

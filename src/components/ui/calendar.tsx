@@ -52,6 +52,7 @@ function Calendar({
   return (
     <DayPicker
       locale={ru}
+      timeZone="GMT"
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       style={{

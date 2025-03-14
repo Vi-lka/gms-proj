@@ -39,6 +39,7 @@ export default function DataTableSearchInput<TData>({
 
   return (
     <Input
+      type="search"
       placeholder={placeholder}
       value={searchValue}
       onChange={(event) => setSearchValue(event.target.value)}
