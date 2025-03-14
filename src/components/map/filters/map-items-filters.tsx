@@ -1,6 +1,6 @@
 "use client"
 
-import { FilterIcon, XIcon } from 'lucide-react'
+import { ListFilter, XIcon } from 'lucide-react'
 import React from 'react'
 import { Button } from '~/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
@@ -30,7 +30,7 @@ export default function MapItemsFilters() {
               "backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary bg-background/60"
             )}
           >
-            <FilterIcon className='aspect-square'/>
+            <ListFilter className='aspect-square'/>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className='relative rounded-xl min-w-56'>
