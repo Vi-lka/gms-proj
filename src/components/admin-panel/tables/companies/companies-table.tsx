@@ -11,6 +11,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar';
 import CompaniesTableToolbarActions from './companies-table-toolbar-actions';
 import DeleteCompaniesDialog from './delete-companies-dialog';
 import UpdateCompanySheet from './update-company-sheet';
+import { toast } from 'sonner';
 
 interface CompaniesTableProps {
   promises: Promise<
@@ -21,7 +22,16 @@ interface CompaniesTableProps {
 }
 
 export default function CompaniesTable({ promises }: CompaniesTableProps) {
-  const [{ data, pageCount }] = React.use(promises)
+  const [{ data, pageCount, error }] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("data-error")
+    }
+  }, [error])
+
+  const [isPending, startTransition] = React.useTransition()
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<Company> | null>(null);
 
@@ -45,6 +55,7 @@ export default function CompaniesTable({ promises }: CompaniesTableProps) {
     filterFields,
     enableAdvancedFilter: false,
     initialState: {
+      sorting: [{ id: "name", desc: false }],
       columnPinning: {
         right: ["actions"],
         left: ["select"]
@@ -52,16 +63,15 @@ export default function CompaniesTable({ promises }: CompaniesTableProps) {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
+    startTransition,
     clearOnDefault: true,
   })
 
   return (
     <>
-      <DataTable
-        table={table}
-      >
-        <DataTableToolbar table={table} filterFields={filterFields}>
-          <CompaniesTableToolbarActions table={table} />
+      <DataTable table={table} disabled={isPending}>
+        <DataTableToolbar table={table} filterFields={filterFields} isPending={isPending}>
+          <CompaniesTableToolbarActions table={table} disabled={isPending} />
         </DataTableToolbar>
       </DataTable>
       <UpdateCompanySheet

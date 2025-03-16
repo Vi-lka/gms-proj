@@ -7,10 +7,12 @@ import CreateAreasDataSheet from './create-areas-data-sheet'
 
 interface AreasDataTableToolbarActionsProps {
   table: Table<AreaDataExtend>
+  disabled?: boolean
 }
 
 export default function AreasDataTableToolbarActions({
-  table
+  table,
+  disabled
 }: AreasDataTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
@@ -25,7 +27,7 @@ export default function AreasDataTableToolbarActions({
         />
       ) : null}
       <CreateAreasDataSheet open={openCreate} onOpenChange={setOpenCreate} />
-      <DataTableSortList table={table}/>
+      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

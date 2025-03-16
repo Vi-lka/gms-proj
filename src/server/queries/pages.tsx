@@ -66,42 +66,6 @@ export async function getMapItemPage(id: string, fetchImages = true) {
   return result
 }
 
-// export async function getAreaPage(mapItemId: string, input: GetAreasDataSchema) {
-//   const session = await auth();
-//   if (restrictUser(session?.user.role, 'content')) {
-//     throw new Error("No access");
-//   }
-
-//   const fetchData = async () => {
-//     try {
-//       const mapItem = await getMapItem(mapItemId)
-
-//       if (mapItem.error !== null) throw new Error(mapItem.error);
-//       // if no mapItem found or it`s doesn't have companies throw to NotFound page
-//       if (!mapItem.data.companiesToMapItems[0]) notFound();
-    
-//       const titleMapItem = mapItem.data.cluster?.name ?? mapItem.data.companiesToMapItems[0].company.name
-    
-//       const areaData = await getAreasData(input)
-
-//       return { 
-//         data: { 
-//           titleMapItem, 
-//           areaData 
-//         },
-//         error: null
-//       }
-//     } catch (error) {
-//       console.error(error)
-//       return { data: null, error: getErrorMessage(error) }
-//     }
-//   }
-
-//   const result = await fetchData()
-
-//   return result
-// }
-
 export async function getLicensedAreaPage(input: GetAreasDataSchema) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {

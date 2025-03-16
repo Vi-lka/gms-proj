@@ -9,6 +9,7 @@ import { DataTableSortList } from "~/components/data-table/data-table-sort-list"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import { type DataTableAdvancedFilterField } from "~/lib/types"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
+import { Loader } from "lucide-react"
 
 interface DataTableAdvancedToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -59,9 +60,11 @@ interface DataTableAdvancedToolbarProps<TData>
 
   append?: React.ReactNode
 
-  disabled?: boolean,
+  disabled?: boolean
 
-  draggableList?: boolean,
+  isPending?: boolean
+
+  draggableList?: boolean
 }
 
 export function DataTableAdvancedToolbar<TData>({
@@ -70,6 +73,7 @@ export function DataTableAdvancedToolbar<TData>({
   debounceMs = 300,
   shallow = true,
   disabled,
+  isPending,
   children,
   prepend,
   append,
@@ -98,6 +102,12 @@ export function DataTableAdvancedToolbar<TData>({
           {append}
         </div>
         <div className="flex items-center gap-2">
+          {isPending && (
+            <div className='flex items-center gap-1 mx-2'>
+              <Loader size={18} className="flex-none animate-spin" />
+              <span className='text-sm font-light md:block hidden'>Загрузка...</span>
+            </div>
+          )}
           {children}
           <DataTableSortList
             table={table}

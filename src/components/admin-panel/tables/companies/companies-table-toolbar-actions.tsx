@@ -7,10 +7,12 @@ import React from "react";
 
 interface CompaniesTableToolbarActionsProps {
   table: Table<Company>
+  disabled?: boolean
 }
 
 export default function CompaniesTableToolbarActions({
-  table
+  table,
+  disabled
 }: CompaniesTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
   
@@ -25,7 +27,7 @@ export default function CompaniesTableToolbarActions({
         />
       ) : null}
       <CreateCompanySheet open={openCreate} onOpenChange={setOpenCreate} />
-      <DataTableSortList table={table}/>
+      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

@@ -9,6 +9,8 @@ import { idToSentenceCase } from '~/lib/utils'
 import { useDataTable } from '~/hooks/use-data-table'
 import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
+import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
+import { toast } from 'sonner'
 
 interface UsersTableProps {
   promises: Promise<
@@ -20,7 +22,16 @@ interface UsersTableProps {
 }
 
 export default function UsersTable({ promises }: UsersTableProps) {
-  const [{ data, pageCount }, roleCounts] = React.use(promises)
+  const [{ data, pageCount, error }, roleCounts] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("data-error")
+    }
+  }, [error])
+
+  const [isPending, startTransition] = React.useTransition()
 
   const [, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
 
@@ -53,7 +64,7 @@ export default function UsersTable({ promises }: UsersTableProps) {
     filterFields,
     enableAdvancedFilter: false,
     initialState: {
-      sorting: [{ id: "id", desc: true }],
+      sorting: [{ id: "name", desc: false }],
       columnPinning: { 
         right: ["actions"],
         left: ["select"]
@@ -61,18 +72,17 @@ export default function UsersTable({ promises }: UsersTableProps) {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
+    startTransition,
     clearOnDefault: true,
   })
 
 
   return (
     <>
-      <DataTable
-        table={table}
-        // floatingBar={<UsersTableFloatingBar table={table} />}
-      >
-        <DataTableToolbar table={table} filterFields={filterFields}>
-          {/* <UsersTableToolbarActions table={table} /> */}
+      <DataTable table={table} disabled={isPending}>
+        <DataTableToolbar table={table} filterFields={filterFields} isPending={isPending}>
+          {/*TODO:  <UsersTableToolbarActions table={table} /> */}
+          <DataTableSortList table={table} disabled={isPending}/>
         </DataTableToolbar>
       </DataTable>
     </>

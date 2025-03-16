@@ -155,7 +155,8 @@ export function getTableOrderBy<IData, TData extends TableConfig>(
 export function getRelationOrderBy<SData, TData extends TableConfig>(
   sort: ExtendedSortingState<SData>,
   table: PgTableWithColumns<TData>,
-  defaultColumn: AnyColumn | SQLWrapper
+  defaultColumn: AnyColumn | SQLWrapper,
+  relationColumns?: Extract<keyof SData, string>[]
 ) {
   const orderByUnClear = sort.length > 0
     ? sort.map((item) => getTableOrderBy(item, table))
@@ -165,6 +166,7 @@ export function getRelationOrderBy<SData, TData extends TableConfig>(
   const relationOrderBy = sort
     .map((item) => getTableOrderBy(item, table, true))
     .filter((item): item is ExtendedColumnSort<SData> => !!item)
+    .filter((item) => relationColumns?.includes(item.id))
 
   return { orderBy, relationOrderBy }
 }
@@ -194,12 +196,15 @@ export function fieldSorter<TData extends object>(
   return function (a: TData, b: TData) {
     for (let i = 0; i < length; i++) {
       const field = fields[i]!.id;
-      if (typeof a[field] === "string" && typeof b[field] === "string") {
-        if (a[field].localeCompare(b[field]) > 0) return dir[i]!;
-        if (a[field].localeCompare(b[field]) < 0) return -(dir[i]!);
+      const valueA = a[field];
+      const valueB = b[field];
+
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        if (valueA.localeCompare(valueB) > 0) return dir[i]!;
+        if (valueA.localeCompare(valueB) < 0) return -(dir[i]!);
       } else {
-        if (a[field] > b[field]) return dir[i]!;
-        if (a[field] < b[field]) return -(dir[i]!);  
+        if (valueA > valueB) return dir[i]!;
+        if (valueA < valueB) return -(dir[i]!);
       }
     }
     return 0;
@@ -219,4 +224,43 @@ export function compareElements(
   })
 
   return compare
+}
+
+export interface PaginationInput {
+  page: number;
+  perPage: number;
+}
+export interface PaginationResult<DataT> {
+  items: DataT[];
+  totalPages: number;
+  currentPage: number;
+  totalItems: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+/**
+ * Pagination of an array of data
+ * @param data Source data set
+ * @param input Pagination parameters (page and perPage)
+ * @returns Object with paginated data and metadata
+ */
+export function paginate<DataT>(data: DataT[], input: PaginationInput): PaginationResult<DataT> {
+  const page = Math.max(1, input.page);
+  const perPage = Math.max(1, input.perPage);
+  
+  const totalItems = data.length;
+  
+  const offset = (page - 1) * perPage;
+  const items = data.slice(offset, offset + perPage);
+
+  const totalPages = Math.ceil(totalItems / perPage);
+  
+  return {
+    items,
+    totalPages,
+    currentPage: page,
+    totalItems,
+    hasNextPage: page < totalPages,
+    hasPreviousPage: page > 1
+  };
 }

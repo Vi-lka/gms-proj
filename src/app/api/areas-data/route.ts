@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const data = await getAreasData({ ...search, filters: validFilters })
+    if (data.error !== null) throw new Error(data.error)
     return Response.json(data)
   } catch (error) {
     return Response.json({ message: 'Internal Server Error', error: error }, { status: 500 })

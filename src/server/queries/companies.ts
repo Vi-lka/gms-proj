@@ -5,10 +5,11 @@ import { type GetCompaniesSchema } from "~/lib/validations/companies"
 import { auth } from "../auth";
 import { and, count, eq, ilike, or } from "drizzle-orm";
 import { companies } from "../db/schema";
-import { getRelationOrderBy, orderData } from "../db/utils";
+import { getRelationOrderBy } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { restrictUser } from "~/lib/utils";
+import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getCompanies(
   input: GetCompaniesSchema,
@@ -58,13 +59,11 @@ export async function getCompanies(
           }
         })
   
-        const sortedData = orderData(input.sort, data)
-  
         const pageCount = Math.ceil(total / input.perPage)
-        return { data: sortedData, pageCount }
+        return { data, pageCount, error: null }
       } catch (err) {
         console.error(err)
-        return { data: [], pageCount: 0 }
+        return { data: [], pageCount: 0, error: getErrorMessage(err) }
       }
     }
   

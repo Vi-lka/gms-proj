@@ -231,7 +231,7 @@ export function DataTableSortList<TData>({
                                   variant="secondary"
                                   className="h-[1.125rem] rounded px-1 font-mono text-[0.65rem] font-normal"
                                 >
-                                  По умолчанию
+                                  По ум.
                                 </Badge>
                               ) : null}
                               <ChevronsUpDown
@@ -320,8 +320,8 @@ export function DataTableSortList<TData>({
                             <SelectItem key={order.value} value={order.value}>
                               <p className="flex items-center gap-1">
                                 {order.value === "asc" 
-                                  ? <ArrowUp size={14} className="text-muted-foreground"/> 
-                                  : <ArrowDown size={14} className="text-muted-foreground"/>
+                                  ? <ArrowDown size={14} className="text-muted-foreground"/> 
+                                  : <ArrowUp size={14} className="text-muted-foreground"/>
                                 }
                                 {order.label}
                               </p>

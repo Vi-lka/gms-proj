@@ -25,11 +25,13 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "areas-data-error", duration: 5000, dismissible: true })
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
     return () => { 
-      if (error !== null) toast.dismiss("areas-data-error")
+      if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
+
+  const [isPending, startTransition] = React.useTransition()
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<AreaDataExtend> | null>(null);
 
@@ -53,6 +55,7 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
     filterFields,
     enableAdvancedFilter: false,
     initialState: {
+      sorting: [{ id: "companyName", desc: false }],
       columnPinning: { 
         right: ["actions"],
         left: ["select"]
@@ -60,16 +63,15 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
+    startTransition,
     clearOnDefault: true,
   })
 
   return (
     <>
-      <DataTable
-        table={table}
-      >
-        <DataTableToolbar table={table} filterFields={filterFields}>
-          <AreasDataTableToolbarActions table={table} />
+      <DataTable table={table} disabled={isPending}>
+        <DataTableToolbar table={table} filterFields={filterFields} isPending={isPending}>
+          <AreasDataTableToolbarActions table={table} disabled={isPending} />
         </DataTableToolbar>
       </DataTable>
       <UpdateAreasDataSheet

@@ -65,9 +65,9 @@ export function DataTableColumnHeader<TData, TValue>({
           {titleNode ?? title}
           <SelectIcon asChild>
             {column.getCanSort() && column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2.5 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === "asc" ? (
               <ArrowUp className="ml-2.5 size-4" aria-hidden="true" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowDown className="ml-2.5 size-4" aria-hidden="true" />
             ) : (
               <ChevronsUpDown className="ml-2.5 size-4" aria-hidden="true" />
             )}
@@ -78,7 +78,7 @@ export function DataTableColumnHeader<TData, TValue>({
             <>
               <SelectItem value={ascValue}>
                 <span className="flex items-center">
-                  <ArrowUp
+                  <ArrowDown
                     className="mr-2 size-3.5 text-muted-foreground/70"
                     aria-hidden="true"
                   />
@@ -87,7 +87,7 @@ export function DataTableColumnHeader<TData, TValue>({
               </SelectItem>
               <SelectItem value={descValue}>
                 <span className="flex items-center">
-                  <ArrowDown
+                  <ArrowUp
                     className="mr-2 size-3.5 text-muted-foreground/70"
                     aria-hidden="true"
                   />

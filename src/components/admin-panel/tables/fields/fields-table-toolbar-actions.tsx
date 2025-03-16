@@ -7,10 +7,12 @@ import DeleteFieldsDialog from './delete-fields-dialog'
 
 interface FieldsTableToolbarActionsProps {
   table: Table<FieldExtend>
+  disabled?: boolean
 }
 
 export default function FieldsTableToolbarActions({
-  table
+  table,
+  disabled
 }: FieldsTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
@@ -25,7 +27,7 @@ export default function FieldsTableToolbarActions({
         />
       ) : null}
       <CreateFieldSheet open={openCreate} onOpenChange={setOpenCreate} />
-      <DataTableSortList table={table}/>
+      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

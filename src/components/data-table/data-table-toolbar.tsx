@@ -3,7 +3,7 @@
 import * as React from "react"
 import type { DataTableFilterField } from "~/lib/types"
 import type { Table } from "@tanstack/react-table"
-import { X } from "lucide-react"
+import { Loader, X } from "lucide-react"
 
 import { cn } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
@@ -37,11 +37,14 @@ interface DataTableToolbarProps<TData>
    * ]
    */
   filterFields?: DataTableFilterField<TData>[]
+
+  isPending?: boolean
 }
 
 export function DataTableToolbar<TData>({
   table,
   filterFields = [],
+  isPending,
   children,
   className,
   ...props
@@ -103,6 +106,12 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex items-center gap-2">
+        {isPending && (
+          <div className='flex items-center gap-1 mx-2'>
+            <Loader size={18} className="flex-none animate-spin" />
+            <span className='text-sm font-light md:block hidden'>Загрузка...</span>
+          </div>
+        )}
         {children}
         <DataTableViewOptions table={table} />
       </div>

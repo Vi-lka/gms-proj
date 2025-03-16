@@ -7,10 +7,12 @@ import CreateLicensedAreaSheet from './create-licensed-area-sheet'
 
 interface LicensedAreasTableToolbarActionsProps {
   table: Table<LicensedAreaExtend>
+  disabled?: boolean
 }
 
 export default function LicensedAreasTableToolbarActions({
-  table
+  table,
+  disabled
 }: LicensedAreasTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
@@ -25,7 +27,7 @@ export default function LicensedAreasTableToolbarActions({
         />
       ) : null}
       <CreateLicensedAreaSheet open={openCreate} onOpenChange={setOpenCreate} />
-      <DataTableSortList table={table}/>
+      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

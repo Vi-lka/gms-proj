@@ -28,7 +28,7 @@ export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<User>().withDefault([
-    { id: "id", desc: false },
+    { id: "name", desc: false },
   ]),
   id: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),
@@ -43,7 +43,7 @@ export const searchParamsSessions = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<SessionExtend>().withDefault([
-    { id: "userId", desc: false }
+    { id: "name", desc: false }
   ]),
   userId: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),
@@ -75,7 +75,7 @@ export const searchParamsCompanies = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<Company>().withDefault([
-    { id: "id", desc: false }
+    { id: "name", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),
@@ -89,7 +89,7 @@ export const searchParamsFields = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<FieldExtend>().withDefault([
-    { id: "id", desc: false }
+    { id: "name", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),
@@ -105,7 +105,7 @@ export const searchLicensedAreas = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<LicensedAreaExtend>().withDefault([
-    { id: "id", desc: false }
+    { id: "name", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),
@@ -144,7 +144,7 @@ export const searchFieldsMaps = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<FieldMapExtend>().withDefault([
-    { id: "id", desc: false }
+    { id: "fieldName", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   name: parseAsString.withDefault(""),

@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
+import { ReactScan } from "~/components/react-scan";
+import { env } from "~/env";
 
 export const metadata: Metadata = {
   title: "ГМС",
@@ -20,6 +22,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${GeistSans.variable}`}
     >
+      {/* {env.NODE_ENV === "development" && <ReactScan />} */}
       <body className="font-sans">
         <Providers>
           <div className="bg-background">

@@ -7,7 +7,6 @@ import { type DataTableFilterField } from '~/lib/types';
 import { type AreaDataExtend } from '~/server/db/schema';
 import { type getAreasData } from '~/server/queries/area-data';
 import { getColumns } from './licensed-area-data-table-colunms';
-import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { getAdvancedFilterFields } from './licensed-area-data-table-advanced-filter-fields';
 import { DataTableAdvancedToolbar } from '~/components/data-table/data-table-advanced-toolbar';
@@ -24,9 +23,9 @@ export default function LicensedAreaDataTable({
   const { data, pageCount, error } = areaData;
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "areas-data-error", duration: 5000, dismissible: true })
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
     return () => { 
-      if (error !== null) toast.dismiss("areas-data-error")
+      if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
 
@@ -42,7 +41,6 @@ export default function LicensedAreaDataTable({
       id: "areaName",
       label: "Название",
       placeholder: "Поиск...",
-      disabled: isPending
     }
   ]
 
@@ -56,6 +54,9 @@ export default function LicensedAreaDataTable({
     columns,
     pageCount,
     filterFields,
+    initialState: {
+      sorting: [{ id: "companyName", desc: false }],
+    },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
     startTransition,
@@ -69,6 +70,7 @@ export default function LicensedAreaDataTable({
         filterFields={advancedFilterFields}
         shallow={false}
         disabled={isPending}
+        isPending={isPending}
         draggableList
         prepend={
           <>
@@ -81,14 +83,7 @@ export default function LicensedAreaDataTable({
             <Separator className='w-0.5 h-8' />
           </>
         }
-      >
-        {isPending && (
-          <div className='flex items-center gap-1 mx-2'>
-            <Loader size={18} className="flex-none animate-spin" />
-            <span className='text-sm font-light md:block hidden'>Загрузка...</span>
-          </div>
-        )}
-      </DataTableAdvancedToolbar>
+      />
     </DataTable>
   )
 }

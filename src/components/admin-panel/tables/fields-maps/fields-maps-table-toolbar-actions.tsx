@@ -9,10 +9,12 @@ import { Plus } from 'lucide-react'
 
 interface FieldsMapsTableToolbarActionsProps {
   table: Table<FieldMapExtend>
+  disabled?: boolean
 }
 
 export default function FieldsMapsTableToolbarActions({
-  table
+  table,
+  disabled
 }: FieldsMapsTableToolbarActionsProps) {
 
   return (
@@ -33,7 +35,7 @@ export default function FieldsMapsTableToolbarActions({
           Создать <Plus size={16} className='flex-none' />
         </Button>
       </Link>
-      <DataTableSortList table={table}/>
+      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

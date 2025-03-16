@@ -5,10 +5,10 @@ import "server-only"
 import { type GetAreasDataSchema } from "~/lib/validations/areas-data";
 import { auth } from "../auth";
 import { unstable_cache } from "~/lib/unstable-cache";
-import { and, count, ilike, inArray, or, eq } from "drizzle-orm";
+import { and, ilike, inArray, or, eq } from "drizzle-orm";
 import { areasData, companies, fields, licensedAreas } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, orderData } from "../db/utils";
+import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { intervalToString, restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { filterColumns } from "~/lib/filter-columns";
@@ -23,7 +23,7 @@ export async function getAreasData(
 
   const fetchData = async () => {
     try {
-      const offset = (input.page - 1) * input.perPage
+      // const offset = (input.page - 1) * input.perPage
 
       const advancedWhere = filterColumns({
         table: areasData,
@@ -154,11 +154,11 @@ export async function getAreasData(
 
       const { orderBy } = getRelationOrderBy(input.sort, areasData, areasData.id)
 
-      const { data, total } = await db.transaction(async (tx) => {
+      const { data, pageCount } = await db.transaction(async (tx) => {
         const data = await tx
           .query.areasData.findMany({
-            limit: input.perPage,
-            offset,
+            // limit: input.perPage,
+            // offset,
             where,
             orderBy,
             with: {
@@ -187,40 +187,39 @@ export async function getAreasData(
             }
           })
 
-          const total = await tx
-            .select({
-              count: count(),
-            })
-            .from(areasData)
-            .where(where)
-            .execute()
-            .then((res) => res[0]?.count ?? 0)
+          // const total = await tx
+          //   .select({
+          //     count: count(),
+          //   })
+          //   .from(areasData)
+          //   .where(where)
+          //   .execute()
+          //   .then((res) => res[0]?.count ?? 0)
 
+        const transformData = data.map(({area, ...other}) => ({
+          ...other,
+          areaName: area.name,
+          fieldId: area.field.id,
+          fieldName: area.field.name,
+          companyId: area.field.company.id,
+          companyName: area.field.company.name,
+          occurrenceInterval: intervalToString(
+            other.occurrenceIntervalStart,
+            other.occurrenceIntervalEnd
+          )
+        }))
+  
+        const sortedData = orderData(input.sort, transformData)
+
+        const paginated = paginate(sortedData, input)
 
         return {
-          data,
-          total,
+          data: paginated.items,
+          pageCount: paginated.totalPages,
         }
       })
 
-      const transformData = data.map(({area, ...other}) => ({
-        ...other,
-        areaName: area.name,
-        fieldId: area.field.id,
-        fieldName: area.field.name,
-        companyId: area.field.company.id,
-        companyName: area.field.company.name,
-        occurrenceInterval: intervalToString(
-          other.occurrenceIntervalStart,
-          other.occurrenceIntervalEnd
-        )
-      }))
-
-      const sortedData = orderData(input.sort, transformData)
-
-      const pageCount = Math.ceil(total / input.perPage)
-      
-      return { data: sortedData, pageCount, error: null }
+      return { data, pageCount, error: null }
     } catch (err) {
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }

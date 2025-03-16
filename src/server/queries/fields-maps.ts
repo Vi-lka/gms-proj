@@ -5,10 +5,10 @@ import "server-only"
 import { type GetFieldsMapsSchema } from "~/lib/validations/fields-maps";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
-import { and, ilike, inArray, or, eq, count } from "drizzle-orm";
+import { and, ilike, inArray, or, eq } from "drizzle-orm";
 import { companies, fields, fieldsMaps } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, orderData } from "../db/utils";
+import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { getPresignedUrl } from "../s3-bucket/queries";
 import { getErrorMessage } from "~/lib/handle-error";
@@ -23,7 +23,7 @@ export async function getFieldsMaps(
 
   const fetchData = async () => {
     try {
-      const offset = (input.page - 1) * input.perPage
+      // const offset = (input.page - 1) * input.perPage
 
       const where = and(
           input.name ? or(
@@ -84,11 +84,11 @@ export async function getFieldsMaps(
 
       const { orderBy } = getRelationOrderBy(input.sort, fieldsMaps, fieldsMaps.id)
 
-      const { data, total } = await db.transaction(async (tx) => {
+      const { data, pageCount } = await db.transaction(async (tx) => {
         const data = await tx
           .query.fieldsMaps.findMany({
-            limit: input.perPage,
-            offset,
+            // limit: input.perPage,
+            // offset,
             where,
             orderBy,
             with: {
@@ -109,42 +109,43 @@ export async function getFieldsMaps(
             }
           })
 
-          const total = await tx
-            .select({
-              count: count(),
-            })
-            .from(fieldsMaps)
-            .where(where)
-            .execute()
-            .then((res) => res[0]?.count ?? 0)
+        // const total = await tx
+        //   .select({
+        //     count: count(),
+        //   })
+        //   .from(fieldsMaps)
+        //   .where(where)
+        //   .execute()
+        //   .then((res) => res[0]?.count ?? 0)
+
+        const validData = await Promise.all(
+          data.map(async ({field, ...other}) => {
+            const fileUrl = await getPresignedUrl(other.fileId)
+            if (fileUrl.error !== null) throw new Error(fileUrl.error)
+            return {
+              ...other,
+              fileUrl: fileUrl.data,
+              fieldName: field.name,
+              companyId: field.company.id,
+              companyName: field.company.name,
+            }
+          })
+        )
+  
+        const sortedData = orderData(input.sort, validData)
+
+        const paginated = paginate(sortedData, input)
 
         return {
-          data,
-          total,
+          data: paginated.items,
+          pageCount: paginated.totalPages,
         }
       })
 
-      const validData = await Promise.all(
-        data.map(async ({field, ...other}) => {
-          const fileUrl = await getPresignedUrl(other.fileId)
-          if (fileUrl.error !== null) throw new Error(fileUrl.error)
-          return {
-            ...other,
-            fileUrl: fileUrl.data,
-            fieldName: field.name,
-            companyId: field.company.id,
-            companyName: field.company.name,
-          }
-        })
-      )
-
-      const sortedData = orderData(input.sort, validData)
-
-      const pageCount = Math.ceil(total / input.perPage)
-      return { data: sortedData, pageCount }
+      return { data, pageCount, error: null }
     } catch (err) {
       console.error(err)
-      return { data: [], pageCount: 0 }
+      return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
 

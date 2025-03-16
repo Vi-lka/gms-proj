@@ -81,7 +81,7 @@ export function getColumns({
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Имя" />
+        <DataTableColumnHeader column={column} title="Название" />
       ),
       cell: ({ row }) => (
         <div className="flex space-x-2">

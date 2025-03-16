@@ -12,6 +12,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import DeleteFieldsMapsDialog from './delete-fields-maps-dialog'
 import FieldsMapsTableToolbarActions from './fields-maps-table-toolbar-actions'
 import OpenImageDialog from './open-image-dialog'
+import { toast } from 'sonner'
 
 interface FieldsMapsTableProps {
   promises: Promise<
@@ -22,7 +23,16 @@ interface FieldsMapsTableProps {
 }
 
 export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
-  const [{ data, pageCount }] = React.use(promises)
+  const [{ data, pageCount, error }] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("data-error")
+    }
+  }, [error])
+
+  const [isPending, startTransition] = React.useTransition()
 
   const router = useRouter()
 
@@ -52,6 +62,7 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
     filterFields,
     enableAdvancedFilter: false,
     initialState: {
+      sorting: [{ id: "fieldName", desc: false }],
       columnPinning: { 
         right: ["actions"],
         left: ["select"]
@@ -59,16 +70,15 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,
+    startTransition,
     clearOnDefault: true,
   })
 
   return (
     <>
-      <DataTable
-        table={table}
-      >
-        <DataTableToolbar table={table} filterFields={filterFields}>
-          <FieldsMapsTableToolbarActions table={table} />
+      <DataTable table={table} disabled={isPending}>
+        <DataTableToolbar table={table} filterFields={filterFields} isPending={isPending}>
+          <FieldsMapsTableToolbarActions table={table} disabled={isPending} />
         </DataTableToolbar>
       </DataTable>
       <DeleteFieldsMapsDialog

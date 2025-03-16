@@ -17,8 +17,9 @@ import {
 } from "drizzle-orm"
 import { db } from "../db";
 import { auth } from "../auth";
-import { getRelationOrderBy, orderData } from "../db/utils";
+import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { restrictUser } from "~/lib/utils";
+import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getUsers(
   input: GetUsersSchema,
@@ -42,12 +43,7 @@ export async function getUsers(
             : undefined,
         )
 
-      const orderBy =
-        input.sort.length > 0
-          ? input.sort.map((item) =>
-              item.desc ? desc(users[item.id]) : asc(users[item.id])
-            )
-          : [asc(users.id)]
+      const { orderBy } = getRelationOrderBy(input.sort, users, users.id)
 
       const { data, total } = await db.transaction(async (tx) => {
         const data = await tx
@@ -74,10 +70,10 @@ export async function getUsers(
       })
 
       const pageCount = Math.ceil(total / input.perPage)
-      return { data, pageCount }
+      return { data, pageCount, error: null }
     } catch (err) {
       console.error(err)
-      return { data: [], pageCount: 0 }
+      return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
 
@@ -144,7 +140,7 @@ export async function getSessions(
 
   const fetchData = async () => {
     try {
-      const offset = (input.page - 1) * input.perPage
+      // const offset = (input.page - 1) * input.perPage
 
       const where = and(
         gt(sessions.expires, currentDate),
@@ -180,12 +176,12 @@ export async function getSessions(
 
       const { orderBy } = getRelationOrderBy(input.sort, sessions, sessions.userId)
 
-      const { data, total } = await db.transaction(async (tx) => {
+      const { data, pageCount } = await db.transaction(async (tx) => {
 
         const data = await tx
           .query.sessions.findMany({
-            limit: input.perPage,
-            offset,
+            // limit: input.perPage,
+            // offset,
             where,
             orderBy,
             with: {
@@ -199,37 +195,38 @@ export async function getSessions(
             }
           })
 
-        const total = await tx
-          .select({
-            count: count(),
-          })
-          .from(sessions)
-          .where(where)
-          .execute()
-          .then((res) => res[0]?.count ?? 0)
+        // const total = await tx
+        //   .select({
+        //     count: count(),
+        //   })
+        //   .from(sessions)
+        //   .where(where)
+        //   .execute()
+        //   .then((res) => res[0]?.count ?? 0)
+
+        const transformData = data.map(item => ({
+          userId: item.userId,
+          sessionToken: item.sessionToken,
+          expires: item.expires,
+          name: item.user.name,
+          email: item.user.email,
+          role: item.user.role
+        }))
+  
+        const sortedData = orderData(input.sort, transformData)
+
+        const paginated = paginate(sortedData, input)
 
         return {
-          data,
-          total,
+          data: paginated.items,
+          pageCount: paginated.totalPages,
         }
       })
 
-      const transformData = data.map(item => ({
-        userId: item.userId,
-        sessionToken: item.sessionToken,
-        expires: item.expires,
-        name: item.user.name,
-        email: item.user.email,
-        role: item.user.role
-      }))
-
-      const sortedData = orderData(input.sort, transformData)
-
-      const pageCount = Math.ceil(total / input.perPage)
-      return { data: sortedData, pageCount }
+      return { data, pageCount, error: null }
     } catch (err) {
       console.error(err)
-      return { data: [], pageCount: 0 }
+      return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
 

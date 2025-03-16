@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { profitability } from "../db/schema";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
+import { getErrorMessage } from "~/lib/handle-error";
 
 export async function getProfitability(
   input?: GetProfitabilitySchema,
@@ -26,12 +27,12 @@ export async function getProfitability(
           where
         })
 
-      if (!data) return { data: [], pageCount: 0 };
+      if (!data) return { data: [], pageCount: 0, error: null };
 
-      return { data: [data], pageCount: 1 }
+      return { data: [data], pageCount: 1, error: null }
     } catch (err) {
       console.error(err)
-      return { data: [], pageCount: 0 }
+      return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
   

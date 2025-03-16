@@ -10,6 +10,7 @@ import { DataTable } from '~/components/data-table/data-table';
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar';
 import ProfitabilityTableToolbarActions from './profitability-table-toolbar-actions';
 import UpdateProfitabilitySheet from './update-profitability-sheet';
+import { toast } from 'sonner';
 
 interface ProfitabilityTableProps {
   promises: Promise<
@@ -20,7 +21,16 @@ interface ProfitabilityTableProps {
 }
 
 export default function ProfitabilityTable({ promises }: ProfitabilityTableProps) {
-  const [{ data, pageCount }] = React.use(promises)
+  const [{ data, pageCount, error }] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("data-error")
+    }
+  }, [error])
+
+  const [isPending, startTransition] = React.useTransition()
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<Profitability> | null>(null);
 
@@ -42,14 +52,15 @@ export default function ProfitabilityTable({ promises }: ProfitabilityTableProps
       },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
+    startTransition,
     shallow: false,
     clearOnDefault: true,
   })
 
   return (
     <>
-      <DataTable table={table}>
-        <DataTableToolbar table={table}>
+      <DataTable table={table} disabled={isPending}>
+        <DataTableToolbar table={table} isPending={isPending}>
           <ProfitabilityTableToolbarActions table={table} />
         </DataTableToolbar>
       </DataTable>
