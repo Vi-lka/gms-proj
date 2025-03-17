@@ -7,9 +7,7 @@ import { type GetSessionsSchema, type GetUsersSchema } from "~/lib/validations/u
 import { sessions, type User, users } from "../db/schema";
 import {
   gt,
-  asc,
   count,
-  desc,
   and,
   ilike,
   inArray,
@@ -35,8 +33,9 @@ export async function getUsers(
 
       const where = and(
           input.name ? or(
+            ilike(users.id, `%${input.name}%`),
             ilike(users.name, `%${input.name}%`),
-            ilike(users.id, `%${input.name}%`)
+            ilike(users.email, `%${input.name}%`)
           ) : undefined,
           input.role.length > 0
             ? inArray(users.role, input.role)
@@ -152,8 +151,9 @@ export async function getSessions(
               .select({ id: users.id })
               .from(users)
               .where(
-                and(
+                or(
                   ilike(users.name, `%${input.name}%`),
+                  ilike(users.email, `%${input.name}%`),
                 )
               )
           ),

@@ -11,6 +11,7 @@ import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import { toast } from 'sonner'
+import DeleteUsersDialog from './delete-users-dialog'
 
 interface UsersTableProps {
   promises: Promise<
@@ -33,7 +34,7 @@ export default function UsersTable({ promises }: UsersTableProps) {
 
   const [isPending, startTransition] = React.useTransition()
 
-  const [, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<User> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
@@ -44,7 +45,7 @@ export default function UsersTable({ promises }: UsersTableProps) {
     {
       id: "name",
       label: "Имя",
-      placeholder: "Поиск по имени или ID...",
+      placeholder: "Поиск...",
     },
     {
       id: "role",
@@ -81,10 +82,26 @@ export default function UsersTable({ promises }: UsersTableProps) {
     <>
       <DataTable table={table} disabled={isPending}>
         <DataTableToolbar table={table} filterFields={filterFields} isPending={isPending}>
-          {/*TODO:  <UsersTableToolbarActions table={table} /> */}
-          <DataTableSortList table={table} disabled={isPending}/>
+          <div className="flex items-center gap-2">
+            {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+              <DeleteUsersDialog
+                users={table
+                  .getFilteredSelectedRowModel()
+                  .rows.map((row) => row.original)}
+                onSuccess={() => table.toggleAllRowsSelected(false)}
+              />
+            ) : null}
+            <DataTableSortList table={table} disabled={isPending}/>
+          </div>
         </DataTableToolbar>
       </DataTable>
+      <DeleteUsersDialog
+        open={rowAction?.type === "delete"}
+        onOpenChange={() => setRowAction(null)}
+        users={rowAction?.row.original ? [rowAction?.row.original] : []}
+        showTrigger={false}
+        onSuccess={() => rowAction?.row.toggleSelected(false)}
+      />
     </>
   )
 }

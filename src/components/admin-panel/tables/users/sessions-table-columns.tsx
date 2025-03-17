@@ -7,6 +7,9 @@ import type { DataTableRowAction, SessionWithUser } from "~/lib/types";
 import { toast } from "sonner"
 import { formatDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { Button } from "~/components/ui/button";
+import { Ellipsis, Trash2 } from "lucide-react";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
@@ -15,7 +18,7 @@ interface GetColumnsProps {
 }
 
 export function getColumns({
-  // setRowAction,
+  setRowAction,
 }: GetColumnsProps): ColumnDef<SessionWithUser>[] {
   return [
     {
@@ -118,6 +121,33 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Истекает" />
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date),
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              aria-label="Open menu"
+              variant="ghost"
+              className="flex size-8 p-0 data-[state=open]:bg-muted"
+            >
+              <Ellipsis className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem
+              onSelect={() => setRowAction({ row, type: "delete" })}
+            >
+              Удалить
+              <DropdownMenuShortcut>
+                <Trash2 size={16}/>
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      size: 40,
     },
   ]
 }

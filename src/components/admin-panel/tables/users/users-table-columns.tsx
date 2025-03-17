@@ -1,16 +1,16 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Trash2 } from "lucide-react";
 import React from "react";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { type DataTableRowAction } from "~/lib/types";
 import { users, type User } from "~/server/db/schema";
 import { toast } from "sonner"
 import { getErrorMessage } from "~/lib/handle-error";
-import { updateUser } from "~/server/actions/updateUser";
+import { updateUser } from "~/server/actions/users";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { idToSentenceCase } from "~/lib/utils";
 
@@ -21,7 +21,7 @@ interface GetColumnsProps {
 }
 
 export function getColumns({
-  // setRowAction,
+  setRowAction,
 }: GetColumnsProps): ColumnDef<User>[] {
   return [
     {
@@ -135,13 +135,8 @@ export function getColumns({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              {/* <DropdownMenuItem
-                onSelect={() => setRowAction({ row, type: "update" })}
-              >
-                Edit
-              </DropdownMenuItem> */}
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Роль</DropdownMenuSubTrigger>
+                <DropdownMenuSubTrigger>Изменить Роль</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
                     value={row.original.role}
@@ -174,6 +169,15 @@ export function getColumns({
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => setRowAction({ row, type: "delete" })}
+              >
+                Удалить
+                <DropdownMenuShortcut>
+                  <Trash2 size={16}/>
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
