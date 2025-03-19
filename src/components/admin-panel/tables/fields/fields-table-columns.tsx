@@ -8,6 +8,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
+import { formatDate } from "~/lib/utils";
 import { type FieldExtend } from "~/server/db/schema";
 
 interface GetColumnsProps {
@@ -112,6 +113,96 @@ export function getColumns({
           </TooltipProvider>
         </div>
       )
+    },
+    {
+      accessorKey: "createUserName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Создано" />
+      ),
+      cell: ({ row }) => (
+        <div
+          onClick={()=> {
+            if (row.original.createUserId) {
+              void navigator.clipboard.writeText(row.original.createUserId)
+              toast.success('ID скопирован')
+            }
+          }}
+        >
+          <TooltipProvider>
+            <Tooltip delayDuration={150}>
+              <TooltipTrigger className="max-w-[31.25rem] truncate font-medium">
+                {row.getValue("createUserName")}
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                ID: {row.original.createUserId}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )
+    },
+    {
+      accessorKey: "updateUserName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Изменено" />
+      ),
+      cell: ({ row }) => (
+        <div
+          onClick={()=> {
+            if (row.original.updateUserId) {
+              void navigator.clipboard.writeText(row.original.updateUserId)
+              toast.success('ID скопирован')
+            }
+          }}
+        >
+          <TooltipProvider>
+            <Tooltip delayDuration={150}>
+              <TooltipTrigger className="max-w-[31.25rem] truncate font-medium">
+                {row.getValue("updateUserName")}
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                ID: {row.original.updateUserId}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Создано в" />
+      ),
+      cell: ({ row }) => {
+        const date = 
+          row.getValue("createdAt")
+            ? formatDate(row.getValue("createdAt"), { month: "numeric", hour: "numeric", minute: "numeric" })
+            : null;
+        return (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {date}
+          </span>
+        </div>
+      )},
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Изменено в" />
+      ),
+      cell: ({ row }) => {
+        const date = 
+          row.getValue("updatedAt")
+            ? formatDate(row.getValue("updatedAt"), { month: "numeric", hour: "numeric", minute: "numeric" })
+            : null;
+        return (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {date}
+          </span>
+        </div>
+      )},
     },
     {
       id: "actions",

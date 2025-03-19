@@ -6,7 +6,7 @@ import { type GetFieldsMapsSchema } from "~/lib/validations/fields-maps";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
 import { and, ilike, inArray, or, eq } from "drizzle-orm";
-import { companies, fields, fieldsMaps } from "../db/schema";
+import { companies, fields, fieldsMaps, users } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
@@ -29,6 +29,30 @@ export async function getFieldsMaps(
           input.name ? or(
             ilike(fieldsMaps.name, `%${input.name}%`),
             ilike(fieldsMaps.id, `%${input.name}%`),
+            inArray(
+              fieldsMaps.createUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
+            inArray(
+              fieldsMaps.updateUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
             inArray(
               fieldsMaps.fieldId,
               db
@@ -92,6 +116,12 @@ export async function getFieldsMaps(
             where,
             orderBy,
             with: {
+              userCreated: {
+                columns: { name: true }
+              },
+              userUpdated: {
+                columns: { name: true }
+              },
               field: {
                 columns: {
                   id: true,
@@ -119,11 +149,13 @@ export async function getFieldsMaps(
         //   .then((res) => res[0]?.count ?? 0)
 
         const validData = await Promise.all(
-          data.map(async ({field, ...other}) => {
+          data.map(async ({field, userCreated, userUpdated, ...other}) => {
             const fileUrl = await getPresignedUrl(other.fileId)
             if (fileUrl.error !== null) throw new Error(fileUrl.error)
             return {
               ...other,
+              createUserName: userCreated ? userCreated.name : null,
+              updateUserName: userUpdated ? userUpdated.name : null,
               fileUrl: fileUrl.data,
               fieldName: field.name,
               companyId: field.company.id,

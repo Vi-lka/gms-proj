@@ -14,7 +14,7 @@ export async function createProfitability(input: CreateProfitabilitySchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -25,7 +25,10 @@ export async function createProfitability(input: CreateProfitabilitySchema) {
   try {
     await db
       .insert(profitability)
-      .values(input)
+      .values({
+        createUserId: session.user.id,
+        ...input
+      })
       .returning()
       .then(takeFirstOrThrow)
 
@@ -47,7 +50,7 @@ export async function updateProfitability(input: UpdateProfitabilitySchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -59,7 +62,10 @@ export async function updateProfitability(input: UpdateProfitabilitySchema) {
   try {
     const result = await db
       .update(profitability)
-      .set(otherData)
+      .set({
+        updateUserId: session.user.id,
+        ...otherData
+      })
       .where(eq(profitability.id, profitabilityId))
       .returning()
       .then(takeFirstOrThrow)

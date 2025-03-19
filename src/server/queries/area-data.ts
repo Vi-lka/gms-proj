@@ -6,7 +6,7 @@ import { type GetAreasDataSchema } from "~/lib/validations/areas-data";
 import { auth } from "../auth";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { and, ilike, inArray, or, eq } from "drizzle-orm";
-import { areasData, companies, fields, licensedAreas } from "../db/schema";
+import { areasData, companies, fields, licensedAreas, users } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { intervalToString, restrictUser } from "~/lib/utils";
@@ -44,6 +44,30 @@ export async function getAreasData(
             ilike(areasData.protocol, `%${input.areaName}%`),
             ilike(areasData.sampleCode, `%${input.areaName}%`),
             ilike(areasData.analysisPlace, `%${input.areaName}%`),
+            inArray(
+              areasData.createUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.areaName}%`),
+                    ilike(users.id, `%${input.areaName}%`),
+                  )
+                )
+            ),
+            inArray(
+              areasData.updateUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.areaName}%`),
+                    ilike(users.id, `%${input.areaName}%`),
+                  )
+                )
+            ),
             inArray(
               areasData.areaId,
               db
@@ -162,6 +186,12 @@ export async function getAreasData(
             where,
             orderBy,
             with: {
+              userCreated: {
+                columns: { name: true }
+              },
+              userUpdated: {
+                columns: { name: true }
+              },
               area: {
                 columns: {
                   id: true,
@@ -196,8 +226,10 @@ export async function getAreasData(
           //   .execute()
           //   .then((res) => res[0]?.count ?? 0)
 
-        const transformData = data.map(({area, ...other}) => ({
+        const transformData = data.map(({area, userCreated, userUpdated, ...other}) => ({
           ...other,
+          createUserName: userCreated ? userCreated.name : null,
+          updateUserName: userUpdated ? userUpdated.name : null,
           areaName: area.name,
           fieldId: area.field.id,
           fieldName: area.field.name,

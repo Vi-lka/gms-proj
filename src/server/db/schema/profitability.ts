@@ -1,6 +1,7 @@
-import { varchar } from "drizzle-orm/pg-core";
+import { timestamp, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { numericCasted } from "../utils";
+import { type User, users } from "./auth";
 
 export const profitability = createTable(
   "profitability",
@@ -48,7 +49,22 @@ export const profitability = createTable(
     nitrate: numericCasted("nitrate", { precision: 100, scale: 20 }),
     phosphate: numericCasted("phosphate", { precision: 100, scale: 20 }),
     ferrum: numericCasted("ferrum", { precision: 100, scale: 20 }),
+    createUserId: varchar("create_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    updateUserId: varchar("update_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().$onUpdate(() => new Date()).notNull(),
   }
 )
 
-export type Profitability = typeof profitability.$inferSelect
+export type Profitability = typeof profitability.$inferSelect & {
+  createUserName: User["name"],
+  updateUserName: User["name"],
+}

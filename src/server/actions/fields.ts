@@ -14,7 +14,7 @@ export async function createField(input: CreateFieldSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -25,7 +25,10 @@ export async function createField(input: CreateFieldSchema) {
   try {
     await db
       .insert(fields)
-      .values(input)
+      .values({
+        createUserId: session.user.id,
+        ...input
+      })
       .returning()
       .then(takeFirstOrThrow)
 
@@ -48,7 +51,7 @@ export async function updateField(input: UpdateFieldSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -60,6 +63,7 @@ export async function updateField(input: UpdateFieldSchema) {
     const result = await db
       .update(fields)
       .set({
+        updateUserId: session.user.id,
         name: input.name,
         description: input.description,
         companyId: input.companyId,

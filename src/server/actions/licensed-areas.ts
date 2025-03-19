@@ -14,7 +14,7 @@ export async function createLicensedArea(input: CreateLicensedAreaSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -25,7 +25,10 @@ export async function createLicensedArea(input: CreateLicensedAreaSchema) {
   try {
     await db
       .insert(licensedAreas)
-      .values(input)
+      .values({
+        createUserId: session.user.id,
+        ...input
+      })
       .returning()
       .then(takeFirstOrThrow)
 
@@ -48,7 +51,7 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -60,6 +63,7 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
     const result = await db
       .update(licensedAreas)
       .set({
+        updateUserId: session.user.id,
         name: input.name,
         description: input.description,
         fieldId: input.fieldId,

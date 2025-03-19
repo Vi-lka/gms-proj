@@ -1,0 +1,2697 @@
+{
+  "id": "ca29e484-33cb-4be3-baa9-4fd40cd36794",
+  "prevId": "fc449ae3-6e26-4eba-825d-5fc0510da255",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.gms_proj_account": {
+      "name": "gms_proj_account",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_account_id": {
+          "name": "provider_account_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_type": {
+          "name": "token_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "session_state": {
+          "name": "session_state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "account_user_id_idx": {
+          "name": "account_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_account_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_account_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_account",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "gms_proj_account_provider_provider_account_id_pk": {
+          "name": "gms_proj_account_provider_provider_account_id_pk",
+          "columns": [
+            "provider",
+            "provider_account_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_authenticator": {
+      "name": "gms_proj_authenticator",
+      "schema": "",
+      "columns": {
+        "credential_id": {
+          "name": "credential_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_account_id": {
+          "name": "provider_account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credential_public_key": {
+          "name": "credential_public_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counter": {
+          "name": "counter",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credential_device_type": {
+          "name": "credential_device_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credential_backed_up": {
+          "name": "credential_backed_up",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transports": {
+          "name": "transports",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_authenticator_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_authenticator_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_authenticator",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "gms_proj_authenticator_credential_id_unique": {
+          "name": "gms_proj_authenticator_credential_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "credential_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_session": {
+      "name": "gms_proj_session",
+      "schema": "",
+      "columns": {
+        "session_token": {
+          "name": "session_token",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "session_user_id_idx": {
+          "name": "session_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_session_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_session_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_session",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_user": {
+      "name": "gms_proj_user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "image": {
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_verification_token": {
+      "name": "gms_proj_verification_token",
+      "schema": "",
+      "columns": {
+        "identifier": {
+          "name": "identifier",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "gms_proj_verification_token_identifier_token_pk": {
+          "name": "gms_proj_verification_token_identifier_token_pk",
+          "columns": [
+            "identifier",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_field-map-polygons": {
+      "name": "gms_proj_field-map-polygons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "field_map_id": {
+          "name": "field_map_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "area_id": {
+          "name": "area_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "points": {
+          "name": "points",
+          "type": "numeric(100, 20)[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_field-map-polygons_field_map_id_gms_proj_fields-maps_id_fk": {
+          "name": "gms_proj_field-map-polygons_field_map_id_gms_proj_fields-maps_id_fk",
+          "tableFrom": "gms_proj_field-map-polygons",
+          "tableTo": "gms_proj_fields-maps",
+          "columnsFrom": [
+            "field_map_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_field-map-polygons_area_id_gms_proj_licensed_areas_id_fk": {
+          "name": "gms_proj_field-map-polygons_area_id_gms_proj_licensed_areas_id_fk",
+          "tableFrom": "gms_proj_field-map-polygons",
+          "tableTo": "gms_proj_licensed_areas",
+          "columnsFrom": [
+            "area_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_field-map-polygons_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_field-map-polygons_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_field-map-polygons",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_field-map-polygons_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_field-map-polygons_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_field-map-polygons",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_fields-maps": {
+      "name": "gms_proj_fields-maps",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_id": {
+          "name": "file_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "field_id": {
+          "name": "field_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "field_map_name_idx": {
+          "name": "field_map_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_fields-maps_file_id_gms_proj_files_id_fk": {
+          "name": "gms_proj_fields-maps_file_id_gms_proj_files_id_fk",
+          "tableFrom": "gms_proj_fields-maps",
+          "tableTo": "gms_proj_files",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields-maps_field_id_gms_proj_fields_id_fk": {
+          "name": "gms_proj_fields-maps_field_id_gms_proj_fields_id_fk",
+          "tableFrom": "gms_proj_fields-maps",
+          "tableTo": "gms_proj_fields",
+          "columnsFrom": [
+            "field_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields-maps_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_fields-maps_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_fields-maps",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields-maps_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_fields-maps_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_fields-maps",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_areas_data": {
+      "name": "gms_proj_areas_data",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "area_id": {
+          "name": "area_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bush": {
+          "name": "bush",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hole": {
+          "name": "hole",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plast": {
+          "name": "plast",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "horizon": {
+          "name": "horizon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retinue": {
+          "name": "retinue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occurrence_interval_start": {
+          "name": "occurrence_interval_start",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occurrence_interval_end": {
+          "name": "occurrence_interval_end",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sampling_date": {
+          "name": "sampling_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "analysis_date": {
+          "name": "analysis_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "protocol": {
+          "name": "protocol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "protocol_url": {
+          "name": "protocol_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sample_code": {
+          "name": "sample_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "p_hydrogen": {
+          "name": "p_hydrogen",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "density": {
+          "name": "density",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mineralization": {
+          "name": "mineralization",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lithium": {
+          "name": "lithium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lithium_approx": {
+          "name": "lithium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rubidium": {
+          "name": "rubidium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rubidium_approx": {
+          "name": "rubidium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cesium": {
+          "name": "cesium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cesium_approx": {
+          "name": "cesium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boron": {
+          "name": "boron",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boron_approx": {
+          "name": "boron_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "iodine": {
+          "name": "iodine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "iodine_approx": {
+          "name": "iodine_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium": {
+          "name": "sodium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium_approx": {
+          "name": "sodium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calcium": {
+          "name": "calcium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calcium_approx": {
+          "name": "calcium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "magnesium": {
+          "name": "magnesium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "magnesium_approx": {
+          "name": "magnesium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "potassium": {
+          "name": "potassium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "potassium_approx": {
+          "name": "potassium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chlorine": {
+          "name": "chlorine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chlorine_approx": {
+          "name": "chlorine_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bromine": {
+          "name": "bromine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bromine_approx": {
+          "name": "bromine_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "strontium": {
+          "name": "strontium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "strontium_approx": {
+          "name": "strontium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barium": {
+          "name": "barium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barium_approx": {
+          "name": "barium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aluminum": {
+          "name": "aluminum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aluminum_approx": {
+          "name": "aluminum_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selenium": {
+          "name": "selenium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selenium_approx": {
+          "name": "selenium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silicon": {
+          "name": "silicon",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silicon_approx": {
+          "name": "silicon_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manganese": {
+          "name": "manganese",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manganese_approx": {
+          "name": "manganese_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "copper": {
+          "name": "copper",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "copper_approx": {
+          "name": "copper_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zinc": {
+          "name": "zinc",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zinc_approx": {
+          "name": "zinc_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silver": {
+          "name": "silver",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silver_approx": {
+          "name": "silver_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tungsten": {
+          "name": "tungsten",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tungsten_approx": {
+          "name": "tungsten_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "titanium": {
+          "name": "titanium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "titanium_approx": {
+          "name": "titanium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vanadium": {
+          "name": "vanadium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vanadium_approx": {
+          "name": "vanadium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chromium": {
+          "name": "chromium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chromium_approx": {
+          "name": "chromium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cobalt": {
+          "name": "cobalt",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cobalt_approx": {
+          "name": "cobalt_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nickel": {
+          "name": "nickel",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nickel_approx": {
+          "name": "nickel_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arsenic": {
+          "name": "arsenic",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arsenic_approx": {
+          "name": "arsenic_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "molybdenum": {
+          "name": "molybdenum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "molybdenum_approx": {
+          "name": "molybdenum_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plumbum": {
+          "name": "plumbum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plumbum_approx": {
+          "name": "plumbum_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bismuth": {
+          "name": "bismuth",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bismuth_approx": {
+          "name": "bismuth_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sulfate_ion": {
+          "name": "sulfate_ion",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sulfate_ion_approx": {
+          "name": "sulfate_ion_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bicarbonate": {
+          "name": "bicarbonate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bicarbonate_approx": {
+          "name": "bicarbonate_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carbonate_ion": {
+          "name": "carbonate_ion",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carbonate_ion_approx": {
+          "name": "carbonate_ion_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ammonium": {
+          "name": "ammonium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ammonium_approx": {
+          "name": "ammonium_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fluorine": {
+          "name": "fluorine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fluorine_approx": {
+          "name": "fluorine_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrogen_dioxide": {
+          "name": "nitrogen_dioxide",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrogen_dioxide_approx": {
+          "name": "nitrogen_dioxide_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrate": {
+          "name": "nitrate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrate_approx": {
+          "name": "nitrate_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phosphate": {
+          "name": "phosphate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phosphate_approx": {
+          "name": "phosphate_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ferrum": {
+          "name": "ferrum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ferrum_approx": {
+          "name": "ferrum_approx",
+          "type": "approx",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rigidity": {
+          "name": "rigidity",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alkalinity": {
+          "name": "alkalinity",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "electrical_conductivity": {
+          "name": "electrical_conductivity",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suspended_solids": {
+          "name": "suspended_solids",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dry_residue": {
+          "name": "dry_residue",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "analysis_place": {
+          "name": "analysis_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "areas_data_bush_idx": {
+          "name": "areas_data_bush_idx",
+          "columns": [
+            {
+              "expression": "bush",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_hole_idx": {
+          "name": "areas_data_hole_idx",
+          "columns": [
+            {
+              "expression": "hole",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_plast_idx": {
+          "name": "areas_data_plast_idx",
+          "columns": [
+            {
+              "expression": "plast",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_horizon_idx": {
+          "name": "areas_data_horizon_idx",
+          "columns": [
+            {
+              "expression": "horizon",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_retinue_idx": {
+          "name": "areas_data_retinue_idx",
+          "columns": [
+            {
+              "expression": "retinue",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_protocol_idx": {
+          "name": "areas_data_protocol_idx",
+          "columns": [
+            {
+              "expression": "protocol",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_sample_code_idx": {
+          "name": "areas_data_sample_code_idx",
+          "columns": [
+            {
+              "expression": "sample_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "areas_data_analysis_place_inx": {
+          "name": "areas_data_analysis_place_inx",
+          "columns": [
+            {
+              "expression": "analysis_place",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_areas_data_area_id_gms_proj_licensed_areas_id_fk": {
+          "name": "gms_proj_areas_data_area_id_gms_proj_licensed_areas_id_fk",
+          "tableFrom": "gms_proj_areas_data",
+          "tableTo": "gms_proj_licensed_areas",
+          "columnsFrom": [
+            "area_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_areas_data_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_areas_data_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_areas_data",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_areas_data_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_areas_data_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_areas_data",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_fields": {
+      "name": "gms_proj_fields",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_id": {
+          "name": "company_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_item_id": {
+          "name": "map_item_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "field_name_idx": {
+          "name": "field_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_fields_company_id_gms_proj_companies_id_fk": {
+          "name": "gms_proj_fields_company_id_gms_proj_companies_id_fk",
+          "tableFrom": "gms_proj_fields",
+          "tableTo": "gms_proj_companies",
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields_map_item_id_gms_proj_map_items_id_fk": {
+          "name": "gms_proj_fields_map_item_id_gms_proj_map_items_id_fk",
+          "tableFrom": "gms_proj_fields",
+          "tableTo": "gms_proj_map_items",
+          "columnsFrom": [
+            "map_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_fields_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_fields",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_fields_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_fields_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_fields",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_licensed_areas": {
+      "name": "gms_proj_licensed_areas",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "field_id": {
+          "name": "field_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "licensed_area_name_idx": {
+          "name": "licensed_area_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_licensed_areas_field_id_gms_proj_fields_id_fk": {
+          "name": "gms_proj_licensed_areas_field_id_gms_proj_fields_id_fk",
+          "tableFrom": "gms_proj_licensed_areas",
+          "tableTo": "gms_proj_fields",
+          "columnsFrom": [
+            "field_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_licensed_areas_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_licensed_areas_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_licensed_areas",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_licensed_areas_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_licensed_areas_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_licensed_areas",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_files": {
+      "name": "gms_proj_files",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "bucket": {
+          "name": "bucket",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "original_name": {
+          "name": "original_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "file_name_idx": {
+          "name": "file_name_idx",
+          "columns": [
+            {
+              "expression": "file_name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "original_name_idx": {
+          "name": "original_name_idx",
+          "columns": [
+            {
+              "expression": "original_name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_files_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_files_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_files",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_files_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_files_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_files",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_clusters": {
+      "name": "gms_proj_clusters",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "cluster_name_idx": {
+          "name": "cluster_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_clusters_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_clusters_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_clusters",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_clusters_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_clusters_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_clusters",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_companies": {
+      "name": "gms_proj_companies",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "company_name_idx": {
+          "name": "company_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "gms_proj_companies_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_companies_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_companies",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_companies_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_companies_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_companies",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_companies_to_map_items": {
+      "name": "gms_proj_companies_to_map_items",
+      "schema": "",
+      "columns": {
+        "company_id": {
+          "name": "company_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_item_id": {
+          "name": "map_item_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_companies_to_map_items_company_id_gms_proj_companies_id_fk": {
+          "name": "gms_proj_companies_to_map_items_company_id_gms_proj_companies_id_fk",
+          "tableFrom": "gms_proj_companies_to_map_items",
+          "tableTo": "gms_proj_companies",
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_companies_to_map_items_map_item_id_gms_proj_map_items_id_fk": {
+          "name": "gms_proj_companies_to_map_items_map_item_id_gms_proj_map_items_id_fk",
+          "tableFrom": "gms_proj_companies_to_map_items",
+          "tableTo": "gms_proj_map_items",
+          "columnsFrom": [
+            "map_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_companies_to_map_items_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_companies_to_map_items_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_companies_to_map_items",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_companies_to_map_items_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_companies_to_map_items_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_companies_to_map_items",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "gms_proj_companies_to_map_items_company_id_map_item_id_pk": {
+          "name": "gms_proj_companies_to_map_items_company_id_map_item_id_pk",
+          "columns": [
+            "company_id",
+            "map_item_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_map_data": {
+      "name": "gms_proj_map_data",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "svg_url": {
+          "name": "svg_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "svg_width": {
+          "name": "svg_width",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "svg_height": {
+          "name": "svg_height",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selected": {
+          "name": "selected",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_map_data_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_map_data_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_map_data",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_map_data_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_map_data_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_map_data",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_map_items": {
+      "name": "gms_proj_map_items",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "clusters_id": {
+          "name": "clusters_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "x_pos": {
+          "name": "x_pos",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "y_pos": {
+          "name": "y_pos",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_map_items_clusters_id_gms_proj_clusters_id_fk": {
+          "name": "gms_proj_map_items_clusters_id_gms_proj_clusters_id_fk",
+          "tableFrom": "gms_proj_map_items",
+          "tableTo": "gms_proj_clusters",
+          "columnsFrom": [
+            "clusters_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "gms_proj_map_items_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_map_items_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_map_items",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_map_items_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_map_items_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_map_items",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.gms_proj_profitability": {
+      "name": "gms_proj_profitability",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "lithium": {
+          "name": "lithium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rubidium": {
+          "name": "rubidium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cesium": {
+          "name": "cesium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boron": {
+          "name": "boron",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "iodine": {
+          "name": "iodine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium": {
+          "name": "sodium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calcium": {
+          "name": "calcium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "magnesium": {
+          "name": "magnesium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "potassium": {
+          "name": "potassium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chlorine": {
+          "name": "chlorine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bromine": {
+          "name": "bromine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "strontium": {
+          "name": "strontium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "barium": {
+          "name": "barium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aluminum": {
+          "name": "aluminum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selenium": {
+          "name": "selenium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silicon": {
+          "name": "silicon",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manganese": {
+          "name": "manganese",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "copper": {
+          "name": "copper",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zinc": {
+          "name": "zinc",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "silver": {
+          "name": "silver",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tungsten": {
+          "name": "tungsten",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "titanium": {
+          "name": "titanium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vanadium": {
+          "name": "vanadium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chromium": {
+          "name": "chromium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cobalt": {
+          "name": "cobalt",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nickel": {
+          "name": "nickel",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arsenic": {
+          "name": "arsenic",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "molybdenum": {
+          "name": "molybdenum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plumbum": {
+          "name": "plumbum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bismuth": {
+          "name": "bismuth",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sulfateIon": {
+          "name": "sulfateIon",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bicarbonate": {
+          "name": "bicarbonate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carbonateIon": {
+          "name": "carbonateIon",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ammonium": {
+          "name": "ammonium",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fluorine": {
+          "name": "fluorine",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrogenDioxide": {
+          "name": "nitrogenDioxide",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrate": {
+          "name": "nitrate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phosphate": {
+          "name": "phosphate",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ferrum": {
+          "name": "ferrum",
+          "type": "numeric(100, 20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_user_id": {
+          "name": "create_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_user_id": {
+          "name": "update_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gms_proj_profitability_create_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_profitability_create_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_profitability",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "create_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "gms_proj_profitability_update_user_id_gms_proj_user_id_fk": {
+          "name": "gms_proj_profitability_update_user_id_gms_proj_user_id_fk",
+          "tableFrom": "gms_proj_profitability",
+          "tableTo": "gms_proj_user",
+          "columnsFrom": [
+            "update_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "unknown",
+        "guest",
+        "user",
+        "admin",
+        "super-admin"
+      ]
+    },
+    "public.approx": {
+      "name": "approx",
+      "schema": "public",
+      "values": [
+        ">",
+        "<"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

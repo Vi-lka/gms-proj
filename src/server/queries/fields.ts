@@ -5,7 +5,7 @@ import "server-only"
 import { type GetFieldsSchema } from "~/lib/validations/fields";
 import { auth } from "../auth";
 import { and, eq, ilike, inArray, or } from "drizzle-orm";
-import { companies, fields } from "../db/schema";
+import { companies, fields, users } from "../db/schema";
 import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
@@ -28,6 +28,30 @@ export async function getFields(
           input.name ? or(
             ilike(fields.name, `%${input.name}%`),
             ilike(fields.id, `%${input.name}%`),
+            inArray(
+              fields.createUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
+            inArray(
+              fields.updateUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
             inArray(
               fields.companyId,
               db
@@ -62,6 +86,12 @@ export async function getFields(
             where,
             orderBy,
             with: {
+              userCreated: {
+                columns: { name: true }
+              },
+              userUpdated: {
+                columns: { name: true }
+              },
               company: {
                 columns: {
                   id: true,
@@ -80,8 +110,10 @@ export async function getFields(
         //   .execute()
         //   .then((res) => res[0]?.count ?? 0)
 
-        const transformData = data.map(({company, ...other}) => ({
+        const transformData = data.map(({company, userCreated, userUpdated, ...other}) => ({
           ...other,
+          createUserName: userCreated ? userCreated.name : null,
+          updateUserName: userUpdated ? userUpdated.name : null,
           companyName: company.name
         }))
 

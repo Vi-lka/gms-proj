@@ -14,7 +14,7 @@ export async function createCompany(input: CreateCompanySchema) {
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -25,7 +25,10 @@ export async function createCompany(input: CreateCompanySchema) {
   try {
     await db
       .insert(companies)
-      .values(input)
+      .values({
+        createUserId: session.user.id,
+        ...input
+      })
       .returning()
       .then(takeFirstOrThrow)
 
@@ -47,7 +50,7 @@ export async function updateCompany(input: UpdateCompanySchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -59,6 +62,7 @@ export async function updateCompany(input: UpdateCompanySchema) {
     const result = await db
       .update(companies)
       .set({
+        updateUserId: session.user.id,
         name: input.name,
         description: input.description,
       })

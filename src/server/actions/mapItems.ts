@@ -31,7 +31,7 @@ export async function createMapItem(input: CreateMapItemT) {
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -44,6 +44,7 @@ export async function createMapItem(input: CreateMapItemT) {
       const newMapItem = await tx
         .insert(mapItems)
         .values({
+          createUserId: session.user.id,
           xPos: input.xPos,
           yPos: input.yPos
         })
@@ -53,6 +54,7 @@ export async function createMapItem(input: CreateMapItemT) {
       await tx
         .update(fields)
         .set({
+          updateUserId: session.user.id,
           mapItemId: newMapItem.id,
         })
         .where(inArray(fields.id, input.fields))
@@ -60,6 +62,7 @@ export async function createMapItem(input: CreateMapItemT) {
       await tx
         .insert(companiesToMapItems)
         .values({
+          createUserId: session.user.id,
           companyId: input.id,
           mapItemId: newMapItem.id
         })
@@ -86,7 +89,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -99,6 +102,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
       const newCluster = await tx
         .insert(clusters)
         .values({
+          createUserId: session.user.id,
           name: input.name,
           description: input.description,
         })
@@ -108,6 +112,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
       const newMapItem = await tx
         .insert(mapItems)
         .values({
+          createUserId: session.user.id,
           clusterId: newCluster.id,
           xPos: input.xPos,
           yPos: input.yPos,
@@ -118,6 +123,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
       await tx
         .insert(companiesToMapItems)
         .values(input.companiesInput.map(comp => ({
+          createUserId: session.user.id,
           companyId: comp.id,
           mapItemId: newMapItem.id
         })))
@@ -127,6 +133,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
       await tx
         .update(fields)
         .set({
+          updateUserId: session.user.id,
           mapItemId: newMapItem.id,
         })
         .where(inArray(fields.id, fieldsIds))
@@ -155,7 +162,7 @@ export async function companyToCluster(
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -183,6 +190,7 @@ export async function companyToCluster(
       const newCluster = await tx
         .insert(clusters)
         .values({
+          createUserId: session.user.id,
           name: input.name,
           description: input.description,
         })
@@ -193,6 +201,7 @@ export async function companyToCluster(
       await tx
         .update(mapItems)
         .set({
+          updateUserId: session.user.id,
           clusterId: newCluster.id
         })
         .where(eq(mapItems.id, input.mapItemId))
@@ -211,6 +220,7 @@ export async function companyToCluster(
       await tx
         .insert(companiesToMapItems)
         .values(newCompaniesInput.map(company => ({
+          createUserId: session.user.id,
           companyId: company.id,
           mapItemId: input.mapItemId
         })))
@@ -219,6 +229,7 @@ export async function companyToCluster(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: null
           })
           .where(inArray(fields.id, fieldsToDelete))
@@ -228,6 +239,7 @@ export async function companyToCluster(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: input.mapItemId
           })
           .where(inArray(fields.id, fieldsIds))
@@ -257,7 +269,7 @@ export async function updateMapItemCompany(
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -278,6 +290,7 @@ export async function updateMapItemCompany(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: null
           })
           .where(inArray(fields.id, fieldsToDelete))
@@ -287,6 +300,7 @@ export async function updateMapItemCompany(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: input.mapItemId
           })
           .where(inArray(fields.id, fieldsToAdd))
@@ -303,6 +317,7 @@ export async function updateMapItemCompany(
         await tx
           .insert(companiesToMapItems)
           .values({
+            createUserId: session.user.id,
             companyId: input.id,
             mapItemId: input.mapItemId
           })
@@ -330,7 +345,7 @@ export async function updateMapItemCluster(
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -360,6 +375,7 @@ export async function updateMapItemCluster(
       await tx
         .update(clusters)
         .set({
+          updateUserId: session.user.id,
           name: input.name,
           description: input.description,
         })
@@ -380,6 +396,7 @@ export async function updateMapItemCluster(
         await tx
           .insert(companiesToMapItems)
           .values(companiesToAdd.map(comp => ({
+            createUserId: session.user.id,
             companyId: comp.id,
             mapItemId: input.mapItemId,
           })))
@@ -389,6 +406,7 @@ export async function updateMapItemCluster(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: null
           })
           .where(inArray(fields.id, fieldsToDelete))
@@ -398,6 +416,7 @@ export async function updateMapItemCluster(
         await tx
           .update(fields)
           .set({
+            updateUserId: session.user.id,
             mapItemId: input.mapItemId
           })
           .where(inArray(fields.id, fieldsToAdd))
@@ -430,7 +449,7 @@ export async function moveMapItem({
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -442,6 +461,7 @@ export async function moveMapItem({
     await db
       .update(mapItems)
       .set({
+        updateUserId: session.user.id,
         xPos,
         yPos
       })
@@ -468,7 +488,7 @@ export async function deleteMapItem(
   noStore()
 
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -481,6 +501,7 @@ export async function deleteMapItem(
       await tx
         .update(fields)
         .set({
+          updateUserId: session.user.id,
           mapItemId: null
         })
         .where(eq(fields.mapItemId, item.id))
@@ -499,7 +520,7 @@ export async function deleteMapItem(
         await tx
           .delete(clusters)
           .where(eq(clusters.id, item.cluster.id))
-      }      
+      }
     })
 
     revalidateTag("map_items")

@@ -24,12 +24,28 @@ export async function getProfitability(
 
       const data = await db
         .query.profitability.findFirst({
-          where
+          where,
+          with: {
+            userCreated: {
+              columns: { name: true }
+            },
+            userUpdated: {
+              columns: { name: true }
+            }
+          }
         })
 
       if (!data) return { data: [], pageCount: 0, error: null };
 
-      return { data: [data], pageCount: 1, error: null }
+      const {userCreated, userUpdated, ...other} = data
+
+      const transformData = {
+        ...other,
+        createUserName: userCreated ? userCreated.name : null,
+        updateUserName: userUpdated ? userUpdated.name : null,
+      }
+
+      return { data: [transformData], pageCount: 1, error: null }
     } catch (err) {
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }

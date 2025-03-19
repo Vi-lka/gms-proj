@@ -5,7 +5,7 @@ import "server-only"
 import { type GetLicensedAreasSchema } from "~/lib/validations/licensed-areas";
 import { auth } from "../auth";
 import { and, eq, ilike, inArray, or } from "drizzle-orm";
-import { companies, fields, licensedAreas } from "../db/schema";
+import { companies, fields, licensedAreas, users } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
@@ -28,6 +28,30 @@ export async function getLicensedAreas(
           input.name ? or(
             ilike(licensedAreas.name, `%${input.name}%`),
             ilike(licensedAreas.id, `%${input.name}%`),
+            inArray(
+              licensedAreas.createUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
+            inArray(
+              licensedAreas.updateUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
             inArray(
               licensedAreas.fieldId,
               db
@@ -91,6 +115,12 @@ export async function getLicensedAreas(
             where,
             orderBy,
             with: {
+              userCreated: {
+                columns: { name: true }
+              },
+              userUpdated: {
+                columns: { name: true }
+              },
               field: {
                 columns: {
                   id: true,
@@ -117,8 +147,10 @@ export async function getLicensedAreas(
         //   .execute()
         //   .then((res) => res[0]?.count ?? 0)
 
-        const transformData = data.map(({field, ...other}) => ({
+        const transformData = data.map(({field, userCreated, userUpdated, ...other}) => ({
           ...other,
+          createUserName: userCreated ? userCreated.name : null,
+          updateUserName: userUpdated ? userUpdated.name : null,
           fieldName: field.name,
           companyId: field.company.id,
           companyName: field.company.name,

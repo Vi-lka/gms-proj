@@ -3,9 +3,9 @@
 import "server-only"
 import { type GetCompaniesSchema } from "~/lib/validations/companies"
 import { auth } from "../auth";
-import { and, count, eq, ilike, or } from "drizzle-orm";
-import { companies } from "../db/schema";
-import { getRelationOrderBy } from "../db/utils";
+import { and, eq, ilike, inArray, or } from "drizzle-orm";
+import { companies, users } from "../db/schema";
+import { getRelationOrderBy, orderData, paginate } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { restrictUser } from "~/lib/utils";
@@ -21,12 +21,34 @@ export async function getCompanies(
 
     const fetchData = async () => {
       try {
-        const offset = (input.page - 1) * input.perPage
-  
         const where = and(
           input.name ? or(
             ilike(companies.name, `%${input.name}%`),
             ilike(companies.id, `%${input.name}%`),
+            inArray(
+              companies.createUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            ),
+            inArray(
+              companies.updateUserId,
+              db
+                .select({ id: users.id })
+                .from(users)
+                .where(
+                  or(
+                    ilike(users.name, `%${input.name}%`),
+                    ilike(users.id, `%${input.name}%`),
+                  )
+                )
+            )
           ) : undefined,
           input.id ?
             eq(companies.id, input.id) 
@@ -35,31 +57,48 @@ export async function getCompanies(
   
         const { orderBy } = getRelationOrderBy(input.sort, companies, companies.id)
   
-        const { data, total } = await db.transaction(async (tx) => {
+        const { data, pageCount } = await db.transaction(async (tx) => {
           const data = await tx
             .query.companies.findMany({
-              limit: input.perPage,
-              offset,
+              // limit: input.perPage,
+              // offset,
               where,
+              with: {
+                userCreated: {
+                  columns: { name: true }
+                },
+                userUpdated: {
+                  columns: { name: true }
+                }
+              },
               orderBy
             })
   
-          const total = await tx
-            .select({
-              count: count(),
-            })
-            .from(companies)
-            .where(where)
-            .execute()
-            .then((res) => res[0]?.count ?? 0)
+          // const total = await tx
+          //   .select({
+          //     count: count(),
+          //   })
+          //   .from(companies)
+          //   .where(where)
+          //   .execute()
+          //   .then((res) => res[0]?.count ?? 0)
+
+          const transformData = data.map(({userCreated, userUpdated, ...other}) => ({
+            ...other,
+            createUserName: userCreated ? userCreated.name : null,
+            updateUserName: userUpdated ? userUpdated.name : null,
+          }))
+    
+          const sortedData = orderData(input.sort, transformData)
+  
+          const paginated = paginate(sortedData, input)
   
           return {
-            data,
-            total,
+            data: paginated.items,
+            pageCount: paginated.totalPages,
           }
         })
-  
-        const pageCount = Math.ceil(total / input.perPage)
+
         return { data, pageCount, error: null }
       } catch (err) {
         console.error(err)

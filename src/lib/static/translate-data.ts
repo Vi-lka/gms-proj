@@ -1,6 +1,13 @@
 const data = {
   and: "и",
   or: "или",
+  not: "не",
+  createUserId: "Создано",
+  createUserName: "Создано",
+  updateUserId: "Изменено",
+  updateUserName: "Изменено",
+  createdAt: "Создано в",
+  updatedAt: "Изменено в",
   id: "ID",
   name: "Название",
   email: "Email",

@@ -14,7 +14,7 @@ export async function createAreasData(input: CreateAreasDataSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -31,6 +31,7 @@ export async function createAreasData(input: CreateAreasDataSchema) {
     await db
       .insert(areasData)
       .values({
+        createUserId: session.user.id,
         analysisDate: analysisDateGMT,
         samplingDate: samplingDateGMT,
         ...otherData,
@@ -57,7 +58,7 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -74,6 +75,7 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
     const result = await db
       .update(areasData)
       .set({
+        updateUserId: session.user.id,
         analysisDate: analysisDateGMT,
         samplingDate: samplingDateGMT,
         ...otherData

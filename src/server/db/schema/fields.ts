@@ -1,7 +1,8 @@
-import { date, index, pgEnum, text, varchar } from "drizzle-orm/pg-core";
+import { date, index, pgEnum, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import createTable from "./createTable";
 import { companies, mapItems, type Company } from "./map";
 import { numericCasted } from "../utils";
+import { type User, users } from "./auth";
 
 export const fields = createTable(
   "fields",
@@ -16,6 +17,18 @@ export const fields = createTable(
       .references(() => companies.id, {onDelete: 'cascade'}).notNull(),
     mapItemId: varchar("map_item_id", { length: 255 })
       .references(() => mapItems.id, {onDelete: 'set null'}),
+    createUserId: varchar("create_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    updateUserId: varchar("update_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().$onUpdate(() => new Date()).notNull(),
   },
   (field) => ({
     nameIndex: index("field_name_idx").on(field.name),
@@ -33,6 +46,18 @@ export const licensedAreas = createTable(
     description: text("description"),
     fieldId: varchar("field_id", { length: 255 })
       .references(() => fields.id, {onDelete: 'cascade'}).notNull(),
+    createUserId: varchar("create_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    updateUserId: varchar("update_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().$defaultFn(() => new Date()).notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().$onUpdate(() => new Date()).notNull(),
   },
   (licensedArea) => ({
     nameIndex: index("licensed_area_name_idx").on(licensedArea.name),
@@ -152,6 +177,18 @@ export const areasData = createTable(
     dryResidue: numericCasted("dry_residue", { precision: 100, scale: 20 }),
     analysisPlace: text("analysis_place"),
     note: text("note"),
+    createUserId: varchar("create_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    updateUserId: varchar("update_user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow().$onUpdate(() => new Date()).notNull(),
   },
   (areaData) => ({
     bushIndex: index("areas_data_bush_idx").on(areaData.bush),
@@ -171,17 +208,23 @@ export type LicensedArea = typeof licensedAreas.$inferSelect
 export type AreaData = typeof areasData.$inferSelect
 
 export interface LicensedAreaExtend extends LicensedArea {
+  createUserName: User["name"],
+  updateUserName: User["name"],
   fieldName: Field["name"],
   companyId: Company["id"],
   companyName: Company["name"],
 }
 export interface FieldExtend extends Field {
+  createUserName: User["name"],
+  updateUserName: User["name"],
   companyName: Company["name"]
 }
 export interface FieldWithLicensedAreas extends Field {
   licensedAreas: LicensedArea[]
 }
 export interface AreaDataExtend extends AreaData {
+  createUserName: User["name"],
+  updateUserName: User["name"],
   areaName: LicensedArea["name"],
   fieldId: Field["id"],
   fieldName: Field["name"],

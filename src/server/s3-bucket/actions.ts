@@ -22,7 +22,7 @@ export const createPresignedUrls = async (files: FileT[]) => {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -84,7 +84,7 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -96,6 +96,7 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
     const saveFilesInfo = await db
       .insert(files)
       .values(presignedUrls.map(file => ({
+        createUserId: session.user.id,
         bucket: env.S3_BUCKET_NAME,
         fileName: file.fileNameInBucket,
         originalName: file.originalFileName,

@@ -16,7 +16,7 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -30,6 +30,7 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
     const fieldMap = await db
       .insert(fieldsMaps)
       .values({
+        createUserId: session.user.id,
         name: `${fileName}`,
         ...rest
       })
@@ -39,6 +40,7 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
     await db
       .insert(fieldMapPolygons)
       .values(polygons.map((polygon) => ({
+        createUserId: session.user.id,
         fieldMapId: fieldMap.id,
         ...polygon
       })))
@@ -62,7 +64,7 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
   noStore()
   
   const session = await auth();
-  if (restrictUser(session?.user.role, 'admin-panel')) {
+  if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
     return {
       data: null,
@@ -88,6 +90,7 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
         await tx
           .update(fieldsMaps)
           .set({
+            updateUserId: session.user.id,
             name: `${input.fileName}`,
             fileId: input.fileId,
           })
@@ -104,6 +107,7 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
         await tx
           .insert(fieldMapPolygons)
           .values(polygonsToAdd.map(({areaId, points}) => ({
+            createUserId: session.user.id,
             fieldMapId: input.id,
             areaId,
             points
@@ -116,6 +120,7 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
             await tx
               .update(fieldMapPolygons)
               .set({
+                updateUserId: session.user.id,
                 areaId: polygon.areaId,
                 points: polygon.points
               })
