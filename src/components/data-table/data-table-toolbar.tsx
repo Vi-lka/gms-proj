@@ -38,7 +38,9 @@ interface DataTableToolbarProps<TData>
    */
   filterFields?: DataTableFilterField<TData>[]
 
-  isPending?: boolean
+  isPending?: boolean,
+
+  prepend?: React.ReactNode
 }
 
 export function DataTableToolbar<TData>({
@@ -46,6 +48,7 @@ export function DataTableToolbar<TData>({
   filterFields = [],
   isPending,
   children,
+  prepend,
   className,
   ...props
 }: DataTableToolbarProps<TData>) {
@@ -68,6 +71,7 @@ export function DataTableToolbar<TData>({
       {...props}
     >
       <div className="flex flex-1 items-center gap-2">
+        {prepend}
         {searchableColumns.length > 0 &&
           searchableColumns.map(
             (column) =>

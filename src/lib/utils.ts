@@ -159,8 +159,8 @@ export function splitIntoPairs<T>(array: T[]): T[][] {
   return result;
 }
 
-export function findMaxValuesByRelevance<T extends Record<string, string | number | null>>(
-  data: Array<Partial<Record<RelevanceKeys<T>, string | number | null>>>,
+export function findMaxValuesByRelevance<T extends Record<string, string | number | Date | null>>(
+  data: Array<Partial<Record<RelevanceKeys<T>, string | number | Date | null>>>,
   relevanceObj: T
 ): MaxValue<T>[] {
   if (typeof relevanceObj !== 'object' || relevanceObj === null) {

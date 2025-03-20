@@ -39,7 +39,7 @@ export default async function DashboardPage(props: {
       </Breadcrumb>
 
       <div className="mt-6">
-        <DashboardContent />
+        <DashboardContent searchParams={props.searchParams} />
       </div>
     </ContentLayout>
   )

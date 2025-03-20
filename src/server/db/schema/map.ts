@@ -16,7 +16,7 @@ export const mapData = createTable(
     svgHeight: varchar("svg_height", { length: 255 }),
     selected: boolean("selected").default(false),
     createUserId: varchar("create_user_id", { length: 255 })
-    .references(() => users.id, { onDelete: "set null" }),
+      .references(() => users.id, { onDelete: "set null" }),
     updateUserId: varchar("update_user_id", { length: 255 })
       .references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", {
@@ -148,7 +148,7 @@ export type Company = typeof companies.$inferSelect & {
 export type CompanyExtend = Company & {
   fields: Field[]
 }
-export type CompanyWithListedAreas = Company & {
+export type CompanyWithListedAreas = typeof companies.$inferSelect & {
   fields: FieldWithLicensedAreas[]
 }
 export type Cluster = typeof clusters.$inferSelect

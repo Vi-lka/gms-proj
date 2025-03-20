@@ -82,3 +82,15 @@ export interface QueryBuilderOpts {
 
 export const approxEnumSchema = z.enum(approxEnum.enumValues);
 export type ApproxEnumT = z.infer<typeof approxEnumSchema>
+
+export type RecentItem = {
+  id: string;
+  title: string | undefined;
+  type: "mapItem" | "cluster" | "company" | "field" | "licensedArea" | "areaData" | "fieldMap" | "polygon" | "file";
+  createUserId: string | null;
+  updateUserId: string | null;
+  createUserName: string | null;
+  updateUserName: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

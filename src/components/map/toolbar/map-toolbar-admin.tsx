@@ -1,7 +1,7 @@
 import React from 'react'
 import { cn } from '~/lib/utils'
 import AddEllementButton from './add-ellement/add-ellement-button'
-
+import CleareActiveButton from './cleare-active-button'
 
 type MapAdminToolbarProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -17,8 +17,9 @@ export default function MapToolbarAdmin({
       )}
       {...props}
     >
-      <div className="flex flex-1 items-center gap-2">
+      <div className="flex flex-1 items-center justify-between gap-2">
         <AddEllementButton />
+        <CleareActiveButton />
       </div>
     </div>
   )

@@ -246,7 +246,7 @@ export interface PaginationResult<DataT> {
  */
 export function paginate<DataT>(data: DataT[], input: PaginationInput): PaginationResult<DataT> {
   const page = Math.max(1, input.page);
-  const perPage = Math.max(1, input.perPage);
+  const perPage = Math.max(10, input.perPage);
   
   const totalItems = data.length;
   

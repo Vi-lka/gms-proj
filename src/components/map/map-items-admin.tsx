@@ -8,12 +8,14 @@ import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms
 import GroupItem from './items/group-item';
 import SingleItem from './items/single-item';
 import { cn } from '~/lib/utils';
+import { useQueryState } from 'nuqs';
 
 export default function MapItemsAdmin({
   items
 }: {
   items: MapItemT[]
 }) {
+  const [activeId, setActiveId] = useQueryState("activeId", { defaultValue: "" });
   const stage = useAtomValue(stageAtom);
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
@@ -31,15 +33,24 @@ export default function MapItemsAdmin({
     [items, scaleForIntersections]
   );
 
+  const filteredByActiveId = React.useMemo(
+    () => intersections.filter(item => {
+      if (!activeId) return true;
+      if (item.intersection) return item.items.find(el => el.id === activeId)
+      else return item.data.id === activeId
+    }),
+    [activeId, intersections]
+  )
+
   return (
     <Layer>
-      {intersections.map((item, indx) => (
+      {filteredByActiveId.map((item, indx) => (
         item.intersection
           ? (
             <GroupItem 
               key={indx}
               data={item}
-              className={item.items.find(el => el.id === selectedItem?.id) 
+              className={item.items.find(el => (el.id === selectedItem?.id || activeId === el.id)) 
                 ? "!outline-dashed !outline-2 !outline-offset-4 !outline-yellow" 
                 : ""
               }
@@ -49,7 +60,7 @@ export default function MapItemsAdmin({
             <SingleItem 
               key={indx}
               data={item.data}
-              className={cn(selectedItem?.id === item.data.id 
+              className={cn((selectedItem?.id === item.data.id || activeId === item.data.id)
                 ? "!outline-yellow" 
                 : "outline-transparent",
                 "!outline-dashed !outline-2 !outline-offset-2 transition-all"
@@ -57,6 +68,7 @@ export default function MapItemsAdmin({
               onClick={(e) => {
                 e.stopPropagation()
                 setSelectedItem(item.data)
+                void setActiveId(null)
               }}
             />
           )

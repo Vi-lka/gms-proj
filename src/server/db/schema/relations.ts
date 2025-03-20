@@ -22,18 +22,6 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   authenticators: many(authenticators),
-  mapData: many(mapData),
-  clusters: many(clusters),
-  companies: many(companies),
-  companiesToMapItems: many(companiesToMapItems),
-  mapItems: many(mapItems),
-  fields: many(fields),
-  fieldsMaps: many(fieldsMaps),
-  fieldMapPolygons: many(fieldMapPolygons),
-  licensedAreas: many(licensedAreas),
-  areasData: many(areasData),
-  profitability: many(profitability),
-  files: many(files),
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({

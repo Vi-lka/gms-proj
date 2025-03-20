@@ -41,12 +41,20 @@ export async function GET(request: NextRequest) {
     const data = await db.query.fields.findMany({
       where,
       with: {
+        userUpdated: {
+          columns: { name: true }
+        },
+        userCreated: {
+          columns: { name: true }
+        },
         company: true,
       },
       orderBy: (fields, { asc }) => [asc(fields.name)]
     })
-    const transformData: FieldExtend[] = data.map((item) => ({
+    const transformData: FieldExtend[] = data.map(({ userCreated, userUpdated, ...item }) => ({
       ...item,
+      createUserName: userCreated ? userCreated.name : null,
+      updateUserName: userUpdated ? userUpdated.name : null,
       companyName: item.company.name
     }))
     return Response.json(transformData)

@@ -23,14 +23,22 @@ export async function GET(request: NextRequest) {
     const data = await db.query.licensedAreas.findMany({
       where,
       with: {
+        userUpdated: {
+          columns: { name: true }
+        },
+        userCreated: {
+          columns: { name: true }
+        },
         field: {
           with: { company: true }
         }
       },
       orderBy: (licensedAreas, { asc }) => [asc(licensedAreas.name)]
     })
-    const transformData: LicensedAreaExtend[] = data.map((item) => ({
+    const transformData: LicensedAreaExtend[] = data.map(({ userCreated, userUpdated, ...item }) => ({
       ...item,
+      createUserName: userCreated ? userCreated.name : null,
+      updateUserName: userUpdated ? userUpdated.name : null,
       fieldName: item.field.name,
       companyId: item.field.company.id,
       companyName: item.field.company.name,

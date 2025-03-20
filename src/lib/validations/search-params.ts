@@ -17,12 +17,14 @@ import {
   type Company, 
   type FieldExtend, 
   type FieldMapExtend, 
+  FileDB, 
   type LicensedAreaExtend,
   type SessionExtend, 
   type User, 
   users 
 } from "~/server/db/schema";
 import { ELEMENTS } from "../static/elements";
+import { type RecentItem } from "../types";
 
 export const searchParamsUsers = {
   page: parseAsInteger.withDefault(1),
@@ -162,6 +164,32 @@ export const searchParamsProfitability = {
   id: parseAsString.withDefault(""),
 }
 export const searchParamsProfitabilityCache = createSearchParamsCache(searchParamsProfitability)
+
+export const searchParamsFiles = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<FileDB>().withDefault([
+    { id: "fileName", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  fileName: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+}
+export const searchParamsFilesCache = createSearchParamsCache(searchParamsFiles)
+
+export const searchParamsRecent = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<RecentItem>().withDefault([
+    { id: "updatedAt", desc: true }
+  ]),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+}
+export const searchParamsRecentCache = createSearchParamsCache(searchParamsRecent)
 
 
 // API Routes
