@@ -3,7 +3,6 @@
 import { atom } from "jotai";
 import { type Stage as StageT } from 'konva/lib/Stage';
 import { type MapItemT } from "../types";
-import { type Polygon } from "~/components/poly-annotation/types";
 
 export const stageAtom = atom({
     width: 0,

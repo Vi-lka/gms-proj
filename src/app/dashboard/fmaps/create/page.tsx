@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import React from 'react'
 import { ContentLayout } from '~/components/admin-panel/content-layout';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb';
-import { Skeleton } from '~/components/ui/skeleton';
 import { auth } from '~/server/auth';
 import { PolyStoreProvider } from '~/components/poly-annotation/store/poly-store-provider';
 import EditPolygons from '~/components/admin-panel/edit-polygons/edit-polygons';

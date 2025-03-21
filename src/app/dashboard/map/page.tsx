@@ -3,14 +3,13 @@ import { redirect } from 'next/navigation';
 import React from 'react'
 import { ContentLayout } from '~/components/admin-panel/content-layout';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb';
-import { type PageProps } from '~/lib/types'
 import { auth } from '~/server/auth';
 import { getMap, getMapItems } from '~/server/queries/map';
 import Map from "./Map";
 import DefaultLoading from '~/components/loadings/default';
 import { getProfitability } from '~/server/queries/profitability';
 
-export default async function MapPage(props: PageProps) {
+export default async function MapPage() {
   const session = await auth();
 
   if (!session) redirect("/dashboard");

@@ -4,7 +4,6 @@ import React from 'react'
 import { ContentLayout } from '~/components/admin-panel/content-layout';
 import { PolyStoreProvider } from '~/components/poly-annotation/store/poly-store-provider';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb';
-import { Skeleton } from '~/components/ui/skeleton';
 import { auth } from '~/server/auth';
 import Content from './content';
 import { getFieldMapWithImage } from '~/server/queries/fields-maps';
