@@ -3,15 +3,14 @@
 import { restrictUser } from "~/lib/utils"
 import { auth } from "../auth"
 import type { FileT, PresignedUrlT } from "./types"
-import { unstable_noStore as noStore } from "next/cache"
+import { unstable_noStore as noStore, revalidateTag } from "next/cache"
 import { getErrorMessage } from "~/lib/handle-error"
 import { v4 as uuidv4 } from 'uuid';
-import { createPresignedUrlToUpload, deleteFileFromBucket } from "./s3-file-management"
+import { createPresignedUrlToUpload, deleteFileFromBucket, deleteFilesFromBucket } from "./s3-file-management"
 import { env } from "~/env"
 import { db } from "../db"
 import { files } from "../db/schema"
-import { eq } from "drizzle-orm"
-import { takeFirstOrThrow } from "../db/utils"
+import { eq, inArray } from "drizzle-orm"
 
 /**
  * Gets presigned urls for uploading files to S3
@@ -104,6 +103,8 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
       })))
       .returning()
 
+    revalidateTag("files")
+
     if (saveFilesInfo.length > 0) return {
       data: saveFilesInfo,
       error: null
@@ -150,9 +151,10 @@ export async function deleteFile(id: string) {
       await db
         .delete(files)
         .where(eq(files.id, id))
-        .returning()
-        .then(takeFirstOrThrow)
     }
+
+    revalidateTag("files")
+
     return {
       data: null,
       error: null
@@ -163,5 +165,51 @@ export async function deleteFile(id: string) {
       error: getErrorMessage(err),
     }
   }
+}
 
+export async function deleteFiles(ids: string[]) {
+  noStore()
+  
+  const session = await auth();
+  if (restrictUser(session?.user.role, 'admin-panel')) {
+    const err = new Error("No access")
+    return {
+      data: null,
+      error: getErrorMessage(err)
+    }
+  }
+
+  try {
+    const filesToDelete = await db.query.files.findMany({
+      where: inArray(files.id, ids),
+      columns: {
+        fileName: true,
+      }
+    })
+
+    if (filesToDelete.length === 0) throw new Error("Файлы не найдены", { cause: filesToDelete })
+    else {
+      // Delete files from the bucket
+      await deleteFilesFromBucket({
+        bucketName: env.S3_BUCKET_NAME,
+        filesNames: filesToDelete.map(file => file.fileName),
+      })
+      // Delete files from the database
+      await db
+        .delete(files)
+        .where(inArray(files.id, ids))
+    }
+
+    revalidateTag("files")
+
+    return {
+      data: null,
+      error: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: getErrorMessage(err),
+    }
+  }
 }

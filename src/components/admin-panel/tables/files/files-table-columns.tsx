@@ -8,20 +8,18 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
-import { formatDate } from "~/lib/utils";
-import { type FieldMapExtend } from "~/server/db/schema";
+import { formatBytes, formatDate } from "~/lib/utils";
+import { type FileDBExtend } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<FieldMapExtend> | null>
-  >,
-  goToUpdate: (id: string) => void;
+    React.SetStateAction<DataTableRowAction<FileDBExtend> | null>
+  >
 }
 
 export function getColumns({
   setRowAction,
-  goToUpdate,
-}: GetColumnsProps): ColumnDef<FieldMapExtend>[] {
+}: GetColumnsProps): ColumnDef<FileDBExtend>[] {
   return [
     {
       id: "select",
@@ -78,59 +76,6 @@ export function getColumns({
       enableHiding: false,
     },
     {
-      accessorKey: "fieldName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Месторождение" />
-      ),
-      cell: ({ row }) => (
-        <div
-          onClick={()=> {
-            if (row.original.fieldId) {
-              void navigator.clipboard.writeText(row.original.fieldId)
-              toast.success('ID скопирован')
-            }
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className="max-w-[31.25rem] truncate font-medium">
-                {row.getValue("fieldName")}
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                ID: {row.original.fieldId}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      )
-    },
-    {
-      accessorKey: "name",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Название" />
-      ),
-      cell: ({ row }) => (
-        <div
-          onClick={()=> {
-            void navigator.clipboard.writeText(row.getValue("name"))
-            toast.success('Название скопировано')
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className="max-w-64 truncate font-medium">
-                {row.getValue("name")}
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                {row.getValue("name")}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      ),
-      enableHiding: false,
-    },
-    {
       accessorKey: "fileUrl",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Фото" className="min-w-20" />
@@ -139,7 +84,7 @@ export function getColumns({
         <div className="flex">
           <Image 
             src={row.getValue("fileUrl")}
-            alt={row.original.name}
+            alt={row.original.originalName}
             width={100}
             height={100}
             className='hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
@@ -147,32 +92,87 @@ export function getColumns({
           />
         </div>
       ),
+      enableHiding: false,
       enableSorting: false,
     },
     {
-      accessorKey: "companyName",
+      accessorKey: "originalName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Компания" />
+        <DataTableColumnHeader column={column} title="Название" />
+      ),
+      cell: ({ row }) => (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {row.getValue("originalName")}
+          </span>
+        </div>
+      ),
+      enableHiding: false,
+    },
+    {
+      accessorKey: "fileName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Название в Minio" />
       ),
       cell: ({ row }) => (
         <div
           onClick={()=> {
-            void navigator.clipboard.writeText(row.original.companyId)
-            toast.success('ID скопирован')
+            void navigator.clipboard.writeText(row.getValue("fileName"))
+            toast.success('Название скопировано')
           }}
         >
           <TooltipProvider>
             <Tooltip delayDuration={150}>
-              <TooltipTrigger className="max-w-[31.25rem] truncate font-medium">
-                {row.getValue("companyName")}
+              <TooltipTrigger className="w-36 truncate">
+                {row.getValue("fileName")}
               </TooltipTrigger>
               <TooltipContent className="p-3">
-                ID: {row.original.companyId}
+                {row.getValue("fileName")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
-      )
+      ),
+    },
+    {
+      accessorKey: "fieldMapName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Карта месторождения" />
+      ),
+      cell: ({ row }) => (
+        <div
+          onClick={()=> {
+            if (row.original.fieldMapId) {
+              void navigator.clipboard.writeText(row.original.fieldMapId)
+              toast.success('ID скопирован')  
+            }
+          }}
+        >
+          <TooltipProvider>
+            <Tooltip delayDuration={150}>
+              <TooltipTrigger className="max-w-[31.25rem] truncate">
+                {row.getValue("fieldMapName")}
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                {row.original.fieldMapId}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "size",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Размер" />
+      ),
+      cell: ({ row }) => (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {formatBytes(row.getValue("size"))}
+          </span>
+        </div>
+      ),
     },
     {
       accessorKey: "createUserName",
@@ -184,7 +184,7 @@ export function getColumns({
           onClick={()=> {
             if (row.original.createUserId) {
               void navigator.clipboard.writeText(row.original.createUserId)
-              toast.success('ID скопирован')
+              toast.success('ID скопирован')  
             }
           }}
         >
@@ -274,12 +274,12 @@ export function getColumns({
                 variant="ghost"
                 className="flex size-8 p-0 data-[state=open]:bg-muted"
               >
-                <Ellipsis className="size-4" />
+                <Ellipsis className="size-4"/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
-                onSelect={() => goToUpdate(row.original.id)}
+                onSelect={() => setRowAction({ row, type: "update" })}
               >
                 Изменить
                 <DropdownMenuShortcut>

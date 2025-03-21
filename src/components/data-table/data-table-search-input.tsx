@@ -38,8 +38,9 @@ export default function DataTableSearchInput<TData>({
   }, [table, columnId, debouncedValue])
 
   return (
+    // TODO: cleare input
     <Input
-      type="search"
+      type="text"
       placeholder={placeholder}
       value={searchValue}
       onChange={(event) => setSearchValue(event.target.value)}

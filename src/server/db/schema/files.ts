@@ -34,4 +34,12 @@ export const files = createTable(
 )
 
 // Types
-export type FileDB = typeof files.$inferSelect
+export type FileDB = typeof files.$inferSelect & {
+  createUserName?: string | null;
+  updateUserName?: string | null;
+}
+
+export type FileDBExtend = FileDB & {
+  fieldMapId?: string;
+  fieldMapName?: string;
+}

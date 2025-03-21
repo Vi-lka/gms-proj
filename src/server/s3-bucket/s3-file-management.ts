@@ -132,6 +132,28 @@ export async function deleteFileFromBucket({
   return true
 }
 
+/**
+ * Delete file from S3 bucket
+ * @param bucketName name of the bucket
+ * @param fileName name of the file
+ * @returns true if file was deleted, false if not
+ */
+export async function deleteFilesFromBucket({ 
+  bucketName, 
+  filesNames 
+}: { 
+  bucketName: string; 
+  filesNames: string[]
+}) {
+  try {
+    await s3Client.removeObjects(bucketName, filesNames)
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+  return true
+}
+
 // /**
 //  * Get file from S3 bucket
 //  * @param bucketName name of the bucket

@@ -5,26 +5,26 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
-import { deleteCompanies } from '~/server/actions/companies'
-import { type Company } from '~/server/db/schema'
+import { type FileDBExtend } from '~/server/db/schema'
+import { deleteFiles } from '~/server/s3-bucket/actions'
 
-interface DeleteCompaniesDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  companies: Row<Company>["original"][]
+interface DeleteFilesFialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  files: Row<FileDBExtend>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export default function DeleteCompaniesFialog({
-  companies,
+export default function DeleteFilesFialog({
+  files,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteCompaniesDialogProps) {
+}: DeleteFilesFialogProps) {
   const [isPending, startTransition] = React.useTransition()
 
   function onDelete() {
     startTransition(async () => {
-      const { error } = await deleteCompanies(companies.map((company) => company.id))
+      const { error } = await deleteFiles(files.map((file) => file.id))
 
       if (error) {
         toast.error(error)
@@ -32,7 +32,7 @@ export default function DeleteCompaniesFialog({
       }
 
       props.onOpenChange?.(false)
-      toast.success("Компании удалены!")
+      toast.success("Файлы удалены!")
       onSuccess?.()
     })
   }
@@ -43,7 +43,7 @@ export default function DeleteCompaniesFialog({
         <CredenzaTrigger asChild>
           <Button variant="outline" size="sm">
             <Trash className="mr-2 size-4" />
-            Удалить ({companies.length})
+            Удалить ({files.length})
           </Button>
         </CredenzaTrigger>
       ) : null}
@@ -52,9 +52,9 @@ export default function DeleteCompaniesFialog({
           <CredenzaTitle>Вы абсолютно уверены?</CredenzaTitle>
           <CredenzaDescription>
             Это действие невозможно отменить. Это приведет к окончательному удалению{" "}
-            <span className="font-medium">{companies.length}</span>
-            {companies.length === 1 ? " Компании" : " Компаний"}.
-            Все данные, которые были привязаны, также будут удалены.
+            <span className="font-medium">{files.length}</span>
+            {files.length === 1 ? " Файла" : " Файлов"}.
+            Все данные, которые были привязаны, также будут удалены (Карты месторождений и их полигоны).
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaFooter className="gap-2 sm:space-x-0">

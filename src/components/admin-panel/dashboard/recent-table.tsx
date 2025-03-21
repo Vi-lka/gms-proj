@@ -49,7 +49,7 @@ export default function RecentTable({
       case "polygon":
         return router.push(`/dashboard/fmaps/${id}`);
       case "file":
-        return router.push(`/dashboard/files?name=${id}`);
+        return router.push(`/dashboard/files?fileName=${id}`);
     
       default:
         return;

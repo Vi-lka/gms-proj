@@ -17,7 +17,7 @@ import {
   type Company, 
   type FieldExtend, 
   type FieldMapExtend, 
-  FileDB, 
+  type FileDB, 
   type LicensedAreaExtend,
   type SessionExtend, 
   type User, 
@@ -169,7 +169,7 @@ export const searchParamsFiles = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
   sort: getSortingStateParser<FileDB>().withDefault([
-    { id: "fileName", desc: false }
+    { id: "originalName", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   fileName: parseAsString.withDefault(""),

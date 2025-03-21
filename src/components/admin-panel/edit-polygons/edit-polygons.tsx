@@ -94,6 +94,7 @@ function Content({
 
   if (imageUrl === undefined) return (
     <div className='w-full h-full flex items-center justify-center'>
+      {/* TODO: Select file */}
       <UploadFile />
     </div>
   )

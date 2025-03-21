@@ -9,7 +9,8 @@ import {
   Cookie,
   Building2,
   MapPinned,
-  AlignEndHorizontal
+  AlignEndHorizontal,
+  Folder
 } from "lucide-react";
 import { type UserRole } from "./types";
 
@@ -89,6 +90,11 @@ export function getMenuList(pathname: string, role: UserRole | undefined): Group
           label: "Рентабельная добыча",
           icon: AlignEndHorizontal,
         },
+        {
+          href: "/dashboard/files",
+          label: "Файлы",
+          icon: Folder
+        }
       ]
     }
   ]
