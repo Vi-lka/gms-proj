@@ -14,6 +14,7 @@ import { handleUpload } from '~/server/s3-bucket/utils';
 export default function SaveButton() {
   const fieldId = usePolyStore((state) => state.fieldId)
   const imageFile = usePolyStore((state) => state.imageFile)
+  const selectedImage = usePolyStore((state) => state.selectedImage)
   const polygons = usePolyStore((state) => state.polygons)
   const editPolygonIndex = usePolyStore((state) => state.editPolygonIndex)
   const isAddible = usePolyStore((state) => state.isAddible)
@@ -26,33 +27,48 @@ export default function SaveButton() {
   const [isPending, startTransition] = React.useTransition()
 
   const onSave = React.useCallback(() => {
-    if (polygons.length === 0 || !imageFile || !fieldId) return;
+    if (polygons.length === 0 || (!imageFile && !selectedImage) || !fieldId) return;
 
     startTransition(async () => {
-      // validate files
-      const fileInfo: FileT = {
-        originalFileName: imageFile.name,
-        fileSize: imageFile.size,
-      }
- 
-      const presignedUrls = await createPresignedUrls([fileInfo])
 
-      if (presignedUrls.error || !presignedUrls.data) {
-        toast.error(presignedUrls.error)
-        return;
-      }
- 
-      // upload files to s3 endpoint directly and save file info to db
-      const uploadedFiles = await handleUpload([imageFile], presignedUrls.data)
+      let fileOriginalName = ""
+      let fileId = ""
 
-      if (uploadedFiles.error) {
-        toast.error(uploadedFiles.error)
-        return;
-      }
-      if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
-        toast.error("Файлы не найдены")
-        return;
-      }
+      if (imageFile !== null) {
+        // validate file
+        const fileInfo: FileT = {
+          originalFileName: imageFile.name,
+          fileSize: imageFile.size,
+        }
+      
+        const presignedUrls = await createPresignedUrls([fileInfo])
+
+        if (presignedUrls.error || !presignedUrls.data) {
+          toast.error(presignedUrls.error)
+          return;
+        }
+      
+        // upload files to s3 endpoint directly and save file info to db
+        const uploadedFiles = await handleUpload([imageFile], presignedUrls.data)
+
+        if (uploadedFiles.error) {
+          toast.error(uploadedFiles.error)
+          return;
+        }
+        if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
+          toast.error("Файлы не найдены")
+          return;
+        }
+
+        fileOriginalName = uploadedFiles.data[0].originalName
+        fileId = uploadedFiles.data[0].id
+      } else if (selectedImage !== null) {
+        fileOriginalName = selectedImage.originalName
+        fileId = selectedImage.id
+      } else {
+        toast.error("Нет Файла")
+        return
+      };
 
       const validPolygons = polygons.map((polygon) => ({
         areaId: polygon.licensedArea?.id,
@@ -65,8 +81,8 @@ export default function SaveButton() {
       const { error } = await createFieldMap({
         fieldId,
         polygons: validPolygons,
-        fileName: uploadedFiles.data[0].originalName,
-        fileId: uploadedFiles.data[0].id,
+        fileName: fileOriginalName,
+        fileId: fileId,
       })
 
       if (error) {
@@ -82,9 +98,9 @@ export default function SaveButton() {
       router.push(`/dashboard/fmaps`)
     })
 
-  }, [polygons, imageFile, fieldId, router, resetState, clear])
+  }, [polygons, imageFile, selectedImage, fieldId, resetState, clear, router])
 
-  if (polygons.length === 0 || !imageFile) return null;
+  if (polygons.length === 0 || (!imageFile && !selectedImage)) return null;
   
   return (
     <Button

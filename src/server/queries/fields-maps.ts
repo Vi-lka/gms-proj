@@ -148,19 +148,13 @@ export async function getFieldsMaps(
         //   .execute()
         //   .then((res) => res[0]?.count ?? 0)
 
-        const validData = await Promise.all(
-          data.map(async ({field, userCreated, userUpdated, ...other}) => {
-            const fileUrl = await getPresignedUrl(other.fileId)
-            if (fileUrl.error !== null) throw new Error(fileUrl.error)
-            return {
-              ...other,
-              createUserName: userCreated ? userCreated.name : null,
-              updateUserName: userUpdated ? userUpdated.name : null,
-              fileUrl: fileUrl.data,
-              fieldName: field.name,
-              companyId: field.company.id,
-              companyName: field.company.name,
-            }
+        const validData = data.map(({field, userCreated, userUpdated, ...other}) => ({
+            ...other,
+            createUserName: userCreated ? userCreated.name : null,
+            updateUserName: userUpdated ? userUpdated.name : null,
+            fieldName: field.name,
+            companyId: field.company.id,
+            companyName: field.company.name,
           })
         )
   
@@ -187,7 +181,22 @@ export async function getFieldsMaps(
     { revalidate: 60, tags: ["fields", "map_items"] }
   )()
 
-  return result
+  const dataWithUrls = await Promise.all(
+    result.data.map(async (fieldMap) => {
+      const fileUrl = await getPresignedUrl(fieldMap.fileId)
+      if (fileUrl.error !== null) throw new Error(fileUrl.error)
+      return {
+        ...fieldMap,
+        fileUrl: fileUrl.data,
+      }
+    })
+  )
+
+  return {
+    data: dataWithUrls,
+    pageCount: result.pageCount,
+    error: result.error
+  }
 }
 
 export async function getFieldMap(

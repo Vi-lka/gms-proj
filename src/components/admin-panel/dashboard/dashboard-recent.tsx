@@ -21,6 +21,6 @@ export default async function DashboardRecent({
   const result = await getRecent(currentDate, {...search, filters: validFilters })
 
   return (
-    <RecentTable result={result} className="max-h-[60vh]" />
+    <RecentTable result={result} className="max-h-[530px]" />
   )
 }

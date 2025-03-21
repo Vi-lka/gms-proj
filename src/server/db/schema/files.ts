@@ -43,3 +43,7 @@ export type FileDBExtend = FileDB & {
   fieldMapId?: string;
   fieldMapName?: string;
 }
+
+export type FileDBWithUrl = FileDBExtend & {
+  fileUrl: string;
+}

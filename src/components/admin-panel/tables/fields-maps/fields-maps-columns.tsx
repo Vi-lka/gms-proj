@@ -9,11 +9,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
 import { formatDate } from "~/lib/utils";
-import { type FieldMapExtend } from "~/server/db/schema";
+import { type FieldMapWithUrl } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<FieldMapExtend> | null>
+    React.SetStateAction<DataTableRowAction<FieldMapWithUrl> | null>
   >,
   goToUpdate: (id: string) => void;
 }
@@ -21,7 +21,7 @@ interface GetColumnsProps {
 export function getColumns({
   setRowAction,
   goToUpdate,
-}: GetColumnsProps): ColumnDef<FieldMapExtend>[] {
+}: GetColumnsProps): ColumnDef<FieldMapWithUrl>[] {
   return [
     {
       id: "select",

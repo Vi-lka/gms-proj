@@ -1,6 +1,6 @@
 import { type Table } from '@tanstack/react-table'
 import React from 'react'
-import { type FieldMapExtend } from '~/server/db/schema'
+import { type FieldMapWithUrl } from '~/server/db/schema'
 import DeleteFieldsMapsDialog from './delete-fields-maps-dialog'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import { Button } from '~/components/ui/button'
@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
 interface FieldsMapsTableToolbarActionsProps {
-  table: Table<FieldMapExtend>
+  table: Table<FieldMapWithUrl>
   disabled?: boolean
 }
 

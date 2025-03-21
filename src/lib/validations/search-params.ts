@@ -16,8 +16,8 @@ import {
   type AreaDataExtend, 
   type Company, 
   type FieldExtend, 
-  type FieldMapExtend, 
-  type FileDB, 
+  type FieldMapExtend,  
+  type FileDBExtend, 
   type LicensedAreaExtend,
   type SessionExtend, 
   type User, 
@@ -156,7 +156,7 @@ export const searchFieldsMaps = {
   companyName: parseAsString.withDefault(""),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
-  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),  
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
 export const searchFieldsMapsCache = createSearchParamsCache(searchFieldsMaps)
 
@@ -168,16 +168,18 @@ export const searchParamsProfitabilityCache = createSearchParamsCache(searchPara
 export const searchParamsFiles = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<FileDB>().withDefault([
+  sort: getSortingStateParser<FileDBExtend>().withDefault([
     { id: "originalName", desc: false }
   ]),
   id: parseAsString.withDefault(""),
   fileName: parseAsString.withDefault(""),
+  hasConnected: parseAsStringEnum(["true", "false", "disabled"]).withDefault("disabled"),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
 export const searchParamsFilesCache = createSearchParamsCache(searchParamsFiles)
+export const searchFilesSerialize = createSerializer(searchParamsFiles)
 
 export const searchParamsRecent = {
   page: parseAsInteger.withDefault(1),
@@ -218,6 +220,8 @@ export const searchLicensedAreasApi = {
 export const searchLicensedAreasApiLoader = createLoader(searchLicensedAreasApi)
 
 export const searchAreasDataApiLoader = createLoader(searchAreasData)
+
+export const searchFilesApiLoader = createLoader(searchParamsFiles)
 
 
 // TABS and VIEW

@@ -9,7 +9,6 @@ import { db } from "../db";
 import { eq, inArray } from "drizzle-orm";
 import { type UpdateFieldMapSchema, type CreateFieldMapSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
-import { deleteFile } from "../s3-bucket/actions";
 import { type DefaultEditDataT } from "~/components/poly-annotation/types";
 
 export async function createFieldMap(input: CreateFieldMapSchema) {
@@ -158,28 +157,12 @@ export async function deleteFieldsMaps(ids: string[]) {
   }
 
   try {
-    const filesIds = await db.query.fieldsMaps.findMany({
-      where: inArray(fieldsMaps.id, ids),
-      columns: {
-        fileId: true,
-      }
-    })
-    .then((fieldsMaps) => fieldsMaps.map((fieldMap) => fieldMap.fileId))
-
     await db
       .delete(fieldsMaps)
       .where(inArray(fieldsMaps.id, ids))
 
     revalidateTag("map_items")
     revalidateTag("fields")
-
-    await Promise.all(
-      // loop through the files ids and delete them
-      filesIds.map(async (fileId) => {
-        const deletedFile = await deleteFile(fileId)
-        if (deletedFile.error) throw new Error(deletedFile.error)
-      })
-    )
 
     return {
       data: null,

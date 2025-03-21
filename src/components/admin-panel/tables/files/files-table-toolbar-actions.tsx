@@ -1,12 +1,12 @@
 import { type Table } from "@tanstack/react-table";
 import { DataTableSortList } from "~/components/data-table/data-table-sort-list";
-import { type FileDBExtend } from "~/server/db/schema";
+import { type FileDBWithUrl } from "~/server/db/schema";
 import React from "react";
 import DeleteFilesDialog from "./delete-files-dialog";
 import CreateFileSheet from "./create-file-sheet";
 
 interface FilesTableToolbarActionsProps {
-  table: Table<FileDBExtend>
+  table: Table<FileDBWithUrl>
   disabled?: boolean
 }
 

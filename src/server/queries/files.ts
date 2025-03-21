@@ -5,7 +5,7 @@ import "server-only"
 import { type GetFilesSchema } from "~/lib/validations/files";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
-import { and, ilike, inArray, or } from "drizzle-orm";
+import { and, ilike, inArray, notInArray, or } from "drizzle-orm";
 import { fieldsMaps, files, users } from "../db/schema";
 import { db } from "../db";
 import { getRelationOrderBy, orderData, paginate } from "../db/utils";
@@ -67,6 +67,20 @@ export async function getFiles(
                 )
             )
           ) : undefined,
+          input.hasConnected === "true" ? inArray(
+            files.id, 
+            db
+              .select({ id: fieldsMaps.fileId })
+              .from(fieldsMaps)
+          ) 
+          : undefined,
+          input.hasConnected === "false" ? notInArray(
+            files.id, 
+            db
+              .select({ id: fieldsMaps.fileId })
+              .from(fieldsMaps)
+          ) 
+          : undefined,
         )
 
       const { orderBy } = getRelationOrderBy(input.sort, files, files.id)
@@ -98,18 +112,12 @@ export async function getFiles(
         //   .execute()
         //   .then((res) => res[0]?.count ?? 0)
 
-        const validData = await Promise.all(
-          data.map(async ({userCreated, userUpdated, fieldMap, ...other}) => {
-            const fileUrl = await getPresignedUrl(other.id)
-            if (fileUrl.error !== null) throw new Error(fileUrl.error)
-            return {
-              ...other,
-              createUserName: userCreated ? userCreated.name : null,
-              updateUserName: userUpdated ? userUpdated.name : null,
-              fileUrl: fileUrl.data,
-              fieldMapId: fieldMap?.id,
-              fieldMapName: fieldMap?.name
-            }
+        const validData = data.map(({userCreated, userUpdated, fieldMap, ...other}) => ({
+            ...other,
+            createUserName: userCreated ? userCreated.name : null,
+            updateUserName: userUpdated ? userUpdated.name : null,
+            fieldMapId: fieldMap?.id,
+            fieldMapName: fieldMap?.name
           })
         )
   
@@ -133,8 +141,25 @@ export async function getFiles(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["files"] }
+    { revalidate: 60, tags: ["files", "fields", "map_items"] }
   )()
 
-  return result
+  const dataWithUrls = await Promise.all(
+    result.data.map(async (file) => {
+      const fileUrl = await getPresignedUrl(file.id)
+      if (fileUrl.error !== null) throw new Error(fileUrl.error)
+      return {
+        ...file,
+        fileUrl: fileUrl.data,
+      }
+    })
+  )
+
+  return {
+    data: dataWithUrls,
+    pageCount: result.pageCount,
+    error: result.error
+  }
 }
+
+// TODO: fix caching for all queries!!!

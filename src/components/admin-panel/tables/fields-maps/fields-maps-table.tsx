@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types'
-import { type FieldMapExtend } from '~/server/db/schema'
+import { type FieldMapWithUrl } from '~/server/db/schema'
 import { type getFieldsMaps } from '~/server/queries/fields-maps'
 import { getColumns } from './fields-maps-columns'
 import { useRouter } from 'next/navigation'
@@ -36,7 +36,7 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
 
   const router = useRouter()
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FieldMapExtend> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FieldMapWithUrl> | null>(null);
 
   const goToUpdate = React.useCallback((id: string) => {
     router.push(`/dashboard/fmaps/${id}`)
@@ -47,7 +47,7 @@ export default function FieldsMapsTable({ promises }: FieldsMapsTableProps) {
     [setRowAction, goToUpdate]
   )
   
-  const filterFields: DataTableFilterField<FieldMapExtend>[] = [
+  const filterFields: DataTableFilterField<FieldMapWithUrl>[] = [
     {
       id: "name",
       label: "Название",

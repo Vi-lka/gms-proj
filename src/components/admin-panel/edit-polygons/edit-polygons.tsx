@@ -14,6 +14,10 @@ import UpdateButton from './toolbar/update-button';
 import { type DefaultEditDataT } from '~/components/poly-annotation/types';
 import DefaultLoading from '~/components/loadings/default';
 import { Skeleton } from '~/components/ui/skeleton';
+import { Separator } from '@radix-ui/react-dropdown-menu';
+import SelectFileDrawer from './select-file/select-file-drawer';
+import { Button } from '~/components/ui/button';
+import { Folder } from 'lucide-react';
 
 const CanvasStage = dynamic(() => import('~/components/poly-annotation/canvas-stage'), {
   ssr: false,
@@ -93,9 +97,18 @@ function Content({
   if (fieldId === null) return null
 
   if (imageUrl === undefined) return (
-    <div className='w-full h-full flex items-center justify-center'>
-      {/* TODO: Select file */}
+    <div className='w-full h-full flex flex-col gap-6 items-center justify-center'>
       <UploadFile />
+      <div className='w-full flex items-center gap-2'>
+        <Separator className='w-full h-0.5 bg-muted-foreground rounded-full'/>
+        <span className='text-muted-foreground text-sm'>или</span>
+        <Separator className='w-full h-0.5 bg-muted-foreground rounded-full'/>
+      </div>
+      <SelectFileDrawer title='Выберите файл'>
+        <Button className='item-center gap-1'>
+          <Folder size={16} className='flex-none'/> Выбрать файл
+        </Button>
+      </SelectFileDrawer>
     </div>
   )
   

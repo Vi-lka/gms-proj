@@ -8,7 +8,6 @@ import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/sto
 import { type DefaultEditDataT } from '~/components/poly-annotation/types'
 import { Button } from '~/components/ui/button'
 import { updateFieldMap } from '~/server/actions/fields-maps'
-import { type FileDB } from '~/server/db/schema'
 import { createPresignedUrls } from '~/server/s3-bucket/actions'
 import { type FileT } from '~/server/s3-bucket/types'
 import { handleUpload } from '~/server/s3-bucket/utils'
@@ -20,6 +19,7 @@ export default function UpdateButton({
 }) {
   const imageUrl = usePolyStore((state) => state.imageUrl)
   const imageFile = usePolyStore((state) => state.imageFile)
+  const selectedImage = usePolyStore((state) => state.selectedImage)
   const polygons = usePolyStore((state) => state.polygons)
   const editPolygonIndex = usePolyStore((state) => state.editPolygonIndex)
   const isAddible = usePolyStore((state) => state.isAddible)
@@ -32,12 +32,13 @@ export default function UpdateButton({
   const [isPending, startTransition] = React.useTransition()
 
   const onSave = React.useCallback(() => {
-    if (polygons.length === 0 || !defaultData || !imageUrl) return;
+    if (polygons.length === 0 || !defaultData || (!imageUrl && !selectedImage)) return;
 
-    let newFile: FileDB | null = null
+    let fileOriginalName: string | undefined
+    let fileId: string | undefined
 
     startTransition(async () => {
-      if (imageFile) {
+      if (imageFile !== null) {
         // validate files
         const fileInfo: FileT = {
           originalFileName: imageFile.name,
@@ -62,7 +63,12 @@ export default function UpdateButton({
           toast.error("Файлы не найдены")
           return;
         }
-        newFile = uploadedFiles.data[0]
+        const newFile = uploadedFiles.data[0]
+        fileOriginalName = newFile.originalName
+        fileId = newFile.id
+      } else if (selectedImage !== null) {
+        fileOriginalName = selectedImage.originalName
+        fileId = selectedImage.id
       }
       
       const validPolygons = polygons.map((polygon) => ({
@@ -79,8 +85,8 @@ export default function UpdateButton({
         id: defaultData.id,
         fieldId: defaultData.fieldId,
         polygons: validPolygons,
-        fileName: newFile?.originalName,
-        fileId: newFile?.id,
+        fileName: fileOriginalName,
+        fileId: fileId,
       }, defaultData)
 
       if (error) {
@@ -97,7 +103,7 @@ export default function UpdateButton({
       router.push(`/dashboard/fmaps`)
     })
 
-  }, [defaultData, polygons, imageUrl, imageFile, resetState, clear, router])
+  }, [polygons, defaultData, imageUrl, selectedImage, imageFile, resetState, clear, router])
 
   if (polygons.length === 0 || !defaultData || !imageUrl) return null;
 

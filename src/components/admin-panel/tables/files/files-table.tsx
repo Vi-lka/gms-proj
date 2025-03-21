@@ -3,7 +3,7 @@
 import React from "react";
 import { toast } from "sonner";
 import type { DataTableFilterField, DataTableRowAction } from "~/lib/types";
-import { type FileDBExtend } from "~/server/db/schema";
+import { type FileDBWithUrl } from "~/server/db/schema";
 import { type getFiles } from "~/server/queries/files";
 import { getColumns } from "./files-table-columns";
 import { useDataTable } from "~/hooks/use-data-table";
@@ -33,14 +33,14 @@ export default function FilesTable({ promises }: FilesTableProps) {
 
   const [isPending, startTransition] = React.useTransition()
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FileDBExtend> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<FileDBWithUrl> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<FileDBExtend>[] = [
+  const filterFields: DataTableFilterField<FileDBWithUrl>[] = [
     {
       id: "fileName",
       label: "Название",

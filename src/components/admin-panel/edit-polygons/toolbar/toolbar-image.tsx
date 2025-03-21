@@ -15,12 +15,16 @@ export default function ToolbarImage() {
   const isAddible = usePolyStore((state) => state.isAddible)
   const editPolygonIndex = usePolyStore((state) => state.editPolygonIndex)
   const setImageUrl = usePolyStore((state) => state.setImageUrl)
+  const setImageFile = usePolyStore((state) => state.setImageFile)
+  const setSelectedImage = usePolyStore((state) => state.setSelectedImage)
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
   
   const { clear } = useTemporalStore((state) => state)
 
   const handleDelete = () => {
     setImageUrl(undefined)
+    setImageFile(null)
+    setSelectedImage(null)
     setGlobalState((prev) => ({
       ...prev,
       ...restDefaultInitState
@@ -46,7 +50,7 @@ export default function ToolbarImage() {
           )}
         />
       </PopoverTrigger>
-      <PopoverContent side='top' className='w-fit h-fit flex p-1'>
+      <PopoverContent side='top' className='w-fit h-fit flex flex-col gap-2 p-1'>
         <Button 
           variant="destructive" 
           size="sm"

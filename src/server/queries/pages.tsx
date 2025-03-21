@@ -402,8 +402,6 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
 
       const sortedData = orderData(input.sort, allRecent.data)
 
-      console.log(input)
-
       const paginated = paginate(sortedData, input)
       return { data: paginated.items, pageCount: paginated.totalPages, error: null }
     } catch (error) {

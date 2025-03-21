@@ -5,11 +5,11 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
-import { type FileDBExtend } from '~/server/db/schema'
+import { type FileDBWithUrl } from '~/server/db/schema'
 import { deleteFiles } from '~/server/s3-bucket/actions'
 
 interface DeleteFilesFialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  files: Row<FileDBExtend>["original"][]
+  files: Row<FileDBWithUrl>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

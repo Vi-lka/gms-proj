@@ -1,5 +1,6 @@
-import { GetAreasDataSchema } from "./areas-data"
-import { searchAreasDataSerialize } from "./search-params"
+import { type GetAreasDataSchema } from "./areas-data"
+import { type GetFilesSchema } from "./files"
+import { searchAreasDataSerialize, searchFilesSerialize } from "./search-params"
 
 export type ClustersSearchParamsT = {
   hasMapItem?: boolean
@@ -39,6 +40,10 @@ type ApiRouteT =
   | {
       route: "areas-data";
       searchParams?: GetAreasDataSchema
+    }
+  | {
+      route: "files";
+      searchParams: GetFilesSchema
     }
 
 
@@ -101,6 +106,10 @@ export function getApiRoute({
     case "areas-data":
       if (searchParams) return searchAreasDataSerialize('/api/areas-data', searchParams)
       return '/api/areas-data'
+
+    case "files":
+      if (searchParams) return searchFilesSerialize('/api/files', searchParams)
+      return '/api/files'
   
     default:
       return ''

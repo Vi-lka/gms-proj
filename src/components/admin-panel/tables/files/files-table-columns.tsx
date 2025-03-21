@@ -1,25 +1,25 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { Edit, Ellipsis, Trash2 } from "lucide-react";
+import { Ellipsis, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
 import { formatBytes, formatDate } from "~/lib/utils";
-import { type FileDBExtend } from "~/server/db/schema";
+import { type FileDBWithUrl } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<FileDBExtend> | null>
+    React.SetStateAction<DataTableRowAction<FileDBWithUrl> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<FileDBExtend>[] {
+}: GetColumnsProps): ColumnDef<FileDBWithUrl>[] {
   return [
     {
       id: "select",
@@ -278,15 +278,6 @@ export function getColumns({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onSelect={() => setRowAction({ row, type: "update" })}
-              >
-                Изменить
-                <DropdownMenuShortcut>
-                  <Edit size={16}/>
-                </DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => setRowAction({ row, type: "delete" })}
               >

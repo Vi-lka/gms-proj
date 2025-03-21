@@ -4,10 +4,10 @@ import React from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { Button } from '~/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
-import { type FieldMapExtend } from '~/server/db/schema'
+import { type FieldMapWithUrl } from '~/server/db/schema'
 
 interface OpenImageDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  row:  Row<FieldMapExtend> | undefined,
+  row:  Row<FieldMapWithUrl> | undefined,
   showTrigger?: boolean
 }
 

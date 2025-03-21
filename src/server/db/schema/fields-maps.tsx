@@ -73,8 +73,12 @@ export interface FieldMapExtend extends FieldMap {
   fieldName: Field["name"],
   companyId: Company["id"],
   companyName: Company["name"],
-  fileUrl: string
 }
+
+export type FieldMapWithUrl = FieldMapExtend & {
+  fileUrl: string;
+}
+
 export interface FieldMapPointsExtend extends FieldMapPolygons {
   areaName: LicensedArea["name"],
 }

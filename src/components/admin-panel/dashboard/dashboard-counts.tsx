@@ -31,7 +31,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Пользователи</p>
+            <p className='truncate'>Пользователи</p>
             <Users className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -50,7 +50,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Компании</p>
+            <p className='truncate'>Компании</p>
             <Building2 className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -69,7 +69,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Месторождения</p>
+            <p className='truncate'>Месторождения</p>
             <Pickaxe className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -88,7 +88,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Лиценз. участки</p>
+            <p className='truncate'>Лицензионные участки</p>
             <LandPlot className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -107,7 +107,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Точки на карте</p>
+            <p className='truncate'>Точки на карте</p>
             <MapIcon className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -126,7 +126,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Данные ЛУ</p>
+            <p className='truncate'>Данные ЛУ</p>
             <Database className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -145,7 +145,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Карты месторожд.</p>
+            <p className='truncate'>Карты месторождений</p>
             <MapPinned className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">
@@ -164,7 +164,7 @@ export default async function DashboardCounts() {
       <Card>
         <CardHeader className="relative pb-2">
           <CardDescription className='flex items-center justify-between gap-1 w-full'>
-            <p>Файлы</p>
+            <p className='truncate'>Файлы</p>
             <Folder className='text-foreground flex-none'/>
           </CardDescription>
           <CardTitle className=" text-2xl font-semibold tabular-nums">

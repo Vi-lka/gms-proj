@@ -6,10 +6,10 @@ import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
 import { deleteFieldsMaps } from '~/server/actions/fields-maps'
-import { type FieldMapExtend } from '~/server/db/schema'
+import { type FieldMapWithUrl } from '~/server/db/schema'
 
 interface DeleteFieldsMapsDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  fieldsMaps: Row<FieldMapExtend>["original"][]
+  fieldsMaps: Row<FieldMapWithUrl>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
@@ -54,7 +54,7 @@ export default function DeleteFieldsMapsDialog({
             Это действие невозможно отменить. Это приведет к окончательному удалению{" "}
             <span className="font-medium">{fieldsMaps.length}</span>
             {fieldsMaps.length === 1 ? " Карты месторождения" : " Карт месторождений"}.
-            Все полигоны и фото также будут удалены.
+            Все полигоны также будут удалены.
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaFooter className="gap-2 sm:space-x-0">

@@ -4,10 +4,10 @@ import React from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { Button } from '~/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
-import { type FileDBExtend } from '~/server/db/schema'
+import { type FileDBWithUrl } from '~/server/db/schema'
 
 interface OpenImageDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  row:  Row<FileDBExtend> | undefined,
+  row:  Row<FileDBWithUrl> | undefined,
   showTrigger?: boolean
 }
 

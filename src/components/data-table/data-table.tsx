@@ -32,6 +32,8 @@ interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   scrollAreaClassName?: string
 
   disabled?: boolean
+
+  isLoading?: boolean
 }
 
 export function DataTable<TData>({
@@ -40,6 +42,7 @@ export function DataTable<TData>({
   children,
   className,
   scrollAreaClassName,
+  isLoading,
   // disabled,
   ...props
 }: DataTableProps<TData>) {
@@ -104,7 +107,7 @@ export function DataTable<TData>({
                       colSpan={table.getAllColumns().length}
                       className="h-24 text-left"
                     >
-                      Нет результатов.
+                      {isLoading ? "Загрузка..." : "Нет результатов."}
                     </TableCell>
                   </TableRow>
                 )}

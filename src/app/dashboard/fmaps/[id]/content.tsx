@@ -21,6 +21,8 @@ export default function Content({ promises }: EditFieldMapContentProps) {
 
   const [defaultData, setDefaultData] = React.useState<DefaultEditDataT>()
 
+  const openSelectImage = usePolyStore((state) => state.openSelectImage)
+  const selectedImage = usePolyStore((state) => state.selectedImage)
   const setGlobalState = usePolyStore((state) => state.setGlobalState)
 
   const { pause, resume } = useTemporalStore((state) => state)
@@ -30,6 +32,8 @@ export default function Content({ promises }: EditFieldMapContentProps) {
       toast.error(result.error)
       return;
     }
+
+    if (openSelectImage || selectedImage !== null) return;
 
     const dataForState = {
       fieldId: result.data.fieldId,
@@ -62,7 +66,7 @@ export default function Content({ promises }: EditFieldMapContentProps) {
       ...dataForState
     }));
     resume();
-  }, [result, pause, resume, setGlobalState])
+  }, [result, pause, resume, setGlobalState, openSelectImage, selectedImage])
 
   if (result.error !== null) throw new Error(result.error)
 

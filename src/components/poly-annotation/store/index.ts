@@ -11,6 +11,12 @@ export type PolyAnnotationState = {
   fieldId: string | null;
   imageUrl: string | undefined;
   imageFile: File | null;
+  selectedImage: {
+    id: string;
+    originalName: string;
+    url: string;
+  } | null,
+  openSelectImage: boolean,
   stageConfig: StageConfig,
   stageRef: StageT | null,
   imageConfig: ImageConfig,
@@ -49,6 +55,16 @@ export type PolyAnnotationStoreActions = {
     next:
       | PolyAnnotationStore['imageFile']
       | ((current: PolyAnnotationStore['imageFile']) => PolyAnnotationStore['imageFile']),
+  ) => void,
+  setSelectedImage: (
+    next:
+      | PolyAnnotationStore['selectedImage']
+      | ((current: PolyAnnotationStore['selectedImage']) => PolyAnnotationStore['selectedImage']),
+  ) => void,
+  setOpenSelectImage: (
+    next:
+      | PolyAnnotationStore['openSelectImage']
+      | ((current: PolyAnnotationStore['openSelectImage']) => PolyAnnotationStore['openSelectImage']),
   ) => void,
   setStageConfig: (
     next:
@@ -130,6 +146,8 @@ export const defaultInitState: PolyAnnotationState = {
   fieldId: null,
   imageUrl: undefined,
   imageFile: null,
+  selectedImage: null,
+  openSelectImage: false,
   stageConfig: {
     width: 0,
     height: 0,
@@ -179,7 +197,16 @@ export const createPolyStore = (
           imageFile: typeof next === 'function' ? next(state.imageFile) : next,
         }))
       },
-
+      setSelectedImage: (next) => {
+        set((state) => ({
+          selectedImage: typeof next === 'function' ? next(state.selectedImage) : next,
+        }))
+      },
+      setOpenSelectImage: (next) => {
+        set((state) => ({
+          openSelectImage: typeof next === 'function' ? next(state.openSelectImage) : next,
+        }))
+      },
       setStageConfig: (next) => {
         set((state) => ({
           stageConfig: typeof next === 'function' ? next(state.stageConfig) : next,
