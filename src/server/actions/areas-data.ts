@@ -39,8 +39,7 @@ export async function createAreasData(input: CreateAreasDataSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("areas_data")
 
     return {
       data: null,
@@ -84,8 +83,7 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("areas_data")
 
     return {
       data: result,
@@ -116,8 +114,7 @@ export async function deleteAreasData(ids: string[]) {
       .delete(areasData)
       .where(inArray(areasData.id, ids))
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("areas_data")
 
     return {
       data: null,

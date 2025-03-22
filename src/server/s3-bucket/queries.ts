@@ -41,7 +41,7 @@ export async function getPresignedUrl(id: string) {
       const file = await unstable_cache(
         fetchDB,
         [id],
-        { revalidate: 60, tags: ["files"] }
+        { revalidate: false, tags: ["files"] }
       )()
     
       if (file.error !== null) throw new Error(file.error)

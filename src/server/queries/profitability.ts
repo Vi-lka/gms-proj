@@ -55,7 +55,7 @@ export async function getProfitability(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["profitability"] }
+    { revalidate: false, tags: ["profitability"] }
   )()
   
   return result

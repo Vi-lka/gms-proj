@@ -178,7 +178,7 @@ export async function getFieldsMaps(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["fields", "map_items"] }
+    { revalidate: false, tags: ["fields_maps", "companies", "fields"] }
   )()
 
   const dataWithUrls = await Promise.all(
@@ -245,7 +245,7 @@ export async function getFieldMap(
   const result = await unstable_cache(
     fetchData,
     [id],
-    { revalidate: 60, tags: ["fields", "map_items"] }
+    { revalidate: false, tags: ["fields_maps", "companies", "fields", "licensed_areas", "polygons"] }
   )()
 
   return result

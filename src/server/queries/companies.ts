@@ -109,7 +109,7 @@ export async function getCompanies(
     const result = await unstable_cache(
       fetchData,
       [JSON.stringify(input)],
-      { revalidate: 60, tags: ["map_items"] }
+      { revalidate: false, tags: ["companies"] }
     )()
   
     return result

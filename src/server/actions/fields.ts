@@ -32,7 +32,6 @@ export async function createField(input: CreateFieldSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
     revalidateTag("fields")
 
     return {
@@ -72,7 +71,6 @@ export async function updateField(input: UpdateFieldSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
     revalidateTag("fields")
 
     return {
@@ -104,7 +102,6 @@ export async function deleteFields(ids: string[]) {
       .delete(fields)
       .where(inArray(fields.id, ids))
 
-    revalidateTag("map_items")
     revalidateTag("fields")
 
     return {

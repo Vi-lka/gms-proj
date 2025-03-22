@@ -32,8 +32,7 @@ export async function createLicensedArea(input: CreateLicensedAreaSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("licensed_areas")
 
     return {
       data: null,
@@ -72,8 +71,7 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("licensed_areas")
 
     return {
       data: result,
@@ -104,8 +102,7 @@ export async function deleteLicensedAreas(ids: string[]) {
       .delete(licensedAreas)
       .where(inArray(licensedAreas.id, ids))
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("licensed_areas")
 
     return {
       data: null,

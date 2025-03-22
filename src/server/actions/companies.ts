@@ -32,7 +32,7 @@ export async function createCompany(input: CreateCompanySchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
+    revalidateTag("companies")
 
     return {
       data: null,
@@ -70,7 +70,7 @@ export async function updateCompany(input: UpdateCompanySchema) {
       .returning()
       .then(takeFirstOrThrow)
 
-    revalidateTag("map_items")
+    revalidateTag("companies")
 
     return {
       data: result,
@@ -110,6 +110,8 @@ export async function deleteCompanies(ids: string[]) {
         )
       ))
 
+    revalidateTag("map_items")
+
     await db
       .delete(companies)
       .where(inArray(companies.id, ids))
@@ -118,7 +120,7 @@ export async function deleteCompanies(ids: string[]) {
       // .delete(companiesToMapItems)
       // .where(inArray(companiesToMapItems.companyId, ids))
 
-    revalidateTag("map_items")
+    revalidateTag("companies")
 
     return {
       data: null,

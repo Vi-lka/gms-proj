@@ -141,7 +141,7 @@ export async function getFiles(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["files", "fields", "map_items"] }
+    { revalidate: false, tags: ["files", "fields_maps"] }
   )()
 
   const dataWithUrls = await Promise.all(
@@ -161,5 +161,3 @@ export async function getFiles(
     error: result.error
   }
 }
-
-// TODO: fix caching for all queries!!!

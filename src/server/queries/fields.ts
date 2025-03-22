@@ -137,7 +137,7 @@ export async function getFields(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["fields", "map_items"] }
+    { revalidate: false, tags: ["fields", "companies"] }
   )()
 
   return result

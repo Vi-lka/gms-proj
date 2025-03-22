@@ -79,7 +79,7 @@ export async function getUsers(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["users"] }
+    { revalidate: false, tags: ["users"] }
   )()
 
   return result
@@ -120,7 +120,7 @@ export async function getUserRolesCounts() {
   const result = await unstable_cache(
     fetchData,
     ["user-roles-counts"],
-    { revalidate: 60, tags: ["users", "user-roles-counts"] }
+    { revalidate: false, tags: ["users", "user-roles-counts"] }
   )()
 
   return result
@@ -233,7 +233,7 @@ export async function getSessions(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["users"] }
+    { revalidate: false, tags: ["users"] }
   )()
 
   return result
@@ -292,7 +292,7 @@ export async function getSessionRolesCounts() {
   const result = await unstable_cache(
     fetchData,
     ["user-roles-counts"],
-    { revalidate: 60, tags: ["users", "user-roles-counts"] }
+    { revalidate: false, tags: ["users", "user-roles-counts"] }
   )()
 
   return result

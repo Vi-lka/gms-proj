@@ -2,7 +2,7 @@
 
 import { unstable_noStore as noStore, revalidateTag } from "next/cache"
 import { auth } from "../auth";
-import { restrictUser } from "~/lib/utils";
+import { restrictUser, splitIntoPairs } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { fieldMapPolygons, fieldsMaps } from "../db/schema";
 import { db } from "../db";
@@ -44,8 +44,8 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
         ...polygon
       })))
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("fields_maps")
+    revalidateTag("polygons")
 
     return {
       data: null,
@@ -79,7 +79,12 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
       !oldData.polygons.some(oldpolygon => oldpolygon.id === inputPolygon.id)
     )
     const polygonsToUpdate = input.polygons.filter(inputPolygon => 
-      oldData.polygons.some(oldpolygon => oldpolygon.id === inputPolygon.id)
+      oldData.polygons.some(oldpolygon => {
+        if (oldpolygon.id === inputPolygon.id) {
+          const isSamePoints = JSON.stringify(oldpolygon.points) === JSON.stringify(splitIntoPairs(inputPolygon.points))
+          if (oldpolygon.licensedArea.id !== inputPolygon.areaId || !isSamePoints) return true
+        } else return false
+      })
     )
 
     const isNewImage = input.fileId !== undefined && input.fileName !== undefined
@@ -129,8 +134,8 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
       }
     })
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("fields_maps")
+    revalidateTag("polygons")
 
     return {
       data: null,
@@ -161,8 +166,8 @@ export async function deleteFieldsMaps(ids: string[]) {
       .delete(fieldsMaps)
       .where(inArray(fieldsMaps.id, ids))
 
-    revalidateTag("map_items")
-    revalidateTag("fields")
+    revalidateTag("fields_maps")
+    revalidateTag("polygons")
 
     return {
       data: null,

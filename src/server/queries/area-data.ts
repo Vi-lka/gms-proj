@@ -263,7 +263,7 @@ export async function getAreasData(
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["fields", "map_items"] }
+    { revalidate: false, tags: ["areas_data", "companies", "fields", "licensed_areas"] }
   )()
 
   return result

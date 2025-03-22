@@ -68,6 +68,8 @@ export async function createMapItem(input: CreateMapItemT) {
         })
     
       revalidateTag("map_items")
+      revalidateTag("fields")
+      revalidateTag("companies")
 
       return {
         data: null,
@@ -138,7 +140,10 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
         })
         .where(inArray(fields.id, fieldsIds))
 
+      revalidateTag("clusters")
       revalidateTag("map_items")
+      revalidateTag("companies")
+      revalidateTag("fields")
 
       return {
         data: null,
@@ -245,7 +250,10 @@ export async function companyToCluster(
           .where(inArray(fields.id, fieldsIds))
       }
 
+      revalidateTag("clusters")
       revalidateTag("map_items")
+      revalidateTag("companies")
+      revalidateTag("fields")
 
       return {
         data: null,
@@ -325,6 +333,8 @@ export async function updateMapItemCompany(
     })
 
     revalidateTag("map_items")
+    revalidateTag("companies")
+    revalidateTag("fields")
 
     return {
       data: null,
@@ -424,6 +434,9 @@ export async function updateMapItemCluster(
     })
 
     revalidateTag("map_items")
+    revalidateTag("clusters")
+    revalidateTag("companies")
+    revalidateTag("fields")
 
     return {
       data: null,
@@ -524,6 +537,9 @@ export async function deleteMapItem(
     })
 
     revalidateTag("map_items")
+    revalidateTag("clusters")
+    revalidateTag("companies")
+    revalidateTag("fields")
 
     return {
       data: null,

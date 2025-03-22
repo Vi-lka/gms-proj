@@ -114,8 +114,8 @@ export async function getCounts() {
 
   const result = await unstable_cache(
     fetchData,
-    ["map_items"],
-    { revalidate: 60, tags: ["map_items"] }
+    ["counts"],
+    { revalidate: false, tags: ["map_items", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "files", "users"] }
   )()
 
   return result
@@ -395,7 +395,7 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
       const allRecent = await unstable_cache(
         fetchData,
         [currentDate],
-        { revalidate: 60, tags: ["map_items"] }
+        { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files"] }
       )()
 
       if (allRecent.error !== null) return { data: [], pageCount: 0, error: allRecent.error };
@@ -412,7 +412,7 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
   const result = await unstable_cache(
     validateData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["map_items"] }
+    { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files"] }
   )()
 
   return result
@@ -548,7 +548,7 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
   const result = await unstable_cache(
     fetchData,
     [JSON.stringify(input)],
-    { revalidate: 60, tags: ["map_items"] }
+    { revalidate: false, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data"] }
   )()
 
   return result

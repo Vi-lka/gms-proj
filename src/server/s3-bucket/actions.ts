@@ -154,6 +154,7 @@ export async function deleteFile(id: string) {
     }
 
     revalidateTag("files")
+    revalidateTag("fields_maps")
 
     return {
       data: null,
@@ -201,6 +202,7 @@ export async function deleteFiles(ids: string[]) {
     }
 
     revalidateTag("files")
+    revalidateTag("fields_maps")
 
     return {
       data: null,
