@@ -24,6 +24,7 @@ const data = {
   updateUserName: "Изменено",
   createdAt: "Создано в",
   updatedAt: "Изменено в",
+  guestUntil: 'Истекает роль "Гость"',
   id: "ID",
   name: "Название",
   email: "Email",

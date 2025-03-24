@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidateTag, unstable_noStore as noStore } from "next/cache"
-import { type UpdateUserSchema } from "~/lib/validations/users"
 import { db } from "../db"
 import { sessions, users } from "../db/schema"
 import { eq, inArray } from "drizzle-orm"
@@ -9,6 +8,7 @@ import { takeFirstOrThrow } from "../db/utils"
 import { getErrorMessage } from "~/lib/handle-error"
 import { auth } from "../auth"
 import { restrictUser } from "~/lib/utils"
+import { type UpdateUserSchema } from "~/lib/validations/forms"
 
 export async function updateUser(input: UpdateUserSchema & { id: string }) {
   noStore();
@@ -21,12 +21,15 @@ export async function updateUser(input: UpdateUserSchema & { id: string }) {
       error: getErrorMessage(err)
     }
   }
+  
+  const guestUntilGMT = input.role === "guest" ? new Date(input.guestUntil) : null
 
   try {
     const data = await db
       .update(users)
       .set({
-        role: input.role
+        role: input.role,
+        guestUntil: guestUntilGMT,
       })
       .where(eq(users.id, input.id))
       .returning()

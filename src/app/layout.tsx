@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
 
+// TODO: export tables (and printing?)
 // TODO: bug tracker
 // TODO: float number formating?
 // TODO: customers styles (waiting...)

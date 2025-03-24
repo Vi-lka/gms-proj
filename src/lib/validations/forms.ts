@@ -1,5 +1,15 @@
 import { z } from "zod"
 import { approxEnumSchema } from "../types"
+import { users } from "~/server/db/schema"
+
+const userRoles = users.role.enumValues
+
+// USER
+export const updateUserSchema = z.object({
+  role: z.enum(userRoles),
+  guestUntil: z.date().or(z.string()),
+})
+export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
 //  COMPANY
 export const companySchema = z.object({

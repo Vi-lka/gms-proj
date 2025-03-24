@@ -30,11 +30,12 @@ export const users = createTable("user", {
   guestUntil: timestamp("guest_until", {
     mode: "date",
     withTimezone: true,
-  }).defaultNow().$onUpdate(() => {
-    const today = new Date()
-    const untilDate = new Date(new Date().setDate(today.getDate() + 30));
-    return untilDate;
   })
+  // .defaultNow().$onUpdate(() => {
+    // const today = new Date()
+    // const untilDate = new Date(new Date().setDate(today.getDate() + 30));
+    // return untilDate;
+  // })
 });
   
 export const accounts = createTable(

@@ -1,16 +1,14 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, Trash2 } from "lucide-react";
+import { Edit, Ellipsis, Trash2 } from "lucide-react";
 import React from "react";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { type DataTableRowAction } from "~/lib/types";
-import { users, type User } from "~/server/db/schema";
+import { type User } from "~/server/db/schema";
 import { toast } from "sonner"
-import { getErrorMessage } from "~/lib/handle-error";
-import { updateUser } from "~/server/actions/users";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { formatDate, idToSentenceCase } from "~/lib/utils";
 
@@ -131,8 +129,6 @@ export function getColumns({
     {
       id: "actions",
       cell: function Cell({ row }) {
-        const [isUpdatePending, startUpdateTransition] = React.useTransition()
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -145,40 +141,14 @@ export function getColumns({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Изменить Роль</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={row.original.role}
-                    onValueChange={(value) => {
-                      startUpdateTransition(() => {
-                        toast.promise(
-                          updateUser({
-                            id: row.original.id,
-                            role: value as User["role"],
-                          }),
-                          {
-                            loading: "Обновляем...",
-                            success: "Роль обновлена",
-                            error: (err) => getErrorMessage(err),
-                          }
-                        )
-                      })
-                    }}
-                  >
-                    {users.role.enumValues.map((role) => (
-                      <DropdownMenuRadioItem
-                        key={role}
-                        value={role}
-                        className="capitalize"
-                        disabled={isUpdatePending}
-                      >
-                        {idToSentenceCase(role)}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
+              <DropdownMenuItem
+                onSelect={() => setRowAction({ row, type: "update" })}
+              >
+                Изменить
+                <DropdownMenuShortcut>
+                  <Edit size={16}/>
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => setRowAction({ row, type: "delete" })}

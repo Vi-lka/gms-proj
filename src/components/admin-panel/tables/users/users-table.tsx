@@ -12,6 +12,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import { toast } from 'sonner'
 import DeleteUsersDialog from './delete-users-dialog'
+import UpdateUserSheet from './update-user-sheet'
 
 interface UsersTableProps {
   promises: Promise<
@@ -95,6 +96,11 @@ export default function UsersTable({ promises }: UsersTableProps) {
           </div>
         </DataTableToolbar>
       </DataTable>
+      <UpdateUserSheet
+        open={rowAction?.type === "update"}
+        onOpenChange={() => setRowAction(null)}
+        user={rowAction?.row.original ?? null}
+      />
       <DeleteUsersDialog
         open={rowAction?.type === "delete"}
         onOpenChange={() => setRowAction(null)}

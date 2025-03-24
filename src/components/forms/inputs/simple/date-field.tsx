@@ -2,6 +2,7 @@
 
 import { CalendarIcon } from 'lucide-react';
 import React from 'react'
+import { type Matcher } from 'react-day-picker';
 import { type Path, type FieldValues, type UseFormReturn } from 'react-hook-form';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
@@ -14,20 +15,28 @@ export default function DateField<TData extends FieldValues>({
   name,
   label,
   placeholder,
-  fromYear,
+  startMonth,
+  endMonth,
+  disabledMatcher,
   align,
   side,
+  disabled,
   className,
+  classNameFormItem
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<TData, any, undefined>,
   name: Path<TData>,
   label?: React.ReactNode,
   placeholder?: string,
-  fromYear?: number;
+  startMonth?: Date;
+  endMonth?: Date;
+  disabledMatcher?: Matcher | Matcher[] | undefined;
   align?: "center" | "end" | "start";
   side?: "top" | "right" | "bottom" | "left";
+  disabled?: boolean,
   className?: string;
+  classNameFormItem?: string;
 }) {
   const [open, setOpenChange] = React.useState(false);
 
@@ -39,12 +48,13 @@ export default function DateField<TData extends FieldValues>({
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="relative space-y-2">
+          <FormItem className={cn("relative space-y-2", classNameFormItem)}>
             <FormLabel>{label}</FormLabel>
             <Popover open={open} onOpenChange={setOpenChange}>
-              <PopoverTrigger asChild>
+              <PopoverTrigger asChild disabled={disabled}>
                 <Button
                   variant={"outline"}
+                  disabled={disabled}
                   className={cn(
                     "flex w-52 truncate justify-start text-left font-normal",
                     className,
@@ -72,9 +82,13 @@ export default function DateField<TData extends FieldValues>({
                     field.onChange(value ?? null);
                     setOpenChange(false);
                   }}
-                  disabled={(date) => date > dateNow}
-                  startMonth={fromYear ? new Date(fromYear, 0) : new Date(1900, 0)}
-                  endMonth={dateNow}
+                  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                  disabled={disabledMatcher !== undefined
+                    ? disabledMatcher
+                    : (date) => date > dateNow
+                  }
+                  startMonth={startMonth ?? new Date(1900, 0)}
+                  endMonth={endMonth ?? dateNow}
                   autoFocus
                 />
               </PopoverContent>
