@@ -12,5 +12,9 @@ export default async function MainTemplate({
 
   if (restrictUser(session.user.role, 'content')) redirect('/')
 
-  return children
+  return (
+    <div className='flex flex-col flex-grow' style={{userSelect: session.user.role === "guest" ? "none" : "auto"}}>
+      {children}
+    </div>
+  )
 }

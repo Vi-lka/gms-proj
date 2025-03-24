@@ -7,6 +7,7 @@ import { Skeleton } from "~/components/ui/skeleton"
 import { getValidFilters } from "~/lib/data-table-func"
 import { type SearchParams } from "~/lib/types"
 import { searchAreasDataCache } from "~/lib/validations/search-params"
+import { auth } from "~/server/auth"
 import { getAreasData } from "~/server/queries/area-data"
 import { getMapItemPage } from "~/server/queries/pages"
 
@@ -17,9 +18,16 @@ export default async function MapItemTableModalPage({
   params: Promise<{ mapItemId: string }>,
   searchParams: Promise<SearchParams>
 }) {
+  const session = await auth()
+
   const mapItemId = (await params).mapItemId
   return (
-    <InterseptingModal modal={false} title={"Данные"} className="h-[calc(100vh-60px)]">
+    <InterseptingModal 
+      modal={false} 
+      title={"Данные"} 
+      className="h-[calc(100vh-60px)]"
+      userSelect={session?.user.role === "guest" ? "none" : "auto"}
+    >
       <Suspense key={mapItemId} fallback={
         <>
           <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>

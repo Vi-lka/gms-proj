@@ -7,6 +7,7 @@ import { Skeleton } from "~/components/ui/skeleton"
 import { getValidFilters } from "~/lib/data-table-func"
 import { type SearchParams } from "~/lib/types"
 import { searchAreasDataCache } from "~/lib/validations/search-params"
+import { auth } from "~/server/auth"
 import { getLicensedAreaPage } from "~/server/queries/pages"
 
 export default async function AreaModalPage({
@@ -16,10 +17,17 @@ export default async function AreaModalPage({
   params: Promise<{ areaId: string }>,
   searchParams: Promise<SearchParams>
 }) {
+  const session = await auth()
+
   const licensedAreaId = (await params).areaId
   const searchParamsRes = await searchParams
   return (
-    <InterseptingModal modal={false} title={"Данные"} className="h-[calc(100vh-60px)]">
+    <InterseptingModal 
+      modal={false} 
+      title={"Данные"} 
+      className="h-[calc(100vh-60px)]"
+      userSelect={session?.user.role === "guest" ? "none" : "auto"}
+    >
       <Suspense key={licensedAreaId} fallback={
         <>
           <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>

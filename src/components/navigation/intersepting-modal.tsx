@@ -9,15 +9,17 @@ import { cn } from '~/lib/utils'
 export default function InterseptingModal({
   title,
   children,
-  modal,
+  modal = false,
   backUrl,
-  className
+  className,
+  userSelect = "auto"
 }: {
-  title: React.ReactNode,
-  children: React.ReactNode,
-  modal?: boolean,
+  title: React.ReactNode
+  children: React.ReactNode
+  modal?: boolean
   backUrl?: string
   className?: string
+  userSelect?: "auto" | "text" | "none" | "contain" | "all"
 }) {
   const router = useRouter()
 
@@ -30,6 +32,7 @@ export default function InterseptingModal({
     <Drawer modal={modal} open={true} onOpenChange={handleOpenChange}>
       <DrawerContent 
         className={cn('w-full flex flex-col flex-grow', className)}
+        style={{ userSelect }}
       >
         <DrawerHeader>
           <DrawerTitle className='text-center'>{title}</DrawerTitle>

@@ -6,7 +6,6 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: fix: can`t select text in drawer
 // TODO: filters for admin tables!
 // TODO: export tables (and printing?)
 // TODO: bug tracker
