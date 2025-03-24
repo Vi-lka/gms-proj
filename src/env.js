@@ -11,6 +11,7 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
+    AUTH_URL: z.string(),
     AUTH_YANDEX_ID: z.string(),
     AUTH_YANDEX_SECRET: z.string(),
     DB_HOST: z.string(),
@@ -27,6 +28,7 @@ export const env = createEnv({
       .default("true")
       .optional(),
     CONTROL_KEY: z.string(),
+    CRON_SECRET: z.string(),
     S3_ENDPOINT: z.string(),
     S3_PORT: z.coerce.number(),
     S3_ACCESS_KEY: z.string(),
@@ -55,6 +57,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
+    AUTH_URL: process.env.AUTH_URL,
     AUTH_YANDEX_ID: process.env.AUTH_YANDEX_ID,
     AUTH_YANDEX_SECRET: process.env.AUTH_YANDEX_SECRET,
     DB_HOST: process.env.DB_HOST,
@@ -66,6 +69,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     IS_VERCEL: process.env.IS_VERCEL,
     CONTROL_KEY: process.env.CONTROL_KEY,
+    CRON_SECRET: process.env.CRON_SECRET,
     S3_ENDPOINT: process.env.S3_ENDPOINT,
     S3_PORT: process.env.S3_PORT,
     S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,

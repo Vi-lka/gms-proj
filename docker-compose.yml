@@ -15,6 +15,65 @@ services:
       - gms-proj-data:/var/lib/postgresql/data
     networks:
       - gms-proj-net
+
+  gms-proj:
+    container_name: gms-proj
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        AUTH_SECRET: ${AUTH_SECRET}
+        AUTH_URL: ${AUTH_URL}
+        AUTH_YANDEX_ID: ${AUTH_YANDEX_ID}
+        AUTH_YANDEX_SECRET: ${AUTH_YANDEX_SECRET}
+        DB_HOST: ${DB_HOST}
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_NAME: ${DB_NAME}
+        DB_PORT: ${DB_PORT}
+        DATABASE_URL: ${DATABASE_URL}
+        NODE_ENV: ${NODE_ENV}
+        IS_VERCEL: ${IS_VERCEL}
+        CONTROL_KEY: ${CONTROL_KEY}
+        CRON_SECRET: ${CRON_SECRET}
+        S3_ENDPOINT: ${S3_ENDPOINT}
+        S3_PORT: ${S3_PORT}
+        S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+        S3_SECRET_KEY: ${S3_SECRET_KEY}
+        S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+        S3_USE_SSL: ${S3_USE_SSL}
+        NEXT_PUBLIC_URL: ${NEXT_PUBLIC_URL}
+        NEXT_PUBLIC_S3_PATH: ${NEXT_PUBLIC_S3_PATH}
+        NEXT_PUBLIC_IS_VERCEL: ${NEXT_PUBLIC_IS_VERCEL}
+    restart: always
+    volumes:
+      - gms_next_cache:/app/.next/cache
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    # depends_on:
+      # - gms-proj-postgres
+    networks:
+      - gms-proj-net
+
+  gms-proj-cron:
+    container_name: gms-proj-cron
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+    environment:
+      - CRON_SECRET=${CRON_SECRET}
+    volumes:
+      - ./cron.log:/var/log/cron.log
+    # depends_on:
+      # - gms-proj
+    networks:
+      - gms-proj-net
+
   gms-proj-minio:
     restart: always
     container_name: gms-proj-minio
@@ -27,7 +86,7 @@ services:
       MINIO_SKIP_CLIENT: 'yes'
       MINIO_SCHEME: ${MINIO_SCHEME}
     # command: server /data --console-address ":9001"
-    # command: server --address ":9000" --console-address ":9001" /data    
+    # command: server --address ":9000" --console-address ":9001" /data
     ports:
       - '9000:9000'
       - '9001:9001'
@@ -39,11 +98,18 @@ services:
     volumes:
       - minio_storage:/data
     networks:
-      - gms-proj-net
+      gms-proj-net:
+        aliases:
+        # For localhost access, add the following to your /etc/hosts
+        # 127.0.0.1       my-minio-localhost-alias
+        # When accessing the minio container on a server with an accessible dns, use the following (https://stackoverflow.com/questions/56627446/docker-compose-how-to-use-minio-in-and-outside-of-the-docker-network/61214488#61214488)
+        - ${S3_ENDPOINT}
 
 volumes:
   gms-proj-data:
   minio_storage:
+  gms_next_cache:
+    external: true
 
 networks:
   gms-proj-net:

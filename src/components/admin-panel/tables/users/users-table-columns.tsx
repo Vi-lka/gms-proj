@@ -12,7 +12,7 @@ import { toast } from "sonner"
 import { getErrorMessage } from "~/lib/handle-error";
 import { updateUser } from "~/server/actions/users";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-import { idToSentenceCase } from "~/lib/utils";
+import { formatDate, idToSentenceCase } from "~/lib/utils";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
@@ -116,6 +116,16 @@ export function getColumns({
       ),
       filterFn: (row, id, value) => {
         return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "guestUntil",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Истекает роль "Гость"' />
+      ),
+      cell: ({ row, cell }) => {
+        if (row.original.role !== "guest") return null
+        return formatDate(cell.getValue() as Date)
       },
     },
     {

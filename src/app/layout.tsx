@@ -3,12 +3,8 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
-import { ReactScan } from "~/components/react-scan";
-import { env } from "~/env";
 
-// TODO: auto delete guest users!!!
 // TODO: bug tracker
-// TODO: analytics?
 // TODO: float number formating?
 // TODO: customers styles (waiting...)
 

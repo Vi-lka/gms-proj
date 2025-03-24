@@ -1,0 +1,1 @@
+ALTER TABLE "gms_proj_user" ADD COLUMN "guest_until" timestamp with time zone DEFAULT now();

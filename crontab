@@ -1,0 +1,2 @@
+# Запуск каждый день в 00:00
+0 0 * * * curl --retry 3 -H "Authorization: Bearer ${CRON_SECRET}" http://gms-proj:3000/api/check-guest-roles
