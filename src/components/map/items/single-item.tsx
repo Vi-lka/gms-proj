@@ -9,7 +9,7 @@ import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms
 import { useStageEllementPos } from '~/hooks/use-stage-ellement-pos'
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth'
 import { buttonVariants } from '~/components/ui/button'
-import { cn, idToSentenceCase } from '~/lib/utils'
+import { cn, formatApproxNumber, idToSentenceCase } from '~/lib/utils'
 import { Separator } from '~/components/ui/separator'
 import useOutsideClick from '~/hooks/use-outside-click'
 import { Badge } from '~/components/ui/badge'
@@ -115,7 +115,7 @@ export default function SingleItem({
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {value.originalValue}
+                        {formatApproxNumber(value.originalValue, value.approxValue)}
                       </TooltipContent>
                     </Tooltip>
                   )

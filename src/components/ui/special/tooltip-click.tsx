@@ -17,6 +17,7 @@ type Props = {
   alignOffset?: ContentProps['alignOffset'],
   triggerAsChild?: boolean
   contentAsChild?: boolean
+  onClick?: React.MouseEventHandler<HTMLButtonElement> 
 }
 
 export default function TooltipClick({
@@ -30,6 +31,7 @@ export default function TooltipClick({
   alignOffset,
   triggerAsChild,
   contentAsChild,
+  onClick,
 }: Props) {
   const [tooltipOpen, setTooltipOpen] = React.useState(false)
   const ref = useOutsideClick(100, () => setTooltipOpen(false));
@@ -43,6 +45,7 @@ export default function TooltipClick({
           e.stopPropagation()
           e.preventDefault()
           setTooltipOpen(true)
+          onClick?.(e)
         }}
       >
         {trigger}

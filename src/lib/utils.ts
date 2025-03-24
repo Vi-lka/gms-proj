@@ -36,7 +36,7 @@ export function formatDate(
 
 export function formatApproxNumber(
   number: number | null, 
-  approx: ApproxEnumT | null
+  approx: ApproxEnumT | null | undefined
 ) {
   if (!number) return null
   if (!approx) return number
@@ -177,6 +177,7 @@ export function findMaxValuesByRelevance<T extends Record<string, string | numbe
   for (const key in relevanceObj) {
     let maxWeightedValue = -Infinity;
     let maxOriginalValue: number | undefined;
+    let approxValue: ApproxEnumT | null = null
 
     // finding the maximum value for the current key
     data.forEach(item => {
@@ -189,13 +190,19 @@ export function findMaxValuesByRelevance<T extends Record<string, string | numbe
         if (weightedValue > maxWeightedValue) {
           maxWeightedValue = weightedValue;
           maxOriginalValue = item[key]; 
+          if (!!item[`${key}Approx`]) approxValue = item[`${key}Approx`] as ApproxEnumT
         }
       }
     });
 
     // write down the maximum value
     if (maxOriginalValue !== undefined) {
-      maxValues.push({key, originalValue: maxOriginalValue, weightedValue: maxWeightedValue});
+      maxValues.push({
+        key, 
+        originalValue: maxOriginalValue, 
+        weightedValue: maxWeightedValue,
+        approxValue,
+      });
     }
   }
 

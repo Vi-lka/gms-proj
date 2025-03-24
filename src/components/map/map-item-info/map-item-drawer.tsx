@@ -5,7 +5,7 @@ import { Button } from '../../ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '../../ui/drawer'
 import { Separator } from '../../ui/separator'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { cn, idToSentenceCase } from '~/lib/utils'
+import { cn, formatApproxNumber, idToSentenceCase } from '~/lib/utils'
 import { Database, LandPlot, Loader, Pickaxe } from 'lucide-react'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Badge } from '~/components/ui/badge'
@@ -176,7 +176,7 @@ function ElementBadge({
       } 
       classNameContent='z-[200]'
     >
-      {element.originalValue}
+      {formatApproxNumber(element.originalValue, element.approxValue)}
     </TooltipClick>
   )
 }

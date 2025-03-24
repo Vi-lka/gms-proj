@@ -3,10 +3,13 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
+import { env } from "~/env";
+import { ReactScan } from "~/components/react-scan";
 
+// TODO: fix: can`t select text in drawer
+// TODO: filters for admin tables!
 // TODO: export tables (and printing?)
 // TODO: bug tracker
-// TODO: float number formating?
 // TODO: customers styles (waiting...)
 
 export const metadata: Metadata = {
@@ -25,7 +28,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${GeistSans.variable}`}
     >
-      {/* {env.NODE_ENV === "development" && <ReactScan />} */}
+      {env.NODE_ENV === "development" && <ReactScan />}
       <body className="font-sans">
         <Providers>
           <div className="bg-background">

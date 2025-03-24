@@ -1,46 +1,14 @@
+import { ELEMENTS } from "~/lib/static/elements";
 import { type CreateAreasDataSchema, type ElementsWithApproxSchema } from "~/lib/validations/forms";
 
-export const defaultValuesElements = [
-    {lithium: null, lithiumApprox: null},
-    {rubidium: null, rubidiumApprox: null},
-    {cesium: null, cesiumApprox: null},
-    {boron: null, boronApprox: null},
-    {iodine: null, iodineApprox: null},
-    {sodium: null, sodiumApprox: null},
-    {calcium: null, calciumApprox: null},
-    {magnesium: null, magnesiumApprox: null},
-    {potassium: null, potassiumApprox: null},
-    {chlorine: null, chlorineApprox: null},
-    {bromine: null, bromineApprox: null},
-    {strontium: null, strontiumApprox: null},
-    {barium: null, bariumApprox: null},
-    {aluminum: null, aluminumApprox: null},
-    {selenium: null, seleniumApprox: null},
-    {silicon: null, siliconApprox: null},
-    {manganese: null, manganeseApprox: null},
-    {copper: null, copperApprox: null},
-    {zinc: null, zincApprox: null},
-    {silver: null, silverApprox: null},
-    {tungsten: null, tungstenApprox: null},
-    {titanium: null, titaniumApprox: null},
-    {vanadium: null, vanadiumApprox: null},
-    {chromium: null, chromiumApprox: null},
-    {cobalt: null, cobaltApprox: null},
-    {nickel: null, nickelApprox: null},
-    {arsenic: null, arsenicApprox: null},
-    {molybdenum: null, molybdenumApprox: null},
-    {plumbum: null, plumbumApprox: null},
-    {bismuth: null, bismuthApprox: null},
-    {sulfateIon: null, sulfateIonApprox: null},
-    {bicarbonate: null, bicarbonateApprox: null},
-    {carbonateIon: null, carbonateIonApprox: null},
-    {ammonium: null, ammoniumApprox: null},
-    {fluorine: null, fluorineApprox: null},
-    {nitrogenDioxide: null, nitrogenDioxideApprox: null},
-    {nitrate: null, nitrateApprox: null},
-    {phosphate: null, phosphateApprox: null},
-    {ferrum: null, ferrumApprox: null},
-]
+type ElementEntry = Record<ELEMENTS | `${ELEMENTS}Approx`, null>;
+
+export const defaultValuesElements: ElementEntry[] = Object.values(ELEMENTS).map(element => {
+    return {
+        [element]: null,
+        [`${element}Approx`]: null
+    } as ElementEntry;
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const elementsObj: ElementsWithApproxSchema = Object.assign({}, ...defaultValuesElements);

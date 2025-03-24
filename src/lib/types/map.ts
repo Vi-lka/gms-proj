@@ -1,4 +1,5 @@
 import { type FieldWithLicensedAreas, type AreaData, type Cluster, type CompanyWithListedAreas, type Profitability } from "~/server/db/schema";
+import { type ApproxEnumT } from ".";
 
 export type MapItemT = {
   id: string,
@@ -6,7 +7,7 @@ export type MapItemT = {
   areasData: AreaData[]
   maxElements: {
     filtered: MaxValue<Profitability>[],
-    original: MaxValue<Profitability>[]
+    original: MaxValue<Profitability>[],
   }
   fields: FieldWithLicensedAreas[]
   cluster: Cluster | null;
@@ -33,5 +34,6 @@ export type RelevanceKeys<T> = keyof T;
 export type MaxValue<T> = {
   key: RelevanceKeys<T>, 
   originalValue: number, 
-  weightedValue: number
+  weightedValue: number,
+  approxValue: ApproxEnumT | null
 }
