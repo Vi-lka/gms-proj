@@ -10,6 +10,7 @@ import { DataTableViewOptions } from "~/components/data-table/data-table-view-op
 import { type DataTableAdvancedFilterField } from "~/lib/types"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 import { Loader } from "lucide-react"
+import CleareAdvancedToolbarButton from "./cleare-advanced-toolbar-button"
 
 interface DataTableAdvancedToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -82,43 +83,46 @@ export function DataTableAdvancedToolbar<TData>({
   ...props
 }: DataTableAdvancedToolbarProps<TData>) {
   return (
-    <ScrollArea type="always" className="pb-2" classNameViewport="max-h-12" classNameBar="z-50">
-      <div
-        className={cn(
-          "flex w-full items-center justify-between gap-2 overflow-auto p-1",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex items-center gap-2">
-          {prepend}
-          <DataTableFilterList
-            table={table}
-            filterFields={filterFields}
-            debounceMs={debounceMs}
-            shallow={shallow}
-            draggable={draggableList}
-          />
-          {append}
+    <div>
+      {isPending && (
+        <div className='absolute -top-5 right-0 flex items-center gap-1 mx-2'>
+          <Loader size={18} className="flex-none animate-spin" />
+          <span className='text-sm font-light md:block hidden'>Загрузка...</span>
         </div>
-        <div className="flex items-center gap-2">
-          {isPending && (
-            <div className='flex items-center gap-1 mx-2'>
-              <Loader size={18} className="flex-none animate-spin" />
-              <span className='text-sm font-light md:block hidden'>Загрузка...</span>
-            </div>
+      )}
+      <ScrollArea type="always" className="pb-2" classNameViewport="max-h-12" classNameBar="z-50">
+        <div
+          className={cn(
+            "flex w-full items-center justify-between gap-x-6 gap-y-3 overflow-auto p-1",
+            className
           )}
-          {children}
-          <DataTableSortList
-            table={table}
-            debounceMs={debounceMs}
-            shallow={shallow}
-            disabled={disabled}
-          />
-          <DataTableViewOptions table={table} />
+          {...props}
+        >
+          <div className="flex items-center gap-2">
+            {prepend}
+            <DataTableFilterList
+              table={table}
+              filterFields={filterFields}
+              debounceMs={debounceMs}
+              shallow={shallow}
+              draggable={draggableList}
+            />
+            {append}
+            <CleareAdvancedToolbarButton table={table} shallow={shallow} />
+          </div>
+          <div className="flex items-center gap-2">
+            {children}
+            <DataTableSortList
+              table={table}
+              debounceMs={debounceMs}
+              shallow={shallow}
+              disabled={disabled}
+            />
+            <DataTableViewOptions table={table} />
+          </div>
         </div>
-      </div>
-      <ScrollBar orientation="horizontal" className="z-50" />
-    </ScrollArea>
+        <ScrollBar orientation="horizontal" className="z-50" />
+      </ScrollArea>
+    </div>
   )
 }

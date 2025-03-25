@@ -94,3 +94,8 @@ export type RecentItem = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type GetAllQueryParams = {
+  where: SQL<unknown>,
+  keys: string[]
+}

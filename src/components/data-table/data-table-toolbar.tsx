@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button"
 import { DataTableFacetedFilter } from "~/components/data-table/data-table-faceted-filter"
 import { DataTableViewOptions } from "~/components/data-table/data-table-view-options"
 import DataTableSearchInput from "./data-table-search-input"
+import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -63,62 +64,67 @@ export function DataTableToolbar<TData>({
   }, [filterFields])
 
   return (
-    <div
-      className={cn(
-        "flex w-full items-center justify-between gap-2 overflow-auto p-1",
-        className
+    <div>
+      {isPending && (
+        <div className='absolute -top-5 right-0 flex items-center gap-1 mx-2'>
+          <Loader size={18} className="flex-none animate-spin" />
+          <span className='text-sm font-light md:block hidden'>Загрузка...</span>
+        </div>
       )}
-      {...props}
-    >
-      <div className="flex flex-1 items-center gap-2">
-        {prepend}
-        {searchableColumns.length > 0 &&
-          searchableColumns.map(
-            (column) =>
-              table.getColumn(column.id ? String(column.id) : "") && (
-                <DataTableSearchInput
-                  key={String(column.id)}
-                  table={table}
-                  columnId={column.id}
-                  placeholder={column.placeholder}
-                />
-              )
+      <ScrollArea type="always" className="pb-2" classNameViewport="max-h-12" classNameBar="z-50">
+        <div
+          className={cn(
+            "flex flex-wrap md:flex-nowrap w-full items-center justify-between gap-x-12 gap-y-3 overflow-auto p-1",
+            className
           )}
-        {filterableColumns.length > 0 &&
-          filterableColumns.map(
-            (column) =>
-              table.getColumn(column.id ? String(column.id) : "") && (
-                <DataTableFacetedFilter
-                  key={String(column.id)}
-                  column={table.getColumn(column.id ? String(column.id) : "")}
-                  title={column.label}
-                  disabled={column.disabled}
-                  options={column.options ?? []}
-                />
-              )
-          )}
-        {isFiltered && (
-          <Button
-            aria-label="Reset filters"
-            variant="ghost"
-            className="h-8 px-2 lg:px-3"
-            onClick={() => table.resetColumnFilters()}
-          >
-            Сброс
-            <X className="ml-2 size-4" />
-          </Button>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        {isPending && (
-          <div className='flex items-center gap-1 mx-2'>
-            <Loader size={18} className="flex-none animate-spin" />
-            <span className='text-sm font-light md:block hidden'>Загрузка...</span>
+          {...props}
+        >
+          <div className="flex flex-1 items-center gap-2">
+            {prepend}
+            {searchableColumns.length > 0 &&
+              searchableColumns.map(
+                (column) =>
+                  table.getColumn(column.id ? String(column.id) : "") && (
+                    <DataTableSearchInput
+                      key={String(column.id)}
+                      table={table}
+                      columnId={column.id}
+                      placeholder={column.placeholder}
+                    />
+                  )
+              )}
+            {filterableColumns.length > 0 &&
+              filterableColumns.map(
+                (column) =>
+                  table.getColumn(column.id ? String(column.id) : "") && (
+                    <DataTableFacetedFilter
+                      key={String(column.id)}
+                      column={table.getColumn(column.id ? String(column.id) : "")}
+                      title={column.label}
+                      disabled={column.disabled}
+                      options={column.options ?? []}
+                    />
+                  )
+              )}
+            {isFiltered && (
+              <Button
+                aria-label="Reset filters"
+                variant="ghost"
+                className="h-8 px-2 lg:px-3"
+                onClick={() => table.resetColumnFilters()}
+              >
+                Сброс
+                <X className="ml-2 size-4" />
+              </Button>
+            )}
           </div>
-        )}
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
+          <div className="flex items-center gap-2">
+            {children}
+            <DataTableViewOptions table={table} />
+          </div>
+        </div>
+        <ScrollBar orientation="horizontal" className="z-50" />
+      </ScrollArea>
     </div>
   )
 }

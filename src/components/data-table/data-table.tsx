@@ -43,12 +43,12 @@ export function DataTable<TData>({
   className,
   scrollAreaClassName,
   isLoading,
-  // disabled,
+  disabled,
   ...props
 }: DataTableProps<TData>) {
   return (
     <div
-      className={cn("w-full space-y-2.5 overflow-auto", className)}
+      className={cn("relative w-full space-y-2.5", className)}
       {...props}
     >
       {children}
@@ -79,7 +79,7 @@ export function DataTable<TData>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className={cn("transition-all duration-300", disabled ? "opacity-70" : "opacity-100")}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow

@@ -9,12 +9,15 @@ import {
   type SQL,
   lte,
   gte,
+  type BuildQueryConfig,
 } from "drizzle-orm"
 import { type PgTableWithColumns, type PgColumn } from "drizzle-orm/pg-core"
 import { type ExtendedColumnSort, type ExtendedSortingState } from "~/lib/types"
 import { customType } from 'drizzle-orm/pg-core'
 import { type ElementsSearchSchema } from "~/lib/validations/search-params"
 import { type areasData } from "./schema"
+import { createHash } from "crypto";
+import { CasingCache } from "drizzle-orm/casing"
 
 export type NumericConfig = {
 	precision?: number
@@ -263,4 +266,20 @@ export function paginate<DataT>(data: DataT[], input: PaginationInput): Paginati
     hasNextPage: page < totalPages,
     hasPreviousPage: page > 1
   };
+}
+
+
+// TODO: I`am not sure if this will work with any 'where'
+const buildQueryConfig: BuildQueryConfig = {
+  casing: new CasingCache(),
+  escapeName: (name) => `"${name}"`,
+  escapeParam: (num) => `$${num + 1}`,
+  escapeString: (str) => `'${str.replace(/'/g, "''")}'`,
+};
+export function serializeWhere(where?: SQL<unknown>): string {
+  const baseString = where
+    ? JSON.stringify(where.toQuery(buildQueryConfig))
+    : 'no-where';
+
+  return createHash("sha256").update(baseString).digest("hex");
 }

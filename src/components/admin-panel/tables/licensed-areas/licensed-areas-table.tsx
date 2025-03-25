@@ -3,7 +3,9 @@
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types'
 import { type LicensedAreaExtend } from '~/server/db/schema'
-import { type getLicensedAreas } from '~/server/queries/licensed-areas'
+import { type getCompanyLicensedAreasCounts, type getFieldLicensedAreasCounts, type getLicensedAreas } from '~/server/queries/licensed-areas'
+import { type getAllCompanies } from '~/server/queries/companies'
+import { type getAllFields } from '~/server/queries/fields'
 import { getColumns } from './licensed-areas-columns'
 import { useDataTable } from '~/hooks/use-data-table'
 import { DataTable } from '~/components/data-table/data-table'
@@ -12,17 +14,28 @@ import LicensedAreasTableToolbarActions from './licensed-areas-table-toolbar-act
 import DeleteLicensedAreasDialog from './delete-licensed-areas-dialog'
 import UpdateLicensedAreaSheet from './update-licensed-area-sheet'
 import { toast } from 'sonner'
+import { idToSentenceCase } from '~/lib/utils'
 
 interface LicensedAreasTableProps {
   promises: Promise<
     [
       Awaited<ReturnType<typeof getLicensedAreas>>,
+      Awaited<ReturnType<typeof getCompanyLicensedAreasCounts>>,
+      Awaited<ReturnType<typeof getFieldLicensedAreasCounts>>,
+      Awaited<ReturnType<typeof getAllCompanies>>,
+      Awaited<ReturnType<typeof getAllFields>>,
     ]
   >
 }
 
 export default function LicensedAreasTable({ promises }: LicensedAreasTableProps) {
-  const [{ data, pageCount, error }] = React.use(promises)
+  const [
+    { data, pageCount, error },
+    companyCounts,
+    fieldCounts,
+    { data: allCompanies, error: errorCompanies },
+    { data: allFields, error: errorFields },
+  ] = React.use(promises)
 
   React.useEffect(() => {
     if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
@@ -30,6 +43,20 @@ export default function LicensedAreasTable({ promises }: LicensedAreasTableProps
       if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
+
+  React.useEffect(() => {
+    if (errorCompanies !== null) toast.error(errorCompanies, { id: "companies-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (errorCompanies !== null) toast.dismiss("companies-data-error")
+    }
+  }, [errorCompanies])
+
+  React.useEffect(() => {
+    if (errorFields !== null) toast.error(errorFields, { id: "fields-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (errorFields !== null) toast.dismiss("fields-data-error")
+    }
+  }, [errorFields])
 
   const [isPending, startTransition] = React.useTransition()
 
@@ -40,13 +67,41 @@ export default function LicensedAreasTable({ promises }: LicensedAreasTableProps
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<LicensedAreaExtend>[] = [
+  let filterFields: DataTableFilterField<LicensedAreaExtend>[] = [
     {
       id: "name",
       label: "Название",
       placeholder: "Поиск...",
-    }
+    },
   ]
+  if (errorCompanies === null) {
+    filterFields = [
+      ...filterFields,
+      {
+        id: "companyName",
+        label: idToSentenceCase("companyName"),
+        options: allCompanies.map(({id, name}) => ({
+          label: name,
+          value: id,
+          count: companyCounts[id],
+        }))
+      }
+    ]
+  }
+  if (errorFields === null) {
+    filterFields = [
+      ...filterFields,
+      {
+        id: "fieldName",
+        label: idToSentenceCase("fieldName"),
+        options: allFields.map(({id, name}) => ({
+          label: name,
+          value: id,
+          count: fieldCounts[id],
+        }))
+      }
+    ]
+  }
 
   const { table } = useDataTable({
     data,

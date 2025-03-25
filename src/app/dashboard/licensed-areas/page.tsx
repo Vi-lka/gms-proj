@@ -9,7 +9,9 @@ import { getValidFilters } from '~/lib/data-table-func';
 import { type PageProps } from '~/lib/types'
 import { searchLicensedAreasCache } from '~/lib/validations/search-params';
 import { auth } from '~/server/auth';
-import { getLicensedAreas } from '~/server/queries/licensed-areas';
+import { getCompanyLicensedAreasCounts, getFieldLicensedAreasCounts, getLicensedAreas } from '~/server/queries/licensed-areas';
+import { getAllCompanies } from '~/server/queries/companies';
+import { getAllFields } from '~/server/queries/fields';
 
 export default async function LicensedAreasPage(props: PageProps) {
   const session = await auth();
@@ -23,6 +25,10 @@ export default async function LicensedAreasPage(props: PageProps) {
 
   const promises = Promise.all([
     getLicensedAreas({ ...search, filters: validFilters }),
+    getCompanyLicensedAreasCounts(),
+    getFieldLicensedAreasCounts(),
+    getAllCompanies(),
+    getAllFields()
   ])
 
   return (

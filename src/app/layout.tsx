@@ -6,7 +6,7 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: filters for admin tables!
+// TODO: cache db queries in filters (where)!!!
 // TODO: export tables (and printing?)
 // TODO: bug tracker
 // TODO: customers styles (waiting...)
@@ -27,7 +27,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${GeistSans.variable}`}
     >
-      {env.NODE_ENV === "development" && <ReactScan />}
+      {/* {env.NODE_ENV === "development" && <ReactScan />} */}
       <body className="font-sans">
         <Providers>
           <div className="bg-background">

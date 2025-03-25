@@ -9,7 +9,8 @@ import { getValidFilters } from '~/lib/data-table-func';
 import { type PageProps } from '~/lib/types';
 import { searchParamsFieldsCache } from '~/lib/validations/search-params';
 import { auth } from '~/server/auth';
-import { getFields } from '~/server/queries/fields';
+import { getAllCompanies } from '~/server/queries/companies';
+import { getCompanyFieldsCounts, getFields } from '~/server/queries/fields';
 
 export default async function FieldsPage(props: PageProps) {
   const session = await auth();
@@ -23,6 +24,8 @@ export default async function FieldsPage(props: PageProps) {
 
   const promises = Promise.all([
     getFields({ ...search, filters: validFilters }),
+    getCompanyFieldsCounts(),
+    getAllCompanies()
   ])
 
   return (

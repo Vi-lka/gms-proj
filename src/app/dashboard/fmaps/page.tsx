@@ -9,7 +9,9 @@ import { getValidFilters } from '~/lib/data-table-func';
 import { type PageProps } from '~/lib/types';
 import { searchFieldsMapsCache } from '~/lib/validations/search-params';
 import { auth } from '~/server/auth';
-import { getFieldsMaps } from '~/server/queries/fields-maps';
+import { getAllCompanies } from '~/server/queries/companies';
+import { getAllFields } from '~/server/queries/fields';
+import { getCompanyFieldsMapsCounts, getFieldMapsCounts, getFieldsMaps } from '~/server/queries/fields-maps';
 
 export default async function FieldsMapsPage(props: PageProps) {
   const session = await auth();
@@ -22,7 +24,11 @@ export default async function FieldsMapsPage(props: PageProps) {
   const validFilters = getValidFilters(search.filters)
 
   const promises = Promise.all([
-    getFieldsMaps({ ...search, filters: validFilters })
+    getFieldsMaps({ ...search, filters: validFilters }),
+    getCompanyFieldsMapsCounts(),
+    getFieldMapsCounts(),
+    getAllCompanies(),
+    getAllFields(),
   ])
 
   return (

@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
 import React from 'react'
-import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import { type AreaDataExtend } from '~/server/db/schema'
 import DeleteAreasDataDialog from './delete-areas-data-dialog'
 import CreateAreasDataSheet from './create-areas-data-sheet'
@@ -12,7 +11,7 @@ interface AreasDataTableToolbarActionsProps {
 
 export default function AreasDataTableToolbarActions({
   table,
-  disabled
+  // disabled
 }: AreasDataTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
 
@@ -27,7 +26,6 @@ export default function AreasDataTableToolbarActions({
         />
       ) : null}
       <CreateAreasDataSheet open={openCreate} onOpenChange={setOpenCreate} />
-      <DataTableSortList table={table} disabled={disabled}/>
     </div>
   )
 }

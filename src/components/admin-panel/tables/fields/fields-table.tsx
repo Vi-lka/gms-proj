@@ -3,7 +3,7 @@
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types';
 import { type FieldExtend } from '~/server/db/schema';
-import { type getFields } from '~/server/queries/fields'
+import { type getCompanyFieldsCounts, type getFields } from '~/server/queries/fields'
 import { getColumns } from './fields-table-columns';
 import { useDataTable } from '~/hooks/use-data-table';
 import { DataTable } from '~/components/data-table/data-table';
@@ -12,17 +12,25 @@ import FieldsTableToolbarActions from './fields-table-toolbar-actions';
 import UpdateFieldSheet from './update-field-sheet';
 import DeleteFieldsDialog from './delete-fields-dialog';
 import { toast } from 'sonner';
+import { type getAllCompanies } from '~/server/queries/companies';
+import { idToSentenceCase } from '~/lib/utils';
 
 interface FieldsTableProps {
   promises: Promise<
     [
       Awaited<ReturnType<typeof getFields>>,
+      Awaited<ReturnType<typeof getCompanyFieldsCounts>>,
+      Awaited<ReturnType<typeof getAllCompanies>>
     ]
   >
 }
 
 export default function FieldsTable({ promises }: FieldsTableProps) {
-  const [{ data, pageCount, error }] = React.use(promises)
+  const [
+    { data, pageCount, error }, 
+    companyCounts, 
+    { data: allCompanies, error: errorCompanies }, 
+  ] = React.use(promises)
 
   React.useEffect(() => {
     if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
@@ -30,6 +38,13 @@ export default function FieldsTable({ promises }: FieldsTableProps) {
       if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
+
+  React.useEffect(() => {
+    if (errorCompanies !== null) toast.error(errorCompanies, { id: "companies-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (errorCompanies !== null) toast.dismiss("companies-data-error")
+    }
+  }, [errorCompanies])
 
   const [isPending, startTransition] = React.useTransition()
 
@@ -40,13 +55,28 @@ export default function FieldsTable({ promises }: FieldsTableProps) {
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<FieldExtend>[] = [
+  let filterFields: DataTableFilterField<FieldExtend>[] = [
     {
       id: "name",
       label: "Название",
       placeholder: "Поиск...",
-    }
+    },
   ]
+
+  if (errorCompanies === null) {
+    filterFields = [
+      ...filterFields,
+      {
+        id: "companyName",
+        label: idToSentenceCase("companyName"),
+        options: allCompanies.map(({id, name}) => ({
+          label: name,
+          value: id,
+          count: companyCounts[id],
+        }))
+      }
+    ]
+  }
 
   const { table } = useDataTable({
     data,
