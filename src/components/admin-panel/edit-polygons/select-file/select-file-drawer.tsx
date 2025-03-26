@@ -26,6 +26,7 @@ export default function SelectFileDrawer({
       </DrawerTrigger>
       <DrawerContent 
         className={cn('w-full flex flex-col flex-grow h-[calc(100vh-60px)]', className)}
+        style={{ userSelect: "auto" }}
       >
         <DrawerHeader>
           <DrawerTitle className='text-center'>{title}</DrawerTitle>
