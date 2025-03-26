@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   const validFilters = getValidFilters(search.filters)
 
   try {
-    const data = await getAreasData({ ...search, filters: validFilters })
+    const data = await getAreasData({ ...search, filters: validFilters }, "id")
     if (data.error !== null) throw new Error(data.error)
     return Response.json(data)
   } catch (error) {

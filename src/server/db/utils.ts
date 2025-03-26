@@ -5,14 +5,15 @@ import {
   sql,
   type SQLWrapper,
   type TableConfig,
-  type AnyColumn,
   type SQL,
+  type BuildQueryConfig,
+  type Table,
+  AnyColumn,
   lte,
   gte,
-  type BuildQueryConfig,
 } from "drizzle-orm"
 import { type PgTableWithColumns, type PgColumn } from "drizzle-orm/pg-core"
-import { type ExtendedColumnSort, type ExtendedSortingState } from "~/lib/types"
+import type { SortFieldConfig, ExtendedColumnSort, ExtendedSortingState } from "~/lib/types"
 import { customType } from 'drizzle-orm/pg-core'
 import { type ElementsSearchSchema } from "~/lib/validations/search-params"
 import { type areasData } from "./schema"
@@ -172,6 +173,73 @@ export function getRelationOrderBy<SData, TData extends TableConfig>(
     .filter((item) => relationColumns?.includes(item.id))
 
   return { orderBy, relationOrderBy }
+}
+
+export function generateSortFields<T>(
+  config: SortFieldConfig<T>[]
+): Record<keyof T, AnyColumn | SQLWrapper> {
+  const sortFields = {} as Record<keyof T, AnyColumn | SQLWrapper>;
+
+  config.forEach(({ key, column }) => {
+    sortFields[key] = column;
+  });
+
+  return sortFields;
+}
+
+export function getOrderByOld<T>(
+  config: SortFieldConfig<T>[],
+  sortInput: ExtendedSortingState<T>,
+  defaultColumn: AnyColumn | SQLWrapper
+): SQL<unknown>[] {
+  const sortFields = generateSortFields(config);
+
+  let orderBy: (SQL<unknown> | undefined)[] = [];
+
+  if (sortInput && sortInput.length > 0) {
+    const orderByClauses = sortInput.map(({ id, desc: descV }) => {
+      const column = sortFields[id];
+      if (!!column) return descV ? desc(column) : asc(column);
+    });
+    orderBy = orderByClauses;
+  } else {
+    orderBy = [asc(defaultColumn)];
+  }
+
+  return orderBy.filter((item): item is SQL<unknown> => !!item);
+}
+
+export function getOrderBy<T, TData extends TableConfig>({
+  config,
+  sortInput,
+  defaultColumn,
+  table,
+}: {
+  config: SortFieldConfig<T>[],
+  sortInput: ExtendedSortingState<T>,
+  defaultColumn: AnyColumn | SQLWrapper,
+  table: PgTableWithColumns<TData>
+}): SQL<unknown>[] {
+  const sortFields = generateSortFields(config);
+
+  let orderBy: (SQL<unknown> | undefined)[] = [];
+
+  if (sortInput && sortInput.length > 0) {
+    const orderByClauses = sortInput.map(({ id, desc: descV }) => {
+      const tableColumn = table[String(id)];
+      const column = tableColumn ?? sortFields[id];
+
+      if (column) {
+        return descV ? desc(column) : asc(column);
+      }
+      return undefined;
+    });
+    orderBy = orderByClauses;
+  } else {
+    orderBy = [asc(defaultColumn)];
+  }
+
+  return orderBy.filter((item): item is SQL<unknown> => !!item);
 }
 
 export function orderData<TData extends object>(

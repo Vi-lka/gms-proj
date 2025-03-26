@@ -12,6 +12,7 @@ import { areasData, clusters, companies, companiesToMapItems, fields, licensedAr
 import { compareElements } from "../db/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 
+// TODO: refactor this!
 export async function getMap() {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {

@@ -3,14 +3,15 @@
 import "server-only"
 import { type GetCompaniesSchema } from "~/lib/validations/companies"
 import { auth } from "../auth";
-import { and, eq, ilike, inArray, or } from "drizzle-orm";
-import { companies, users } from "../db/schema";
-import { getRelationOrderBy, orderData, paginate, serializeWhere } from "../db/utils";
+import { and, count, eq, getTableColumns, ilike, or, type SQL } from "drizzle-orm";
+import { companies, type Company, users } from "../db/schema";
+import { getOrderBy, serializeWhere } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function getCompanies(
   input: GetCompaniesSchema,
@@ -22,81 +23,69 @@ export async function getCompanies(
 
   const fetchData = async () => {
     try {
-      const where = and(
-        input.name ? or(
-          ilike(companies.name, `%${input.name}%`),
+      const usersUpdated = alias(users, 'users_updated');
+
+      const offset = (input.page - 1) * input.perPage
+
+      const whereConditions: (SQL | undefined)[] = [];
+
+      if (input.id) {
+        whereConditions.push(or(
+          eq(companies.id, input.id),
+        ));
+      }
+      if (input.name) {
+        whereConditions.push(or(
           ilike(companies.id, `%${input.name}%`),
-          inArray(
-            companies.createUserId,
-            db
-              .select({ id: users.id })
-              .from(users)
-              .where(
-                or(
-                  ilike(users.name, `%${input.name}%`),
-                  ilike(users.id, `%${input.name}%`),
-                )
-              )
-          ),
-          inArray(
-            companies.updateUserId,
-            db
-              .select({ id: users.id })
-              .from(users)
-              .where(
-                or(
-                  ilike(users.name, `%${input.name}%`),
-                  ilike(users.id, `%${input.name}%`),
-                )
-              )
-          )
-        ) : undefined,
-        input.id ?
-          eq(companies.id, input.id) 
-          : undefined
-      )
-  
-      const { orderBy } = getRelationOrderBy(input.sort, companies, companies.id)
+          ilike(companies.name, `%${input.name}%`),
+          ilike(users.id, `%${input.name}%`),
+          ilike(users.name, `%${input.name}%`),
+          ilike(usersUpdated.id, `%${input.name}%`),
+          ilike(usersUpdated.name, `%${input.name}%`),
+        ));
+      }
+
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'createUserName', column: users.name },
+          { key: 'updateUserName', column: usersUpdated.name },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: companies.name,
+        table: companies
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
-        const data = await tx
-          .query.companies.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            with: {
-              userCreated: {
-                columns: { name: true }
-              },
-              userUpdated: {
-                columns: { name: true }
-              }
-            },
-            orderBy
+        const data: Company[] = await tx
+          .select({
+            ...getTableColumns(companies),
+            createUserName: users.name,
+            updateUserName: usersUpdated.name,
           })
-
-        // const total = await tx
-        //   .select({
-        //     count: count(),
-        //   })
-        //   .from(companies)
-        //   .where(where)
-        //   .execute()
-        //   .then((res) => res[0]?.count ?? 0)
-
-        const transformData = data.map(({userCreated, userUpdated, ...other}) => ({
-          ...other,
-          createUserName: userCreated ? userCreated.name : null,
-          updateUserName: userUpdated ? userUpdated.name : null,
-        }))
+          .from(companies)
+          .limit(input.perPage)
+          .offset(offset)
+          .leftJoin(users, eq(companies.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(companies.updateUserId, usersUpdated.id))
+          .where(and(...whereConditions))
+          .orderBy(...orderBy)
   
-        const sortedData = orderData(input.sort, transformData)
-
-        const paginated = paginate(sortedData, input)
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(companies)
+          .leftJoin(users, eq(companies.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(companies.updateUserId, usersUpdated.id))
+          .where(and(...whereConditions))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data,
+          pageCount,
         }
       })
 

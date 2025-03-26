@@ -1,10 +1,10 @@
 "use client"
 
 import React from "react";
-import type { DataTableFilterField, DataTableRowAction, SessionWithUser } from "~/lib/types";
+import type { DataTableFilterField, DataTableRowAction } from "~/lib/types";
 import type { getSessionRolesCounts, getSessions } from "~/server/queries/users";
 import { getColumns } from "./sessions-table-columns";
-import { users } from "~/server/db/schema";
+import { type SessionExtend, users } from "~/server/db/schema";
 import { toSentenceCase } from "~/lib/utils";
 import { useDataTable } from "~/hooks/use-data-table";
 import { DataTable } from "~/components/data-table/data-table";
@@ -34,14 +34,14 @@ export default function SessionsTable({ promises }: SessionsTableProps) {
 
   const [isPending, startTransition] = React.useTransition()
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<SessionWithUser> | null>(null);
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<SessionExtend> | null>(null);
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction }),
     [setRowAction]
   )
 
-  const filterFields: DataTableFilterField<SessionWithUser>[] = [
+  const filterFields: DataTableFilterField<SessionExtend>[] = [
     {
       id: "name",
       label: "Имя",

@@ -5,17 +5,19 @@ import "server-only"
 import { type GetAreasDataSchema } from "~/lib/validations/areas-data";
 import { auth } from "../auth";
 import { unstable_cache } from "~/lib/unstable-cache";
-import { and, ilike, inArray, or, gt, eq, count } from "drizzle-orm";
-import { type AreaData, areasData, companies, type Field, fields, type LicensedArea, licensedAreas, users } from "../db/schema";
+import { and, ilike, inArray, or, gt, eq, count, type SQL, getTableColumns } from "drizzle-orm";
+import { type AreaData, type AreaDataExtend, areasData, companies, type Field, fields, type LicensedArea, licensedAreas, users } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, orderData, paginate, serializeWhere } from "../db/utils";
+import { getOrderBy, serializeWhere } from "../db/utils";
 import { intervalToString, restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { filterColumns } from "~/lib/filter-columns";
 import { type GetAllQueryParams } from "~/lib/types";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function getAreasData(
   input: GetAreasDataSchema,
+  searchKey: "id" | "areaName"
 ) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {
@@ -24,10 +26,77 @@ export async function getAreasData(
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
-      const companiesInputs = input.companyName.split(',');
-      const fieldsInputs = input.fieldName.split(',');
-      const areasInputs = input.areaName.split(',');
+      const usersUpdated = alias(users, 'users_updated');
+
+      const offset = (input.page - 1) * input.perPage
+
+      const whereConditions: (SQL | undefined)[] = [];
+      const whereSearchConditions: (SQL | undefined)[] = [];
+
+      let searchInput: string | null = null
+
+      if (searchKey === "id" && input.id) searchInput = input.id
+      if (searchKey === "areaName" && input.areaName) searchInput = input.areaName
+
+      if (searchInput) {
+        whereSearchConditions.push(or(
+          ilike(areasData.id, `%${searchInput}%`),
+          ilike(areasData.bush, `%${searchInput}%`),
+          ilike(areasData.hole, `%${searchInput}%`),
+          ilike(areasData.plast, `%${searchInput}%`),
+          ilike(areasData.horizon, `%${searchInput}%`),
+          ilike(areasData.retinue, `%${searchInput}%`),
+          ilike(areasData.protocol, `%${searchInput}%`),
+          ilike(areasData.sampleCode, `%${searchInput}%`),
+          ilike(areasData.analysisPlace, `%${searchInput}%`),
+          ilike(licensedAreas.id, `%${searchInput}%`),
+          ilike(licensedAreas.name, `%${searchInput}%`),
+          ilike(fields.id, `%${searchInput}%`),
+          ilike(fields.name, `%${searchInput}%`),
+          ilike(companies.id, `%${searchInput}%`),
+          ilike(companies.name, `%${searchInput}%`),
+          ilike(users.id, `%${searchInput}%`),
+          ilike(users.name, `%${searchInput}%`),
+          ilike(usersUpdated.id, `%${searchInput}%`),
+          ilike(usersUpdated.name, `%${searchInput}%`),
+        ));
+      }
+      if (input.areaId) {
+        whereConditions.push(eq(licensedAreas.id, input.areaId));
+      }
+      if (searchKey === "id" && input.areaName) {
+        const areasInputs = input.areaName.split(',');
+        whereConditions.push(or(
+          ilike(licensedAreas.name, `%${input.areaName}%`),
+          inArray(licensedAreas.id, areasInputs),
+          inArray(licensedAreas.name, areasInputs)
+        ));
+      }
+      if (input.fieldId) {
+        whereConditions.push(eq(fields.id, input.fieldId));
+      }
+      if (input.fieldName) {
+        const fieldsInputs = input.fieldName.split(',');
+        whereConditions.push(or(
+          ilike(fields.name, `%${input.fieldName}%`),
+          inArray(fields.id, fieldsInputs),
+          inArray(fields.name, fieldsInputs)
+        ));
+      }
+      if (input.companyId) {
+        whereConditions.push(eq(companies.id, input.companyId));
+      }
+      if (input.companyName) {
+        const companiesInputs = input.companyName.split(',');
+        whereConditions.push(or(
+          ilike(companies.name, `%${input.companyName}%`),
+          inArray(companies.id, companiesInputs),
+          inArray(companies.name, companiesInputs)
+        ));
+      }
+      if (input.fieldsIds && input.fieldsIds.length > 0) {
+        whereConditions.push(inArray(fields.id, input.fieldsIds));
+      }
 
       const advancedWhere = filterColumns({
         table: areasData,
@@ -38,348 +107,78 @@ export async function getAreasData(
       const where = and(
         advancedWhere,
         and(
-          // TODO: refactor this >>
-          or (
-            input.id ? or(
-              ilike(areasData.id, `%${input.id}%`),
-              ilike(areasData.bush, `%${input.id}%`),
-              ilike(areasData.hole, `%${input.id}%`),
-              ilike(areasData.plast, `%${input.id}%`),
-              ilike(areasData.horizon, `%${input.id}%`),
-              ilike(areasData.retinue, `%${input.id}%`),
-              ilike(areasData.protocol, `%${input.id}%`),
-              ilike(areasData.sampleCode, `%${input.id}%`),
-              ilike(areasData.analysisPlace, `%${input.id}%`),
-              inArray(
-                areasData.createUserId,
-                db
-                  .select({ id: users.id })
-                  .from(users)
-                  .where(
-                    or(
-                      ilike(users.name, `%${input.id}%`),
-                      ilike(users.id, `%${input.id}%`),
-                    )
-                  )
-              ),
-              inArray(
-                areasData.updateUserId,
-                db
-                  .select({ id: users.id })
-                  .from(users)
-                  .where(
-                    or(
-                      ilike(users.name, `%${input.id}%`),
-                      ilike(users.id, `%${input.id}%`),
-                    )
-                  )
-              ),
-              inArray(
-                areasData.areaId,
-                db
-                  .select({ id: licensedAreas.id })
-                  .from(licensedAreas)
-                  .where(
-                    or(
-                      ilike(licensedAreas.name, `%${input.id}%`),
-                      ilike(licensedAreas.id, `%${input.id}%`),
-                      inArray(licensedAreas.id, areasInputs),
-                      inArray(licensedAreas.name, areasInputs),
-                      inArray(
-                        licensedAreas.fieldId,
-                        db
-                          .select({ id: fields.id })
-                          .from(fields)
-                          .where(
-                            or(
-                              ilike(fields.name, `%${input.id}%`),
-                              ilike(fields.id, `%${input.id}%`),
-                              inArray(
-                                fields.companyId,
-                                db
-                                  .select({ id: companies.id })
-                                  .from(companies)
-                                  .where(
-                                    or(
-                                      ilike(companies.name, `%${input.id}%`),
-                                      ilike(companies.id, `%${input.id}%`),
-                                    )
-                                  )
-                              ),
-                            )
-                          )
-                      ),
-                    )
-                  )
-              )
-            ) : undefined,
-            input.areaName ? or(
-              ilike(areasData.id, `%${input.areaName}%`),
-              ilike(areasData.bush, `%${input.areaName}%`),
-              ilike(areasData.hole, `%${input.areaName}%`),
-              ilike(areasData.plast, `%${input.areaName}%`),
-              ilike(areasData.horizon, `%${input.areaName}%`),
-              ilike(areasData.retinue, `%${input.areaName}%`),
-              ilike(areasData.protocol, `%${input.areaName}%`),
-              ilike(areasData.sampleCode, `%${input.areaName}%`),
-              ilike(areasData.analysisPlace, `%${input.areaName}%`),
-              inArray(
-                areasData.createUserId,
-                db
-                  .select({ id: users.id })
-                  .from(users)
-                  .where(
-                    or(
-                      ilike(users.name, `%${input.areaName}%`),
-                      ilike(users.id, `%${input.areaName}%`),
-                    )
-                  )
-              ),
-              inArray(
-                areasData.updateUserId,
-                db
-                  .select({ id: users.id })
-                  .from(users)
-                  .where(
-                    or(
-                      ilike(users.name, `%${input.areaName}%`),
-                      ilike(users.id, `%${input.areaName}%`),
-                    )
-                  )
-              ),
-              inArray(
-                areasData.areaId,
-                db
-                  .select({ id: licensedAreas.id })
-                  .from(licensedAreas)
-                  .where(
-                    or(
-                      ilike(licensedAreas.name, `%${input.areaName}%`),
-                      ilike(licensedAreas.id, `%${input.areaName}%`),
-                      inArray(licensedAreas.id, areasInputs),
-                      inArray(licensedAreas.name, areasInputs),
-                      inArray(
-                        licensedAreas.fieldId,
-                        db
-                          .select({ id: fields.id })
-                          .from(fields)
-                          .where(
-                            or(
-                              ilike(fields.name, `%${input.areaName}%`),
-                              ilike(fields.id, `%${input.areaName}%`),
-                              inArray(
-                                fields.companyId,
-                                db
-                                  .select({ id: companies.id })
-                                  .from(companies)
-                                  .where(
-                                    or(
-                                      ilike(companies.name, `%${input.areaName}%`),
-                                      ilike(companies.id, `%${input.areaName}%`),
-                                    )
-                                  )
-                              ),
-                            )
-                          )
-                      ),
-                    )
-                  )
-              )
-            ) : undefined,
-          ),
-          input.areaId ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(eq(licensedAreas.id, input.areaId))
-            )
-          ) : undefined,
-          input.fieldId ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(
-                  inArray(
-                    licensedAreas.fieldId,
-                    db
-                      .select({ id: fields.id })
-                      .from(fields)
-                      .where(eq(fields.id, input.fieldId))
-                  ),
-                )
-            )
-          ) : undefined,
-          input.fieldName ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(
-                  inArray(
-                    licensedAreas.fieldId,
-                    db
-                      .select({ id: fields.id })
-                      .from(fields)
-                      .where(or(
-                        ilike(fields.name, `%${input.fieldName}%`),
-                        inArray(fields.id, fieldsInputs),
-                        inArray(fields.name, fieldsInputs)
-                      ))
-                  ),
-                )
-            )
-          ) : undefined,
-          (input.fieldsIds && input.fieldsIds.length > 0) ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(
-                  inArray(
-                    licensedAreas.fieldId,
-                    db
-                      .select({ id: fields.id })
-                      .from(fields)
-                      .where(inArray(fields.id, input.fieldsIds))
-                  ),
-                )
-            )
-          ) : undefined,
-          input.companyId ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(
-                  inArray(
-                    licensedAreas.fieldId,
-                    db
-                      .select({ id: fields.id })
-                      .from(fields)
-                      .where(
-                        inArray(
-                          fields.companyId,
-                          db
-                            .select({ id: companies.id })
-                            .from(companies)
-                            .where(eq(companies.id, input.companyId),)
-                        ),
-                      )
-                  ),
-                )
-            )
-          ) : undefined,
-          input.companyName ? (
-            inArray(
-              areasData.areaId,
-              db
-                .select({ id: licensedAreas.id })
-                .from(licensedAreas)
-                .where(
-                  inArray(
-                    licensedAreas.fieldId,
-                    db
-                      .select({ id: fields.id })
-                      .from(fields)
-                      .where(
-                        inArray(
-                          fields.companyId,
-                          db
-                            .select({ id: companies.id })
-                            .from(companies)
-                            .where(or(
-                              ilike(companies.name, `%${input.companyName}%`),
-                              inArray(companies.id, companiesInputs),
-                              inArray(companies.name, companiesInputs)
-                            ))
-                        ),
-                      )
-                  ),
-                )
-            )
-          ) : undefined,
+          ...whereConditions,
+          ...whereSearchConditions,
         )
       )
 
-      const { orderBy } = getRelationOrderBy(input.sort, areasData, areasData.id)
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'occurrenceInterval', column: areasData.occurrenceIntervalStart },
+          { key: 'createUserName', column: users.name },
+          { key: 'updateUserName', column: usersUpdated.name },
+          { key: 'areaName', column: licensedAreas.name },
+          { key: 'fieldId', column: fields.id },
+          { key: 'fieldName', column: fields.name },
+          { key: 'companyId', column: companies.id },
+          { key: 'companyName', column: companies.name },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: companies.name,
+        table: areasData
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
         const data = await tx
-          .query.areasData.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            orderBy,
-            with: {
-              userCreated: {
-                columns: { name: true }
-              },
-              userUpdated: {
-                columns: { name: true }
-              },
-              area: {
-                columns: {
-                  id: true,
-                  name: true
-                },
-                with: {
-                  field: {
-                    columns: {
-                      id: true,
-                      name: true
-                    },
-                    with: {
-                      company: {
-                        columns: {
-                          id: true,
-                          name: true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+          .select({
+            ...getTableColumns(areasData),
+            areaName: licensedAreas.name,
+            fieldId: fields.id,
+            fieldName: fields.name,
+            companyId: companies.id,
+            companyName: companies.name,
+            createUserName: users.name,
+            updateUserName: usersUpdated.name,
           })
+          .from(areasData)
+          .limit(input.perPage)
+          .offset(offset)
+          .leftJoin(users, eq(areasData.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(areasData.updateUserId, usersUpdated.id))
+          .innerJoin(licensedAreas, eq(areasData.areaId, licensedAreas.id))
+          .innerJoin(fields, eq(licensedAreas.fieldId, fields.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(where)
+          .orderBy(...orderBy)
 
-          // const total = await tx
-          //   .select({
-          //     count: count(),
-          //   })
-          //   .from(areasData)
-          //   .where(where)
-          //   .execute()
-          //   .then((res) => res[0]?.count ?? 0)
 
-        const transformData = data.map(({area, userCreated, userUpdated, ...other}) => ({
-          ...other,
-          createUserName: userCreated ? userCreated.name : null,
-          updateUserName: userUpdated ? userUpdated.name : null,
-          areaName: area.name,
-          fieldId: area.field.id,
-          fieldName: area.field.name,
-          companyId: area.field.company.id,
-          companyName: area.field.company.name,
+        const transformData: AreaDataExtend[] = data.map((item) => ({
+          ...item,
           occurrenceInterval: intervalToString(
-            other.occurrenceIntervalStart,
-            other.occurrenceIntervalEnd
+            item.occurrenceIntervalStart,
+            item.occurrenceIntervalEnd
           )
         }))
   
-        const sortedData = orderData(input.sort, transformData)
-
-        const paginated = paginate(sortedData, input)
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(areasData)
+          .leftJoin(users, eq(areasData.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(areasData.updateUserId, usersUpdated.id))
+          .innerJoin(licensedAreas, eq(areasData.areaId, licensedAreas.id))
+          .innerJoin(fields, eq(licensedAreas.fieldId, fields.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(where)
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data: transformData,
+          pageCount,
         }
       })
 
@@ -389,8 +188,6 @@ export async function getAreasData(
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
   }
-
-  // await new Promise((resolve) => setTimeout(resolve, 2000))
 
   const result = await unstable_cache(
     fetchData,

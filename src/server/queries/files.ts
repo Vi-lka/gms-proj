@@ -5,13 +5,14 @@ import "server-only"
 import { type GetFilesSchema } from "~/lib/validations/files";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
-import { and, ilike, inArray, notInArray, or } from "drizzle-orm";
-import { fieldsMaps, files, users } from "../db/schema";
+import { and, count, eq, getTableColumns, ilike, isNotNull, isNull, or, type SQL } from "drizzle-orm";
+import { fieldsMaps, type FileDBWithUrl, files, users } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, orderData, paginate } from "../db/utils";
+import { getOrderBy } from "../db/utils";
 import { getPresignedUrl } from "../s3-bucket/queries";
 import { getErrorMessage } from "~/lib/handle-error";
 import { unstable_cache } from "~/lib/unstable-cache";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function getFiles(
   input: GetFilesSchema,
@@ -23,111 +24,101 @@ export async function getFiles(
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
+      const usersUpdated = alias(users, 'users_updated');
 
-      const where = and(
-          input.fileName ? or(
-            ilike(files.id, `%${input.fileName}%`),
-            ilike(files.fileName, `%${input.fileName}%`),
-            ilike(files.originalName, `%${input.fileName}%`),
-            inArray(
-              files.id,
-              db
-                .select({ id: fieldsMaps.fileId })
-                .from(fieldsMaps)
-                .where(
-                  or(
-                    ilike(fieldsMaps.name, `%${input.fileName}%`),
-                    ilike(fieldsMaps.id, `%${input.fileName}%`),
-                  )
-                )
-            ),
-            inArray(
-              files.createUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.fileName}%`),
-                    ilike(users.id, `%${input.fileName}%`),
-                  )
-                )
-            ),
-            inArray(
-              files.updateUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.fileName}%`),
-                    ilike(users.id, `%${input.fileName}%`),
-                  )
-                )
-            )
-          ) : undefined,
-          input.hasConnected === "true" ? inArray(
-            files.id, 
-            db
-              .select({ id: fieldsMaps.fileId })
-              .from(fieldsMaps)
-          ) 
-          : undefined,
-          input.hasConnected === "false" ? notInArray(
-            files.id, 
-            db
-              .select({ id: fieldsMaps.fileId })
-              .from(fieldsMaps)
-          ) 
-          : undefined,
-        )
+      const offset = (input.page - 1) * input.perPage
 
-      const { orderBy } = getRelationOrderBy(input.sort, files, files.id)
+      const whereConditions: (SQL | undefined)[] = [];
+
+      if (input.id) {
+        whereConditions.push(or(
+          eq(files.id, input.id),
+        ));
+      }
+      if (input.fileName) {
+        whereConditions.push(or(
+          ilike(files.id, `%${input.fileName}%`),
+          ilike(files.fileName, `%${input.fileName}%`),
+          ilike(files.originalName, `%${input.fileName}%`),
+          ilike(fieldsMaps.id, `%${input.fileName}%`),
+          ilike(fieldsMaps.name, `%${input.fileName}%`),
+          ilike(users.id, `%${input.fileName}%`),
+          ilike(users.name, `%${input.fileName}%`),
+          ilike(usersUpdated.id, `%${input.fileName}%`),
+          ilike(usersUpdated.name, `%${input.fileName}%`)
+        ));
+      }
+      if (input.hasConnected === "true") {
+        whereConditions.push(isNotNull(fieldsMaps.fileId))
+      }
+      if (input.hasConnected === "false") {
+        whereConditions.push(isNull(fieldsMaps.fileId))
+      }
+
+      // input.hasConnected === "true" ? inArray(
+      //   files.id, 
+      //   db
+      //     .select({ id: fieldsMaps.fileId })
+      //     .from(fieldsMaps)
+      // ) 
+      // : undefined,
+      // input.hasConnected === "false" ? notInArray(
+      //   files.id, 
+      //   db
+      //     .select({ id: fieldsMaps.fileId })
+      //     .from(fieldsMaps)
+      // ) 
+      // : undefined,
+
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'createUserName', column: users.name },
+          { key: 'updateUserName', column: usersUpdated.name },
+          { key: 'fieldMapId', column: fieldsMaps.id },
+          { key: 'fieldMapName', column: fieldsMaps.name },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: files.originalName,
+        table: files
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
         const data = await tx
-          .query.files.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            orderBy,
-            with: {
-              userCreated: {
-                columns: { name: true }
-              },
-              userUpdated: {
-                columns: { name: true }
-              },
-              fieldMap: true
-            }
+          .select({
+            ...getTableColumns(files),
+            fieldMapId: fieldsMaps.id,
+            fieldMapName: fieldsMaps.name,
+            createUserName: users.name,
+            updateUserName: usersUpdated.name,
           })
+          .from(files)
+          .limit(input.perPage)
+          .offset(offset)
+          .leftJoin(users, eq(files.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(files.updateUserId, usersUpdated.id))
+          .leftJoin(fieldsMaps, eq(files.id, fieldsMaps.fileId))
+          .where(and(...whereConditions))
+          .orderBy(...orderBy)
 
-        // const total = await tx
-        //   .select({
-        //     count: count(),
-        //   })
-        //   .from(fieldsMaps)
-        //   .where(where)
-        //   .execute()
-        //   .then((res) => res[0]?.count ?? 0)
-
-        const validData = data.map(({userCreated, userUpdated, fieldMap, ...other}) => ({
-            ...other,
-            createUserName: userCreated ? userCreated.name : null,
-            updateUserName: userUpdated ? userUpdated.name : null,
-            fieldMapId: fieldMap?.id,
-            fieldMapName: fieldMap?.name
-          })
-        )
+        console.log(data)
   
-        const sortedData = orderData(input.sort, validData)
-
-        const paginated = paginate(sortedData, input)
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(files)
+          .leftJoin(users, eq(files.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(files.updateUserId, usersUpdated.id))
+          .leftJoin(fieldsMaps, eq(files.id, fieldsMaps.fileId))
+          .where(and(...whereConditions))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data,
+          pageCount,
         }
       })
 
@@ -144,7 +135,7 @@ export async function getFiles(
     { revalidate: false, tags: ["files", "fields_maps"] }
   )()
 
-  const dataWithUrls = await Promise.all(
+  const dataWithUrls: FileDBWithUrl[] = await Promise.all(
     result.data.map(async (file) => {
       const fileUrl = await getPresignedUrl(file.id)
       if (fileUrl.error !== null) throw new Error(fileUrl.error)

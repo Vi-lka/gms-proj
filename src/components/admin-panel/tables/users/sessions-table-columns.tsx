@@ -3,23 +3,24 @@ import React from "react";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Badge } from "~/components/ui/badge";
 import { Checkbox } from "~/components/ui/checkbox";
-import type { DataTableRowAction, SessionWithUser } from "~/lib/types";
+import type { DataTableRowAction } from "~/lib/types";
 import { toast } from "sonner"
 import { formatDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
 import { Ellipsis, Trash2 } from "lucide-react";
+import { type SessionExtend } from "~/server/db/schema";
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<SessionWithUser> | null>
+    React.SetStateAction<DataTableRowAction<SessionExtend> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<SessionWithUser>[] {
+}: GetColumnsProps): ColumnDef<SessionExtend>[] {
   return [
     {
       id: "select",

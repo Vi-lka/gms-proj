@@ -4,7 +4,7 @@ import "server-only"
 
 import { unstable_cache } from "~/lib/unstable-cache";
 import { type GetSessionsSchema, type GetUsersSchema } from "~/lib/validations/users";
-import { sessions, type User, users } from "../db/schema";
+import { type SessionExtend, sessions, type User, users } from "../db/schema";
 import {
   gt,
   count,
@@ -12,10 +12,13 @@ import {
   ilike,
   inArray,
   or,
+  eq,
+  type SQL,
+  getTableColumns,
 } from "drizzle-orm"
 import { db } from "../db";
 import { auth } from "../auth";
-import { getRelationOrderBy, orderData, paginate } from "../db/utils";
+import { getOrderBy, getRelationOrderBy } from "../db/utils";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 
@@ -139,87 +142,67 @@ export async function getSessions(
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
+      const offset = (input.page - 1) * input.perPage
 
-      const where = and(
-        gt(sessions.expires, currentDate),
-        input.userId ? ilike(sessions.userId, `%${input.userId}%`) : undefined,
-        input.name ? or(
-          inArray(
-            sessions.userId,
-            db
-              .select({ id: users.id })
-              .from(users)
-              .where(
-                or(
-                  ilike(users.name, `%${input.name}%`),
-                  ilike(users.email, `%${input.name}%`),
-                )
-              )
-          ),
-          ilike(sessions.userId, `%${input.name}%`)
-        ) : undefined,
-        input.role.length > 0
-          ? inArray(
-            sessions.userId,
-            db
-              .select({ id: users.id })
-              .from(users)
-              .where(
-                and(
-                  inArray(users.role, input.role)
-                )
-              )
-          )
-          : undefined,
-      )
+      const whereConditions: (SQL | undefined)[] = [
+        gt(sessions.expires, currentDate)
+      ];
 
-      const { orderBy } = getRelationOrderBy(input.sort, sessions, sessions.userId)
+      if (input.userId) {
+        whereConditions.push(ilike(sessions.userId, `%${input.userId}%`))
+      }
+      if (input.name) {
+        whereConditions.push(or(
+          ilike(sessions.userId, `%${input.name}%`),
+          ilike(users.name, `%${input.name}%`),
+          ilike(users.email, `%${input.name}%`),
+        ));
+      }
+      if (input.role.length > 0) {
+        whereConditions.push(inArray(users.role, input.role))
+      }
+
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'name', column: users.name },
+          { key: 'email', column: users.email },
+          { key: 'role', column: users.role },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: users.name,
+        table: sessions
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
-
-        const data = await tx
-          .query.sessions.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            orderBy,
-            with: {
-              user: {
-                columns: {
-                  name: true,
-                  email: true,
-                  role: true,
-                }
-              }
-            }
+        const data: SessionExtend[] = await tx
+          .select({
+            ...getTableColumns(sessions),
+            name: users.name,
+            email: users.email,
+            role: users.role,
           })
-
-        // const total = await tx
-        //   .select({
-        //     count: count(),
-        //   })
-        //   .from(sessions)
-        //   .where(where)
-        //   .execute()
-        //   .then((res) => res[0]?.count ?? 0)
-
-        const transformData = data.map(item => ({
-          userId: item.userId,
-          sessionToken: item.sessionToken,
-          expires: item.expires,
-          name: item.user.name,
-          email: item.user.email,
-          role: item.user.role
-        }))
+          .from(sessions)
+          .limit(input.perPage)
+          .offset(offset)
+          .innerJoin(users, eq(sessions.userId, users.id))
+          .where(and(...whereConditions))
+          .orderBy(...orderBy)
   
-        const sortedData = orderData(input.sort, transformData)
-
-        const paginated = paginate(sortedData, input)
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(sessions)
+          .innerJoin(users, eq(sessions.userId, users.id))
+          .where(and(...whereConditions))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data,
+          pageCount,
         }
       })
 
@@ -232,8 +215,8 @@ export async function getSessions(
 
   const result = await unstable_cache(
     fetchData,
-    [JSON.stringify(input)],
-    { revalidate: false, tags: ["users"] }
+    [JSON.stringify(input), currentDate.toLocaleDateString()],
+    { revalidate: 60, tags: ["users"] }
   )()
 
   return result
@@ -291,8 +274,8 @@ export async function getSessionRolesCounts() {
 
   const result = await unstable_cache(
     fetchData,
-    ["user-roles-counts"],
-    { revalidate: false, tags: ["users", "user-roles-counts"] }
+    ["user-roles-counts", currentDate.toLocaleDateString()],
+    { revalidate: 60, tags: ["users", "user-roles-counts"] }
   )()
 
   return result

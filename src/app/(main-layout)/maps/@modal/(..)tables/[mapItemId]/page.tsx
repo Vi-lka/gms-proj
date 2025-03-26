@@ -80,7 +80,7 @@ async function Content({
     ...dataSearch,
     fieldsIds: fieldMaps.map((fieldMap) => fieldMap.fieldId),
     filters: validFilters,
-  })
+  }, "areaName")
 
   return (
     <>

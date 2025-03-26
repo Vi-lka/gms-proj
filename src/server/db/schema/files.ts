@@ -40,8 +40,8 @@ export type FileDB = typeof files.$inferSelect & {
 }
 
 export type FileDBExtend = FileDB & {
-  fieldMapId?: string;
-  fieldMapName?: string;
+  fieldMapId?: string | null;
+  fieldMapName?: string | null;
 }
 
 export type FileDBWithUrl = FileDBExtend & {

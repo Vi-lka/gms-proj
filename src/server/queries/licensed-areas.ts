@@ -4,18 +4,17 @@ import "server-only"
 
 import { type GetLicensedAreasSchema } from "~/lib/validations/licensed-areas";
 import { auth } from "../auth";
-import { and, count, eq, gt, ilike, inArray, or } from "drizzle-orm";
-import { companies, type Field, fields, type LicensedArea, licensedAreas, users } from "../db/schema";
+import { and, count, eq, getTableColumns, gt, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { companies, type Field, fields, type LicensedArea, type LicensedAreaExtend, licensedAreas, users } from "../db/schema";
 import { db } from "../db";
-import { getRelationOrderBy, orderData, paginate, serializeWhere } from "../db/utils";
+import { getOrderBy, serializeWhere } from "../db/utils";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
+import { alias } from "drizzle-orm/pg-core";
 
-export async function getLicensedAreas(
-  input: GetLicensedAreasSchema,
-) {
+export async function getLicensedAreas(input: GetLicensedAreasSchema) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {
     throw new Error("No access");
@@ -23,190 +22,122 @@ export async function getLicensedAreas(
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
-      const companiesInputs = input.companyName.split(',');
-      const fieldsInputs = input.fieldName.split(',');
+      const usersUpdated = alias(users, 'users_updated');
 
-      const where = and(
-          input.name ? or(
-            ilike(licensedAreas.name, `%${input.name}%`),
-            ilike(licensedAreas.id, `%${input.name}%`),
-            inArray(
-              licensedAreas.createUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.name}%`),
-                    ilike(users.id, `%${input.name}%`),
-                  )
-                )
-            ),
-            inArray(
-              licensedAreas.updateUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.name}%`),
-                    ilike(users.id, `%${input.name}%`),
-                  )
-                )
-            ),
-            inArray(
-              licensedAreas.fieldId,
-              db
-                .select({ id: fields.id })
-                .from(fields)
-                .where(
-                  or(
-                    ilike(fields.name, `%${input.name}%`),
-                    ilike(fields.id, `%${input.name}%`),
-                    inArray(
-                      fields.companyId,
-                      db
-                        .select({ id: companies.id })
-                        .from(companies)
-                        .where(
-                          or(
-                            ilike(companies.name, `%${input.name}%`),
-                            ilike(companies.id, `%${input.name}%`),
-                          )
-                        )
-                    ),
-                  )
-                )
-            )
-          ) : undefined,
-          input.fieldId ? (
-            inArray(
-              licensedAreas.fieldId,
-              db
-                .select({ id: fields.id })
-                .from(fields)
-                .where(eq(fields.id, input.fieldId))
-            )
-          ) : undefined,
-          input.fieldName ? (
-            inArray(
-              licensedAreas.fieldId,
-              db
-                .select({ id: fields.id })
-                .from(fields)
-                .where(or(
-                  ilike(fields.name, `%${input.fieldName}%`),
-                  inArray(fields.id, fieldsInputs),
-                  inArray(fields.name, fieldsInputs)
-                ))
-            )
-          ) : undefined,
-          input.companyId ? (
-            inArray(
-              licensedAreas.fieldId,
-              db
-                .select({ id: fields.id })
-                .from(fields)
-                .where(
-                  inArray(
-                    fields.companyId,
-                    db
-                      .select({ id: companies.id })
-                      .from(companies)
-                      .where(eq(companies.id, input.companyId),)
-                  ),
-                )
-            )
-          ) : undefined,
-          input.companyName ? (
-            inArray(
-              licensedAreas.fieldId,
-              db
-                .select({ id: fields.id })
-                .from(fields)
-                .where(
-                  inArray(
-                    fields.companyId,
-                    db
-                      .select({ id: companies.id })
-                      .from(companies)
-                      .where(or(
-                        ilike(companies.name, `%${input.companyName}%`),
-                        inArray(companies.id, companiesInputs),
-                        inArray(companies.name, companiesInputs)
-                      ))
-                  ),
-                )
-            )
-          ) : undefined
-        )
+      const offset = (input.page - 1) * input.perPage
 
-      const { orderBy } = getRelationOrderBy(input.sort, licensedAreas, licensedAreas.id)
+      const whereConditions: (SQL | undefined)[] = [];
+
+      if (input.id) {
+        whereConditions.push(or(
+          eq(licensedAreas.id, input.id),
+          eq(fields.id, input.id),
+          eq(companies.id, input.id),
+        ));
+      }
+      if (input.name) {
+        whereConditions.push(or(
+          ilike(licensedAreas.id, `%${input.name}%`),
+          ilike(licensedAreas.name, `%${input.name}%`),
+          ilike(fields.id, `%${input.name}%`),
+          ilike(fields.name, `%${input.name}%`),
+          ilike(companies.id, `%${input.name}%`),
+          ilike(companies.name, `%${input.name}%`),
+          ilike(users.id, `%${input.name}%`),
+          ilike(users.name, `%${input.name}%`),
+          ilike(usersUpdated.id, `%${input.name}%`),
+          ilike(usersUpdated.name, `%${input.name}%`),
+        ));
+      }
+      if (input.fieldId) {
+        whereConditions.push(eq(fields.id, input.fieldId));
+      }
+      if (input.fieldName) {
+        const fieldsInputs = input.fieldName.split(',');
+        whereConditions.push(or(
+          ilike(fields.name, `%${input.fieldName}%`),
+          inArray(fields.id, fieldsInputs),
+          inArray(fields.name, fieldsInputs)
+        ));
+      }
+      if (input.companyId) {
+        whereConditions.push(eq(companies.id, input.companyId));
+      }
+      if (input.companyName) {
+        const companiesInputs = input.companyName.split(',');
+        whereConditions.push(or(
+          ilike(companies.name, `%${input.companyName}%`),
+          inArray(companies.id, companiesInputs),
+          inArray(companies.name, companiesInputs)
+        ));
+      }
+
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'createUserName', column: users.name },
+          { key: 'updateUserName', column: usersUpdated.name },
+          { key: 'fieldName', column: fields.name },
+          { key: 'companyId', column: companies.id },
+          { key: 'companyName', column: companies.name },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: licensedAreas.name,
+        table: licensedAreas
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
-        const data = await tx
-          .query.licensedAreas.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            orderBy,
-            with: {
-              userCreated: {
-                columns: { name: true }
-              },
-              userUpdated: {
-                columns: { name: true }
-              },
-              field: {
-                columns: {
-                  id: true,
-                  name: true
-                },
-                with: {
-                  company: {
-                    columns: {
-                      id: true,
-                      name: true
-                    }
-                  }
-                }
-              }
-            }
+        const data: LicensedAreaExtend[] = await tx
+          .select({
+            ...getTableColumns(licensedAreas),
+            fieldName: fields.name,
+            companyId: companies.id,
+            companyName: companies.name,
+            createUserName: users.name,
+            updateUserName: usersUpdated.name,
           })
-
-        // const total = await tx
-        //   .select({
-        //     count: count(),
-        //   })
-        //   .from(licensedAreas)
-        //   .where(where)
-        //   .execute()
-        //   .then((res) => res[0]?.count ?? 0)
-
-        const transformData = data.map(({field, userCreated, userUpdated, ...other}) => ({
-          ...other,
-          createUserName: userCreated ? userCreated.name : null,
-          updateUserName: userUpdated ? userUpdated.name : null,
-          fieldName: field.name,
-          companyId: field.company.id,
-          companyName: field.company.name,
-        }))
+          .from(licensedAreas)
+          .limit(input.perPage)
+          .offset(offset)
+          .leftJoin(users, eq(licensedAreas.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(licensedAreas.updateUserId, usersUpdated.id))
+          .innerJoin(fields, eq(licensedAreas.fieldId, fields.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(and(...whereConditions))
+          .orderBy(...orderBy)
   
-        const sortedData = orderData(input.sort, transformData)
-
-        const paginated = paginate(sortedData, input)
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(licensedAreas)
+          .leftJoin(users, eq(licensedAreas.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(licensedAreas.updateUserId, usersUpdated.id))
+          .innerJoin(fields, eq(licensedAreas.fieldId, fields.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(and(...whereConditions))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data,
+          pageCount,
         }
       })
-
-      return { data, pageCount, error: null }
+  
+      return {
+        data,
+        pageCount,
+        error: null
+      };
     } catch (err) {
-      console.error(err)
-      return { data: [], pageCount: 0, error: getErrorMessage(err) }
+      console.error(err);
+      return {
+        data: [],
+        pageCount: 0,
+        error: getErrorMessage(err)
+      };
     }
   }
 

@@ -474,6 +474,7 @@ export async function getMapItemPage(id: string, fetchImages = true) {
 }
 
 
+// TODO: refactor this!
 // Area page
 export async function getLicensedAreaPage(input: GetAreasDataSchema) {
   const session = await auth();
@@ -519,7 +520,7 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
 
       const titleMapItem = mapItem.cluster?.name ?? mapItem.companiesToMapItems[0].company.name
     
-      const areaData = await getAreasData(input)
+      const areaData = await getAreasData(input, "areaName")
 
       const names = {
         fieldName: licensedArea.field.name,

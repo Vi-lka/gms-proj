@@ -2,19 +2,13 @@ import type { Row, ColumnSort } from "@tanstack/react-table"
 import { z } from "zod"
 import type { filterSchema } from "../parsers"
 import type { DataTableConfig } from "../config/data-table"
-import type { roleEnum, Session } from "~/server/db/schema"
-import type { SQL } from "drizzle-orm"
+import type { roleEnum } from "~/server/db/schema"
+import type { AnyColumn, SQL, SQLWrapper } from "drizzle-orm"
 import { approxEnum } from "~/server/db/schema/fields"
 
 export * from "./map"
 
 export type UserRole = typeof roleEnum.enumValues[number]
-
-export interface SessionWithUser extends Session {
-  name: string | null;
-  email: string;
-  role: UserRole
-}
 
 export type UserRestrictions = 'content' | 'admin-panel' | 'admin-panel-users'
 
@@ -48,6 +42,11 @@ export type ColumnType = DataTableConfig["columnTypes"][number]
 export type FilterOperator = DataTableConfig["globalOperators"][number]
 
 export type JoinOperator = DataTableConfig["joinOperators"][number]["value"]
+
+export type SortFieldConfig<T> = {
+  key: keyof T;
+  column: AnyColumn | SQLWrapper;
+};
 
 export interface DataTableFilterField<TData> {
   id: StringKeyOf<TData>

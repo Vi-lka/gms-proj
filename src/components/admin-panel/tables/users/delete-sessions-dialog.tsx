@@ -5,11 +5,11 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
-import { type SessionWithUser } from '~/lib/types'
 import { deleteSessions } from '~/server/actions/users'
+import { type SessionExtend } from '~/server/db/schema'
 
 interface DeleteSessionsDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  sessions: Row<SessionWithUser>["original"][]
+  sessions: Row<SessionExtend>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

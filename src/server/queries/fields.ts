@@ -4,14 +4,15 @@ import "server-only"
 
 import { type GetFieldsSchema } from "~/lib/validations/fields";
 import { auth } from "../auth";
-import { and, count, eq, gt, ilike, inArray, or } from "drizzle-orm";
-import { companies, type Field, fields, users } from "../db/schema";
-import { getRelationOrderBy, orderData, paginate, serializeWhere } from "../db/utils";
+import { and, count, eq, getTableColumns, gt, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { companies, type Field, type FieldExtend, fields, users } from "../db/schema";
+import { getOrderBy, serializeWhere } from "../db/utils";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function getFields(
   input: GetFieldsSchema,
@@ -23,122 +24,88 @@ export async function getFields(
 
   const fetchData = async () => {
     try {
-      // const offset = (input.page - 1) * input.perPage
-      const companiesInputs = input.companyName.split(',');
+      const usersUpdated = alias(users, 'users_updated');
 
-      const where = and(
-          input.name ? or(
-            ilike(fields.name, `%${input.name}%`),
-            ilike(fields.id, `%${input.name}%`),
-            inArray(
-              fields.createUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.name}%`),
-                    ilike(users.id, `%${input.name}%`),
-                  )
-                )
-            ),
-            inArray(
-              fields.updateUserId,
-              db
-                .select({ id: users.id })
-                .from(users)
-                .where(
-                  or(
-                    ilike(users.name, `%${input.name}%`),
-                    ilike(users.id, `%${input.name}%`),
-                  )
-                )
-            ),
-            inArray(
-              fields.companyId,
-              db
-                .select({ id: companies.id })
-                .from(companies)
-                .where(
-                  or(
-                    ilike(companies.name, `%${input.name}%`),
-                    ilike(companies.id, `%${input.name}%`)
-                  )
-                )
-            )
-          ) : undefined,
-          input.companyId ? (
-            inArray(
-              fields.companyId,
-              db
-                .select({ id: companies.id })
-                .from(companies)
-                .where(eq(companies.id, input.companyId))
-            )
-          ) : undefined,
-          input.companyName ? (
-            inArray(
-              fields.companyId,
-              db
-                .select({ id: companies.id })
-                .from(companies)
-                .where(or(
-                  ilike(companies.name, `%${input.companyName}%`),
-                  inArray(companies.id, companiesInputs),
-                  inArray(companies.name, companiesInputs)
-                ))
-            )
-          ) : undefined
-        )
+      const offset = (input.page - 1) * input.perPage
 
-      const { orderBy } = getRelationOrderBy(input.sort, fields, fields.id)
+      const whereConditions: (SQL | undefined)[] = [];
+
+      if (input.id) {
+        whereConditions.push(or(
+          eq(fields.id, input.id),
+          eq(companies.id, input.id),
+        ));
+      }
+      if (input.name) {
+        whereConditions.push(or(
+          ilike(fields.id, `%${input.name}%`),
+          ilike(fields.name, `%${input.name}%`),
+          ilike(companies.id, `%${input.name}%`),
+          ilike(companies.name, `%${input.name}%`),
+          ilike(users.id, `%${input.name}%`),
+          ilike(users.name, `%${input.name}%`),
+          ilike(usersUpdated.id, `%${input.name}%`),
+          ilike(usersUpdated.name, `%${input.name}%`),
+        ));
+      }
+      if (input.companyId) {
+        whereConditions.push(eq(companies.id, input.companyId));
+      }
+      if (input.companyName) {
+        const companiesInputs = input.companyName.split(',');
+        whereConditions.push(or(
+          ilike(companies.name, `%${input.companyName}%`),
+          inArray(companies.id, companiesInputs),
+          inArray(companies.name, companiesInputs)
+        ));
+      }
+      
+      const orderBy = getOrderBy({
+        config: [
+          { key: 'createUserName', column: users.name },
+          { key: 'updateUserName', column: usersUpdated.name },
+          { key: 'companyId', column: companies.id },
+          { key: 'companyName', column: companies.name },
+        ], 
+        sortInput: input.sort, 
+        defaultColumn: fields.name,
+        table: fields
+      });
 
       const { data, pageCount } = await db.transaction(async (tx) => {
-        const data = await tx
-          .query.fields.findMany({
-            // limit: input.perPage,
-            // offset,
-            where,
-            orderBy,
-            with: {
-              userCreated: {
-                columns: { name: true }
-              },
-              userUpdated: {
-                columns: { name: true }
-              },
-              company: {
-                columns: {
-                  id: true,
-                  name: true
-                }
-              }
-            }
+        const data: FieldExtend[] = await tx
+          .select({
+            ...getTableColumns(fields),
+            companyName: companies.name,
+            createUserName: users.name,
+            updateUserName: usersUpdated.name,
           })
-
-        // const total = await tx
-        //   .select({
-        //     count: count(),
-        //   })
-        //   .from(fields)
-        //   .where(where)
-        //   .execute()
-        //   .then((res) => res[0]?.count ?? 0)
-
-        const transformData = data.map(({company, userCreated, userUpdated, ...other}) => ({
-          ...other,
-          createUserName: userCreated ? userCreated.name : null,
-          updateUserName: userUpdated ? userUpdated.name : null,
-          companyName: company.name
-        }))
-
-        const sortedData = orderData(input.sort, transformData)
-
-        const paginated = paginate(sortedData, input)
+          .from(fields)
+          .limit(input.perPage)
+          .offset(offset)
+          .leftJoin(users, eq(fields.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(fields.updateUserId, usersUpdated.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(and(...whereConditions))
+          .orderBy(...orderBy)
+  
+        const total = await tx
+          .select({ 
+            count: count() 
+          })
+          .from(fields)
+          .leftJoin(users, eq(fields.createUserId, users.id))
+          .leftJoin(usersUpdated, eq(fields.updateUserId, usersUpdated.id))
+          .innerJoin(companies, eq(fields.companyId, companies.id))
+          .where(and(...whereConditions))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
+    
+        const pageCount = Math.ceil(total / input.perPage);
 
         return {
-          data: paginated.items,
-          pageCount: paginated.totalPages,
+          data,
+          pageCount,
         }
       })
 

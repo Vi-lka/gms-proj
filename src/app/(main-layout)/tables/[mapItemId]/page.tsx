@@ -44,7 +44,7 @@ export default async function MapItemTablePage({
     ...dataSearch,
     fieldsIds: fieldMaps.map((fieldMap) => fieldMap.fieldId),
     filters: validFilters,
-  })
+  }, "areaName")
   
   return (
     <ContentLayout container={false}>
