@@ -12,7 +12,7 @@ import type {
 } from 'konva/lib/Node';
 import { cn } from '~/lib/utils';
 import { Layer, Stage } from 'react-konva';
-import { type MapData } from '~/server/db/schema';
+import { type MapDataExtend } from '~/server/db/schema';
 import MapMainImage from './map-main-image';
 
 export default function MapStage({
@@ -21,7 +21,7 @@ export default function MapStage({
   children,
   actions
 }: {
-  mapData: MapData | undefined,
+  mapData: MapDataExtend | null,
   className?: string,
   children: React.ReactNode,
   actions?: React.ReactNode

@@ -54,7 +54,7 @@ export default function DeleteFilesFialog({
             Это действие невозможно отменить. Это приведет к окончательному удалению{" "}
             <span className="font-medium">{files.length}</span>
             {files.length === 1 ? " Файла" : " Файлов"}.
-            Все данные, которые были привязаны, также будут удалены (Карты месторождений и их полигоны).
+            Все данные, которые были привязаны, также будут удалены (Карта России, Карты месторождений и их полигоны).
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaFooter className="gap-2 sm:space-x-0">

@@ -29,6 +29,7 @@ export async function getFiles(
       const offset = (input.page - 1) * input.perPage
 
       const whereConditions: (SQL | undefined)[] = [];
+      const formatConditions: (SQL | undefined)[] = [];
 
       if (input.id) {
         whereConditions.push(or(
@@ -54,21 +55,12 @@ export async function getFiles(
       if (input.hasConnected === "false") {
         whereConditions.push(isNull(fieldsMaps.fileId))
       }
-
-      // input.hasConnected === "true" ? inArray(
-      //   files.id, 
-      //   db
-      //     .select({ id: fieldsMaps.fileId })
-      //     .from(fieldsMaps)
-      // ) 
-      // : undefined,
-      // input.hasConnected === "false" ? notInArray(
-      //   files.id, 
-      //   db
-      //     .select({ id: fieldsMaps.fileId })
-      //     .from(fieldsMaps)
-      // ) 
-      // : undefined,
+      if (input.format.length > 0) {
+        input.format.forEach((format) => {
+          formatConditions.push(ilike(files.originalName, `%.${format}`))
+        })
+        whereConditions.push(or(...formatConditions))
+      }
 
       const orderBy = getOrderBy({
         config: [
@@ -99,8 +91,6 @@ export async function getFiles(
           .leftJoin(fieldsMaps, eq(files.id, fieldsMaps.fileId))
           .where(and(...whereConditions))
           .orderBy(...orderBy)
-
-        console.log(data)
   
         const total = await tx
           .select({ 

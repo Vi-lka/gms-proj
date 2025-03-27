@@ -12,48 +12,6 @@ import { areasData, clusters, companies, companiesToMapItems, fields, licensedAr
 import { compareElements } from "../db/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 
-// TODO: refactor this!
-export async function getMap() {
-  const session = await auth();
-  if (restrictUser(session?.user.role, 'content')) {
-    throw new Error("No access");
-  }
-
-  const fetchData = async () => {
-    try {
-      // const offset = (input.page - 1) * input.perPage
-
-      // const where = and(
-          // input.name ? or(
-            // ilike(users.name, `%${input.name}%`),
-            // ilike(users.id, `%${input.name}%`)
-          // ) : undefined,
-          // input.role.length > 0
-            // ? inArray(users.role, input.role)
-            // : undefined,
-        // )
-
-      const data = await db.query.mapData.findFirst({
-        where: (data, { eq }) => eq(data.selected, true),
-      })
-
-      // const pageCount = Math.ceil(total / input.perPage)
-      return { data }
-    } catch (err) {
-      console.error(err)
-      return { data: undefined }
-    }
-  }
-
-  const result = await unstable_cache(
-    fetchData,
-    ["map"],
-    { revalidate: false, tags: ["map"] }
-  )()
-
-  return result
-}
-
 export async function getMapItems(
   input?: GetMapItemsSchema,
 ) {
@@ -233,10 +191,10 @@ export async function getMapItems(
         return validData
       })
 
-      return data
+      return { data, error: null }
     } catch (err) {
       console.error(err)
-      return []
+      return { data: [], error: getErrorMessage(err) }
     }
   }
 

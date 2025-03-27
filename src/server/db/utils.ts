@@ -7,8 +7,7 @@ import {
   type TableConfig,
   type SQL,
   type BuildQueryConfig,
-  type Table,
-  AnyColumn,
+  type AnyColumn,
   lte,
   gte,
 } from "drizzle-orm"
@@ -185,28 +184,6 @@ export function generateSortFields<T>(
   });
 
   return sortFields;
-}
-
-export function getOrderByOld<T>(
-  config: SortFieldConfig<T>[],
-  sortInput: ExtendedSortingState<T>,
-  defaultColumn: AnyColumn | SQLWrapper
-): SQL<unknown>[] {
-  const sortFields = generateSortFields(config);
-
-  let orderBy: (SQL<unknown> | undefined)[] = [];
-
-  if (sortInput && sortInput.length > 0) {
-    const orderByClauses = sortInput.map(({ id, desc: descV }) => {
-      const column = sortFields[id];
-      if (!!column) return descV ? desc(column) : asc(column);
-    });
-    orderBy = orderByClauses;
-  } else {
-    orderBy = [asc(defaultColumn)];
-  }
-
-  return orderBy.filter((item): item is SQL<unknown> => !!item);
 }
 
 export function getOrderBy<T, TData extends TableConfig>({

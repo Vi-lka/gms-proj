@@ -10,7 +10,8 @@ import {
   Building2,
   MapPinned,
   AlignEndHorizontal,
-  Folder
+  Folder,
+  MapPlus
 } from "lucide-react";
 import { type UserRole } from "./types";
 
@@ -54,6 +55,11 @@ export function getMenuList(pathname: string, role: UserRole | undefined): Group
           href: "/dashboard/map",
           label: "Карта - Главная",
           icon: Map,
+        },
+        {
+          href: "/dashboard/svg-maps",
+          label: "Карта России",
+          icon: MapPlus,
         },
         {
           href: "/dashboard/fmaps",

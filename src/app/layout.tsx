@@ -6,7 +6,6 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: refactor map queries and getLicensedAreaPage!
 // TODO: export tables (and printing?)
 // TODO: bug tracker
 // TODO: customers styles (waiting...)

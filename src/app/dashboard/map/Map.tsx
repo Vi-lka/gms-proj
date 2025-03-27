@@ -3,7 +3,8 @@
 import React from 'react'
 import { DEFAULT_ITEM_SIZE } from '~/lib/intersections/get-intersections'
 import { type MaxValue, type MapItemT } from '~/lib/types'
-import { type getMap, type getMapItems } from '~/server/queries/map'
+import { type getMapItems } from '~/server/queries/map'
+import { type getMap } from '~/server/queries/map-svg'
 import dynamic from 'next/dynamic';
 import useElementDimensions from '~/hooks/use-ellement-dimensions'
 import { useSetAtom } from 'jotai'
@@ -12,6 +13,7 @@ import { useElementsSearch, useMapItemsSearch } from '~/components/map/filters/h
 import { type Profitability, type AreaData } from '~/server/db/schema'
 import { extractKeys, findMaxValuesByRelevance } from '~/lib/utils'
 import { type getProfitability } from '~/server/queries/profitability'
+import { toast } from 'sonner'
 
 const MapStage = dynamic(() => import('~/components/map/map-stage'), {
   ssr: false,
@@ -44,7 +46,32 @@ export default function Map({ promises }: MapProps) {
     if (dimensions) setContainerDimensions(dimensions)
   }, [dimensions, setContainerDimensions])
 
-  const [data, { data: mapData }, { data: profitability }] = React.use(promises)
+  const [
+    { data, error }, 
+    { data: mapData, error: mapDataError }, 
+    { data: profitability, error: profitabilityError }
+  ] = React.use(promises)
+
+  React.useEffect(() => {
+    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (error !== null) toast.dismiss("data-error")
+    }
+  }, [error])
+
+  React.useEffect(() => {
+    if (mapDataError !== null) toast.error(mapDataError, { id: "map-data-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (mapDataError !== null) toast.dismiss("map-data-error")
+    }
+  }, [mapDataError])
+
+  React.useEffect(() => {
+    if (profitabilityError !== null) toast.error(profitabilityError, { id: "profitability-error", duration: 5000, dismissible: true })
+    return () => { 
+      if (profitabilityError !== null) toast.dismiss("profitability-error")
+    }
+  }, [profitabilityError])
 
   const [elementsSearch] = useElementsSearch()
   

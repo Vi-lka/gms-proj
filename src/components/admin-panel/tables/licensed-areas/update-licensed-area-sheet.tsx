@@ -24,7 +24,6 @@ export default function UpdateLicensedAreaSheet({
 }: UpdateLicensedAreaSheetProps) {
   const [isPending, startTransition] = React.useTransition()
 
-
   const form = useForm<UpdateLicensedAreaSchema>({
     resolver: zodResolver(updateLicensedAreaSchema),
     defaultValues: {

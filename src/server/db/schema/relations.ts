@@ -37,6 +37,7 @@ export const authenticatorsRelations = relations(authenticators, ({ one }) => ({
 }));
 
 export const mapDataRelations = relations(mapData, ({ one }) => ({
+  file: one(files, { fields: [mapData.fileId], references: [files.id] }),
   userCreated: one(users, { fields: [mapData.createUserId], references: [users.id] }),
   userUpdated: one(users, { fields: [mapData.updateUserId], references: [users.id] }),
 }))
@@ -121,6 +122,7 @@ export const fieldMapPolygonsRelations = relations(fieldMapPolygons, ({ one }) =
 }))
 
 export const filesRelations = relations(files, ({ one }) => ({
+  mapData: one(mapData),
   fieldMap: one(fieldsMaps),
   userCreated: one(users, { fields: [files.createUserId], references: [users.id] }),
   userUpdated: one(users, { fields: [files.updateUserId], references: [users.id] }),

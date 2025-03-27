@@ -3,6 +3,7 @@ import createTable from "./createTable";
 import { numericCasted } from "../utils";
 import { type FieldWithLicensedAreas, type Field } from "./fields";
 import { type User, users } from "./auth";
+import { files } from "./files";
 
 export const mapData = createTable(
   "map_data", 
@@ -11,7 +12,8 @@ export const mapData = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    svgUrl: text("svg_url").notNull(),
+    fileId: varchar("file_id", { length: 255 })
+      .references(() => files.id, {onDelete: 'cascade'}).notNull(),
     svgWidth: varchar("svg_width", { length: 255 }),
     svgHeight: varchar("svg_height", { length: 255 }),
     selected: boolean("selected").default(false),
@@ -140,6 +142,9 @@ export const companiesToMapItems = createTable(
 
 // Types
 export type MapData = typeof mapData.$inferSelect
+export type MapDataExtend = MapData & {
+  svgUrl: string | null
+}
 export type MapItem = typeof mapItems.$inferSelect
 export type Company = typeof companies.$inferSelect & {
   createUserName: User["name"],
@@ -152,4 +157,5 @@ export type CompanyWithListedAreas = typeof companies.$inferSelect & {
   fields: FieldWithLicensedAreas[]
 }
 export type Cluster = typeof clusters.$inferSelect
+export type CompaniesMapItems = typeof companiesToMapItems.$inferSelect
 

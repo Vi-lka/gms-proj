@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '../button'
 import Dropzone from './dropzone'
 import { Loader } from 'lucide-react'
+import { type Accept } from 'react-dropzone'
+import { formatBytes, getAcceptText } from '~/lib/utils'
 
 type UploadFileCardProps = {
   imageFile: File | null,
@@ -13,6 +15,8 @@ type UploadFileCardProps = {
   disabled?: boolean,
   isPending?: boolean,
   canUploadTest?: boolean,
+  accept?: Accept,
+  maxSize?: number
 }
 
 export default function UploadFileCard({
@@ -23,6 +27,13 @@ export default function UploadFileCard({
   disabled,
   isPending,
   canUploadTest = false,
+  accept = {
+    'image/jpg': [],
+    'image/jpeg': [],
+    'image/png': [],
+    'image/svg+xml': [],
+  },
+  maxSize = 20 * 1024 * 1024 // 20Mb
 }: UploadFileCardProps) {
   if (env.NEXT_PUBLIC_IS_VERCEL === "true") return (
     <Card>
@@ -43,20 +54,16 @@ export default function UploadFileCard({
       <CardHeader>
         <CardTitle>Загрузите фото</CardTitle>
         <CardDescription>
-          <p>Допустимые форматы: JPEG, JPG, PNG, SVG</p>
-          <p>Максимальный размер: 20Mb</p>
+          <p>Допустимые форматы: {getAcceptText(accept)}</p>
+          <p>Максимальный размер: {formatBytes(maxSize)}</p>
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Dropzone
           isImage
           disabled={!!disabled || !!isPending}
-          accept={{
-            'image/jpg': [],
-            'image/jpeg': [],
-            'image/png': [],
-          }}
-          maxSize={20 * 1024 * 1024} // 20Mb
+          accept={accept}
+          maxSize={maxSize}
           handleDrop={(acceptedFiles) => {
             if (acceptedFiles.length > 0 && !!acceptedFiles[0]) {
               setImageFile(acceptedFiles[0])
@@ -69,7 +76,7 @@ export default function UploadFileCard({
           className="min-h-32 bg-background rounded-lg border-dashed border border-primary/50 shadow hover:bg-secondary transition-all outline outline-1 outline-border outline-offset-2"
         >
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            JPEG, JPG, PNG, SVG (Max 20Mb)
+            {getAcceptText(accept)} (Max {formatBytes(maxSize)})
           </p>
         </Dropzone>
       </CardContent>

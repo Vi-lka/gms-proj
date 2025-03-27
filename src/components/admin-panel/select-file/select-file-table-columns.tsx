@@ -33,7 +33,7 @@ export function getColumns({
             alt={row.original.originalName}
             width={240}
             height={240}
-            className='hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
+            className='bg-muted hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
             onClick={() => setRowAction({ row, type: "dialog" })}
           />
         </div>

@@ -2,25 +2,29 @@ import React from 'react'
 import { Button } from '~/components/ui/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '~/components/ui/drawer'
 import { cn } from '~/lib/utils'
-import SelectFileTable from './select-file-table'
-import { usePolyStore } from '~/components/poly-annotation/store/poly-store-provider'
+import SelectFileTable from '../../select-file/select-file-table'
+import { type Dialog } from '~/components/ui/dialog'
+import { type Row } from '@tanstack/react-table'
+import { type FileDBWithUrl } from '~/server/db/schema'
 
-type SelectFileDrawerProps = {
+interface SelectFileDrawerProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
   children: React.ReactNode,
+  handleOnSelect: (row: Row<FileDBWithUrl>) => void
   title?: string,
   className?: string,
 }
 
 export default function SelectFileDrawer({
   children,
+  handleOnSelect,
   title,
   className,
+  open,
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  onOpenChange
 }: SelectFileDrawerProps) {
-  const openSelectImage = usePolyStore((state) => state.openSelectImage)
-  const setOpenSelectImage = usePolyStore((state) => state.setOpenSelectImage)
-  
   return (
-    <Drawer modal={false} open={openSelectImage} onOpenChange={setOpenSelectImage}>
+    <Drawer modal={false} open={open} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>
         {children}
       </DrawerTrigger>
@@ -33,7 +37,11 @@ export default function SelectFileDrawer({
         </DrawerHeader>
         <div className="px-4 flex flex-col flex-grow">
           <SelectFileTable 
-            afterSelect={() => setOpenSelectImage(false)} 
+            handleOnSelect={(row) => {
+              handleOnSelect(row)
+              onOpenChange?.(false)
+            }} 
+            accept={["svg"]}
             className="sm:max-h-[calc(100vh-320px)] max-h-[calc(100vh-410px)]"
           />
         </div>

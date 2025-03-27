@@ -1,13 +1,13 @@
 import { type Table } from "@tanstack/react-table"
 import React from "react"
-import { type Profitability } from "~/server/db/schema"
-import CreateProfitabilitySheet from "./create-profitability-sheet"
+import { type MapDataExtend } from "~/server/db/schema"
+import CreateMapSheet from "./create-map-sheet"
 
 interface ProfitabilityTableToolbarActionsProps {
-  table: Table<Profitability>
+  table: Table<MapDataExtend>
 }
 
-export default function ProfitabilityTableToolbarActions({
+export default function MapsTableToolbarActions({
   table
 }: ProfitabilityTableToolbarActionsProps) {
   const [openCreate, setOpenCreate] = React.useState(false)
@@ -22,7 +22,7 @@ export default function ProfitabilityTableToolbarActions({
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null} */}
-      {table.getRowCount() === 0 && <CreateProfitabilitySheet open={openCreate} onOpenChange={setOpenCreate} />}
+      {table.getRowCount() === 0 && <CreateMapSheet open={openCreate} onOpenChange={setOpenCreate} />}
     </div>
   )
 }

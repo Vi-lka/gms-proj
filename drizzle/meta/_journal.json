@@ -78,6 +78,13 @@
       "when": 1742712471485,
       "tag": "0010_ambitious_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1743057285457,
+      "tag": "0011_narrow_klaw",
+      "breakpoints": true
     }
   ]
 }

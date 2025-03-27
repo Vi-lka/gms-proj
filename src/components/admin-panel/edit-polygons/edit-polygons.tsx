@@ -15,7 +15,7 @@ import { type DefaultEditDataT } from '~/components/poly-annotation/types';
 import DefaultLoading from '~/components/loadings/default';
 import { Skeleton } from '~/components/ui/skeleton';
 import { Separator } from '@radix-ui/react-dropdown-menu';
-import SelectFileDrawer from './select-file/select-file-drawer';
+import SelectFileDrawer from './select-file-drawer';
 import { Button } from '~/components/ui/button';
 import { Folder } from 'lucide-react';
 

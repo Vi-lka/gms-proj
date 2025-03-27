@@ -19,6 +19,7 @@ import {
   type FieldMapExtend,  
   type FileDBExtend, 
   type LicensedAreaExtend,
+  type MapDataExtend,
   type SessionExtend, 
   type User, 
   users 
@@ -55,6 +56,20 @@ export const searchParamsSessions = {
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 }
 export const searchParamsSessionsCache = createSearchParamsCache(searchParamsSessions)
+
+export const searchParamsMaps = {
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<MapDataExtend>().withDefault([
+    { id: "selected", desc: false }
+  ]),
+  id: parseAsString.withDefault(""),
+  selected: parseAsBoolean,
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+}
+export const searchParamsMapsCache = createSearchParamsCache(searchParamsMaps)
 
 export const elementsSearchSchema = z.object({
   id: z.string(),
@@ -174,6 +189,7 @@ export const searchParamsFiles = {
   id: parseAsString.withDefault(""),
   fileName: parseAsString.withDefault(""),
   hasConnected: parseAsStringEnum(["true", "false", "disabled"]).withDefault("disabled"),
+  format: parseAsArrayOf(parseAsStringEnum(["jpg", "jpeg", "png", "svg"])).withDefault([]),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),

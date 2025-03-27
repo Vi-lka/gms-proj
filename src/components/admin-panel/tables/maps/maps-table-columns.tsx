@@ -1,25 +1,25 @@
-import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, Trash2 } from "lucide-react";
-import Image from "next/image";
-import { toast } from "sonner";
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-import { type DataTableRowAction } from "~/lib/types";
-import { formatBytes, formatDate } from "~/lib/utils";
-import { type FileDBWithUrl } from "~/server/db/schema";
+import { type ColumnDef } from "@tanstack/react-table"
+import { Edit, Ellipsis } from "lucide-react"
+import Image from "next/image"
+import { toast } from "sonner"
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
+import { Button } from "~/components/ui/button"
+import { Checkbox } from "~/components/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip"
+import { type DataTableRowAction } from "~/lib/types"
+import { formatDate } from "~/lib/utils"
+import { type MapDataExtend } from "~/server/db/schema"
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<FileDBWithUrl> | null>
+    React.SetStateAction<DataTableRowAction<MapDataExtend> | null>
   >
 }
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<FileDBWithUrl>[] {
+}: GetColumnsProps): ColumnDef<MapDataExtend>[] {
   return [
     {
       id: "select",
@@ -76,15 +76,15 @@ export function getColumns({
       enableHiding: false,
     },
     {
-      accessorKey: "fileUrl",
+      accessorKey: "svgUrl",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Фото" className="min-w-20" />
+        <DataTableColumnHeader column={column} title="Фото" className="min-w-20 text-center" />
       ),
       cell: ({ row }) => (
         <div className="flex">
           <Image 
-            src={row.getValue("fileUrl")}
-            alt={row.original.originalName}
+            src={row.getValue("svgUrl")}
+            alt={row.original.fileId}
             width={100}
             height={100}
             className='bg-muted hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
@@ -95,85 +95,19 @@ export function getColumns({
       enableHiding: false,
       enableSorting: false,
     },
-    {
-      accessorKey: "originalName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Название" />
-      ),
-      cell: ({ row }) => (
-        <div className="flex space-x-2">
-          <span className="max-w-[31.25rem] truncate font-medium">
-            {row.getValue("originalName")}
-          </span>
-        </div>
-      ),
-      enableHiding: false,
-    },
-    {
-      accessorKey: "fileName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Название в Minio" />
-      ),
-      cell: ({ row }) => (
-        <div
-          onClick={()=> {
-            void navigator.clipboard.writeText(row.getValue("fileName"))
-            toast.success('Название скопировано')
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className="w-36 truncate">
-                {row.getValue("fileName")}
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                {row.getValue("fileName")}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "fieldMapName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Карта месторождения" />
-      ),
-      cell: ({ row }) => (
-        <div
-          onClick={()=> {
-            if (row.original.fieldMapId) {
-              void navigator.clipboard.writeText(row.original.fieldMapId)
-              toast.success('ID скопирован')  
-            }
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className="max-w-[31.25rem] truncate">
-                {row.getValue("fieldMapName")}
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                {row.original.fieldMapId}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "size",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Размер" />
-      ),
-      cell: ({ row }) => (
-        <div className="flex space-x-2">
-          <span className="max-w-[31.25rem] truncate font-medium">
-            {formatBytes(row.getValue("size"))}
-          </span>
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "selected",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title={idToSentenceCase("selected")} />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="flex space-x-2">
+    //       <span className="max-w-[31.25rem] truncate font-medium">
+    //         {row.getValue("selected") ? <Check /> : null}
+    //       </span>
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: "createUserName",
       header: ({ column }) => (
@@ -184,7 +118,7 @@ export function getColumns({
           onClick={()=> {
             if (row.original.createUserId) {
               void navigator.clipboard.writeText(row.original.createUserId)
-              toast.success('ID скопирован')  
+              toast.success('ID скопирован')
             }
           }}
         >
@@ -279,13 +213,22 @@ export function getColumns({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
+                onSelect={() => setRowAction({ row, type: "update" })}
+              >
+                Изменить
+                <DropdownMenuShortcut>
+                  <Edit size={16}/>
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              {/* <DropdownMenuSeparator />
+              <DropdownMenuItem
                 onSelect={() => setRowAction({ row, type: "delete" })}
               >
                 Удалить
                 <DropdownMenuShortcut>
                   <Trash2 size={16}/>
                 </DropdownMenuShortcut>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         )

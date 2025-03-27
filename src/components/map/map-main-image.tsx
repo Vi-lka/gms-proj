@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { type MapData } from '~/server/db/schema';
+import { type MapDataExtend } from '~/server/db/schema';
 import { Image as KonvaImage } from 'react-konva';
 import { useImage } from 'react-konva-utils';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -10,7 +10,7 @@ import { mainImageAtom, mapContainerDimensions } from '~/lib/atoms/main';
 export default function MapMainImage({
   data
 }: {
-  data: MapData | undefined,
+  data: MapDataExtend | null,
 }) {
   const [image] = useImage(data?.svgUrl ?? '/images/Russia-Map.svg');
 

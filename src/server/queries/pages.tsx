@@ -411,7 +411,7 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
 
   const result = await unstable_cache(
     validateData,
-    [JSON.stringify(input)],
+    [JSON.stringify(input), currentDate],
     { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files"] }
   )()
 
@@ -474,7 +474,6 @@ export async function getMapItemPage(id: string, fetchImages = true) {
 }
 
 
-// TODO: refactor this!
 // Area page
 export async function getLicensedAreaPage(input: GetAreasDataSchema) {
   const session = await auth();

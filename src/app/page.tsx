@@ -1,5 +1,6 @@
 import React from "react";
-import { getMap, getMapItems } from "~/server/queries/map";
+import { getMapItems } from "~/server/queries/map";
+import { getMap } from "~/server/queries/map-svg";
 import Map from "./Map";
 import { auth } from "~/server/auth";
 import { providerMap } from "~/server/auth/config";

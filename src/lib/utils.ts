@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { type UserRestrictions, type UserRole, type ApproxEnumT, type RelevanceKeys, type MaxValue } from "./types"
 import translateData from "./static/translate-data"
+import { type Accept } from "react-dropzone"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -301,4 +302,29 @@ export function formatBytes(bytes: number, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
+
+export function getAcceptText(accept: Accept) {
+  const textArr: string[] = []
+  Object.keys(accept).forEach(key => {
+    switch (key) {
+      case "image/jpg":
+        textArr.push("JPG")
+        break;
+      case "image/jpeg":
+        textArr.push("JPEG")
+        break;
+      case "image/png":
+        textArr.push("PNG")
+        break;
+      case "image/svg+xml":
+        textArr.push("SVG")
+        break;
+      default:
+        break;
+    }
+  })
+
+  return textArr.join(", ")
 }

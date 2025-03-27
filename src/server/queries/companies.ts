@@ -145,3 +145,41 @@ export async function getAllCompanies(params?: GetAllQueryParams) {
   
   return result
 }
+
+export async function getAllCompaniesToMapItems(params?: GetAllQueryParams) {
+  const session = await auth();
+  if (restrictUser(session?.user.role, 'content')) {
+    throw new Error("No access");
+  }
+
+  const fetchData = async () => {
+    try {
+      const data = await db.query.companiesToMapItems.findMany({
+        where: params?.where,
+      })
+
+      return { data, error: null }
+    } catch (err) {
+      console.error(err)
+      return { data: [], error: getErrorMessage(err) }
+    }
+  }
+  
+  let whereKey = ""
+
+  // I`am not sure if 'serializeWhere' will work with any 'where', so use keys just in case
+  try {
+    whereKey = serializeWhere(params?.where)
+  } catch (error) {
+    console.error(error)
+    if (params) whereKey = params.keys.join(',')
+  }
+
+  const result = await unstable_cache(
+    fetchData,
+    [`companies_to_map_items-${whereKey}`],
+    { revalidate: false, tags: ["companies", "map_items"] }
+  )()
+  
+  return result
+}

@@ -11,6 +11,8 @@ const data = {
   polygon: "Полигон",
   file: "Файл",
   fileUrl: "Файл URL",
+  svgUrl: "SVG URL",
+  selected: "Выбрано",
   fileName: "Название в Minio",
   originalName: "Название",
   size: "Размер",

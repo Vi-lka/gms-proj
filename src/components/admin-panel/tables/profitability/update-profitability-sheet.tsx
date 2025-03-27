@@ -51,7 +51,7 @@ export default function UpdateProfitabilitySheet({
 
       form.reset()
       props.onOpenChange?.(false)
-      toast.success("Данные ЛУ изменены!")
+      toast.success("Рентабельная добыча изменены!")
     })
   }
 
@@ -62,7 +62,7 @@ export default function UpdateProfitabilitySheet({
     <Sheet {...props}>
       <SheetContent side="bottom" className="flex flex-col gap-6">
         <SheetHeader className="text-left">
-          <SheetTitle>Изменить Данные ЛУ</SheetTitle>
+          <SheetTitle>Изменить Рентабельную добычу</SheetTitle>
         </SheetHeader>
         <Form {...form}>
         <form

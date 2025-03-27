@@ -1,5 +1,3 @@
-"use client"
-
 import React from 'react'
 import { type DataTableFilterField, type DataTableRowAction } from '~/lib/types'
 import { type FileDBWithUrl } from '~/server/db/schema'
@@ -11,34 +9,32 @@ import { toast } from 'sonner'
 import { DataTable } from '~/components/data-table/data-table'
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
-import OpenImageDialog from '../../tables/files/open-image-dialog'
+import OpenImageDialog from '../tables/files/open-image-dialog'
 import { useQueryStates } from 'nuqs'
 import { searchParamsFiles } from '~/lib/validations/search-params'
 import useSWR from 'swr'
 import { getApiRoute } from '~/lib/validations/api-routes'
-import { usePolyStore } from '~/components/poly-annotation/store/poly-store-provider'
 
 export default function SelectFileTable({
-  afterSelect,
+  handleOnSelect,
+  accept = ["jpg", "jpeg", "png", "svg"],
   className
 }: {
-  afterSelect?: () => void,
+  handleOnSelect: (row: Row<FileDBWithUrl>) => void,
+  accept?: ("jpg" | "jpeg" | "png" | "svg")[]
   className?: string
 }) {
-  const setSelectedImage = usePolyStore((state) => state.setSelectedImage)
-  const setImageUrl = usePolyStore((state) => state.setImageUrl)
-  const setImageFile = usePolyStore((state) => state.setImageFile)
-
   const [searchParams] = useQueryStates(searchParamsFiles)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { hasConnected, ...otherParams } = searchParams
+  const { hasConnected, format, ...otherParams } = searchParams
 
   const { data: result, error, isLoading } = useSWR<Awaited<ReturnType<typeof getFiles>>, Error>(
     getApiRoute({
       route: "files", 
       searchParams: {
         hasConnected: "false",
+        format: accept,
         ...otherParams
       }
     })
@@ -62,15 +58,8 @@ export default function SelectFileTable({
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<FileDBWithUrl> | null>(null);
 
   const onSelect = React.useCallback((row: Row<FileDBWithUrl>) => {
-    setSelectedImage({
-      id: row.original.id,
-      originalName: row.original.originalName,
-      url: row.original.fileUrl
-    })
-    setImageUrl(row.original.fileUrl)
-    setImageFile(null)
-    afterSelect?.()
-  }, [afterSelect, setImageFile, setImageUrl, setSelectedImage])
+    handleOnSelect(row)
+  }, [handleOnSelect])
 
   const columns = React.useMemo(
     () => getColumns({ setRowAction, onSelect }),

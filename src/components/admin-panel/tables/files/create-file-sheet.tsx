@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react'
 import React from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
 import UploadFileCard from '~/components/ui/special/upload-file-card'
 import { createPresignedUrls } from '~/server/s3-bucket/actions'
 import type { FileT } from '~/server/s3-bucket/types'
@@ -82,6 +82,13 @@ export default function CreateFileSheet({
             setImageFile={setImageFile}
             handleSave={onSave}
           />
+        <SheetFooter className="gap-2 pt-2 sm:space-x-0">
+          <SheetClose asChild>
+            <Button type="button" variant="outline">
+              Отмена
+            </Button>
+          </SheetClose>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )
