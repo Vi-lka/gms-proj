@@ -6,6 +6,7 @@ import Dropzone from './dropzone'
 import { Loader } from 'lucide-react'
 import { type Accept } from 'react-dropzone'
 import { formatBytes, getAcceptText } from '~/lib/utils'
+import { MAX_FILE_SIZE } from '~/lib/static/max-file-size'
 
 type UploadFileCardProps = {
   imageFile: File | null,
@@ -33,7 +34,7 @@ export default function UploadFileCard({
     'image/png': [],
     'image/svg+xml': [],
   },
-  maxSize = 20 * 1024 * 1024 // 20Mb
+  maxSize = MAX_FILE_SIZE
 }: UploadFileCardProps) {
   if (env.NEXT_PUBLIC_IS_VERCEL === "true") return (
     <Card>

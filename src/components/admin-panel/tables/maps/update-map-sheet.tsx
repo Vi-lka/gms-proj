@@ -12,6 +12,7 @@ import { type FileT } from '~/server/s3-bucket/types'
 import { handleUpload } from '~/server/s3-bucket/utils'
 import SelectFileDrawer from './select-file-drawer'
 import { Button } from '~/components/ui/button'
+import { MAX_SVG_SIZE } from '~/lib/static/max-file-size'
 
 interface UpdateMapSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
   map: MapDataExtend | null
@@ -127,7 +128,7 @@ export default function UpdateMapSheet({
                 accept={{
                   'image/svg+xml': []
                 }}
-                maxSize={50 * 1024 * 1024} // 50Mb
+                maxSize={MAX_SVG_SIZE}
               />
               <div className='flex items-center gap-2'>
                 <Separator className='w-20 h-0.5 bg-muted-foreground rounded-full'/>

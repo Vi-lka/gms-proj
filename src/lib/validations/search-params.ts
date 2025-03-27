@@ -190,6 +190,7 @@ export const searchParamsFiles = {
   fileName: parseAsString.withDefault(""),
   hasConnected: parseAsStringEnum(["true", "false", "disabled"]).withDefault("disabled"),
   format: parseAsArrayOf(parseAsStringEnum(["jpg", "jpeg", "png", "svg"])).withDefault([]),
+  maxSize: parseAsInteger,
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),

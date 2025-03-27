@@ -128,6 +128,44 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
     throw new Error("No access");
   }
 
+  const role = session?.user.role ?? ""
+
+  const fetchUsers = async () => {
+    try {
+      if (restrictUser(session?.user.role, 'admin-panel-users')) return { 
+        data: [], 
+        error: "No access" 
+      }
+
+      const today = new Date(currentDate)
+      const priorDate = new Date(new Date().setDate(today.getDate() - 30));
+
+      const usersData: RecentItem[] = await db
+        .query.users.findMany({
+          where: (fields, operators) => operators.or(
+            operators.gt(fields.updatedAt, priorDate),
+            operators.gt(fields.createdAt, priorDate)
+          ),
+        }).then(res => res.map(
+          item => ({
+            id: item.id,
+            title: item.name ?? item.email,
+            type: "user" as const,
+            createUserName: null,
+            updateUserName: null,
+            createUserId: null,
+            updateUserId: null,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt
+          })
+        ))
+
+      return { data: usersData, error: null }
+    } catch (error) {
+      return { data: [], error: getErrorMessage(error) }
+    }
+  }
+
   const fetchData = async () => {
     try {
       const today = new Date(currentDate)
@@ -378,7 +416,71 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
             })
           ))
 
-        return [...mapItems, ...clusters, ...companies, ...fields, ...licensedAreas, ...areasData, ...fieldsMaps, ...fieldMapPolygons, ...files]
+        const profitability = await tx
+          .query.profitability.findMany({
+            with: {
+              userCreated: true,
+              userUpdated: true,
+            },
+            where(fields, operators) {
+              return operators.or(
+                operators.gt(fields.updatedAt, priorDate),
+                operators.gt(fields.createdAt, priorDate)
+              )
+            },
+          }).then(res => res.map(
+            item => ({
+              id: item.id,
+              title: "Рентабельная добыча",
+              type: "profitability" as const,
+              createUserName: item.userCreated ? item.userCreated.name : null,
+              updateUserName: item.userUpdated ? item.userUpdated.name : null,
+              createUserId: item.createUserId,
+              updateUserId: item.updateUserId,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt
+            })
+          ))
+
+        const mapData = await tx
+          .query.mapData.findMany({
+            with: {
+              userCreated: true,
+              userUpdated: true,
+            },
+            where(fields, operators) {
+              return operators.or(
+                operators.gt(fields.updatedAt, priorDate),
+                operators.gt(fields.createdAt, priorDate)
+              )
+            },
+          }).then(res => res.map(
+            item => ({
+              id: item.id,
+              title: "Карта России",
+              type: "mapData" as const,
+              createUserName: item.userCreated ? item.userCreated.name : null,
+              updateUserName: item.userUpdated ? item.userUpdated.name : null,
+              createUserId: item.createUserId,
+              updateUserId: item.updateUserId,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt
+            })
+          ))
+
+        return [
+          ...mapItems, 
+          ...clusters, 
+          ...companies, 
+          ...fields, 
+          ...licensedAreas, 
+          ...areasData, 
+          ...fieldsMaps, 
+          ...fieldMapPolygons, 
+          ...files,
+          ...profitability,
+          ...mapData
+        ]
       })
       return {
         data,
@@ -392,15 +494,23 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
 
   const validateData = async () => {
     try {
+      const allUsers = await unstable_cache(
+        fetchUsers,
+        [currentDate, role],
+        { revalidate: 60, tags: ["users"] }
+      )()
+
+      if (allUsers.error !== null && allUsers.error !== "No access") return { data: [], pageCount: 0, error: allUsers.error };
+
       const allRecent = await unstable_cache(
         fetchData,
         [currentDate],
-        { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files"] }
+        { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files", "profitability", "map-data"] }
       )()
 
       if (allRecent.error !== null) return { data: [], pageCount: 0, error: allRecent.error };
 
-      const sortedData = orderData(input.sort, allRecent.data)
+      const sortedData = orderData(input.sort, [...allUsers.data, ...allRecent.data])
 
       const paginated = paginate(sortedData, input)
       return { data: paginated.items, pageCount: paginated.totalPages, error: null }
@@ -411,8 +521,8 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
 
   const result = await unstable_cache(
     validateData,
-    [JSON.stringify(input), currentDate],
-    { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files"] }
+    [JSON.stringify(input), currentDate, role],
+    { revalidate: 60, tags: ["map_items", "clusters", "companies", "fields", "licensed_areas", "areas_data", "fields_maps", "polygons", "files", "profitability", "map-data", "users"] }
   )()
 
   return result

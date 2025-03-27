@@ -2,10 +2,11 @@
 
 import React from 'react'
 import { Button } from '~/components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '~/components/ui/drawer'
-import { cn } from '~/lib/utils'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '~/components/ui/drawer'
+import { cn, formatBytes } from '~/lib/utils'
 import SelectFileTable from '../select-file/select-file-table'
 import { usePolyStore } from '~/components/poly-annotation/store/poly-store-provider'
+import { MAX_FILE_SIZE } from '~/lib/static/max-file-size'
 
 type SelectFileDrawerProps = {
   children: React.ReactNode,
@@ -36,6 +37,7 @@ export default function SelectFileDrawer({
       >
         <DrawerHeader>
           <DrawerTitle className='text-center'>{title}</DrawerTitle>
+          <DrawerDescription className='text-center'>Max: {formatBytes(MAX_FILE_SIZE)}</DrawerDescription>
         </DrawerHeader>
         <div className="px-4 flex flex-col flex-grow">
           <SelectFileTable 
@@ -49,7 +51,8 @@ export default function SelectFileDrawer({
               setImageFile(null)
               setOpenSelectImage(false)
             }} 
-            className="sm:max-h-[calc(100vh-320px)] max-h-[calc(100vh-410px)]"
+            maxSizeOfFile={MAX_FILE_SIZE}
+            className="sm:max-h-[calc(100vh-350px)] max-h-[calc(100vh-440px)]"
           />
         </div>
         <DrawerFooter>

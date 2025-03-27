@@ -78,7 +78,7 @@ export function getColumns({
     {
       accessorKey: "fileUrl",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Фото" className="min-w-20" />
+        <DataTableColumnHeader column={column} title="Фото" className="min-w-20 text-center" />
       ),
       cell: ({ row }) => (
         <div className="flex">

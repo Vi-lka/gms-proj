@@ -105,6 +105,26 @@ export function getColumns({
       )
     },
     {
+      accessorKey: "fileUrl",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Фото" className="min-w-20 text-center" />
+      ),
+      cell: ({ row }) => (
+        <div className="flex">
+          <Image 
+            src={row.getValue("fileUrl")}
+            alt={row.original.name}
+            width={100}
+            height={100}
+            className='bg-muted hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
+            onClick={() => setRowAction({ row, type: "dialog" })}
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
       accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Название" />
@@ -129,25 +149,6 @@ export function getColumns({
         </div>
       ),
       enableHiding: false,
-    },
-    {
-      accessorKey: "fileUrl",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Фото" className="min-w-20" />
-      ),
-      cell: ({ row }) => (
-        <div className="flex">
-          <Image 
-            src={row.getValue("fileUrl")}
-            alt={row.original.name}
-            width={100}
-            height={100}
-            className='bg-muted hover:ring-1 ring-ring ring-offset-2 ring-offset-muted rounded-md object-cover aspect-video mx-auto cursor-pointer transition-all duration-300'
-            onClick={() => setRowAction({ row, type: "dialog" })}
-          />
-        </div>
-      ),
-      enableSorting: false,
     },
     {
       accessorKey: "companyName",

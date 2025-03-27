@@ -14,20 +14,23 @@ import { useQueryStates } from 'nuqs'
 import { searchParamsFiles } from '~/lib/validations/search-params'
 import useSWR from 'swr'
 import { getApiRoute } from '~/lib/validations/api-routes'
+import { MAX_FILE_SIZE } from '~/lib/static/max-file-size'
 
 export default function SelectFileTable({
   handleOnSelect,
   accept = ["jpg", "jpeg", "png", "svg"],
+  maxSizeOfFile = MAX_FILE_SIZE,
   className
 }: {
   handleOnSelect: (row: Row<FileDBWithUrl>) => void,
   accept?: ("jpg" | "jpeg" | "png" | "svg")[]
+  maxSizeOfFile?: number,
   className?: string
 }) {
   const [searchParams] = useQueryStates(searchParamsFiles)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { hasConnected, format, ...otherParams } = searchParams
+  const { hasConnected, format, maxSize, ...otherParams } = searchParams
 
   const { data: result, error, isLoading } = useSWR<Awaited<ReturnType<typeof getFiles>>, Error>(
     getApiRoute({
@@ -35,6 +38,7 @@ export default function SelectFileTable({
       searchParams: {
         hasConnected: "false",
         format: accept,
+        maxSize: maxSizeOfFile,
         ...otherParams
       }
     })

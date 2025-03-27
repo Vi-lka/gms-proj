@@ -136,7 +136,7 @@ export function combineArraysWithCommonElements<T>(arrays: T[][]): T[][] {
 }
 
 export function restrictUser(role: UserRole | undefined, restriction: UserRestrictions) {
-  if (!role || role === 'unknown') return true; // Restrict unknown users by default
+  if (!role || role.length === 0 || role === 'unknown') return true; // Restrict unknown users by default
 
   if ((role === 'guest' || role === 'user') && restriction !== 'content')
     return true // Restrict guest and user to view admin panel

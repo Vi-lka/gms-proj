@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { type DataTableRowAction } from "~/lib/types";
+import { formatBytes } from "~/lib/utils";
 import { type FileDBWithUrl } from "~/server/db/schema";
 
 interface GetColumnsProps {
@@ -77,6 +78,19 @@ export function getColumns({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "size",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Размер" />
+      ),
+      cell: ({ row }) => (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {formatBytes(row.getValue("size"))}
+          </span>
         </div>
       ),
     },

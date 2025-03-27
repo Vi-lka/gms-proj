@@ -127,6 +127,42 @@ export function getColumns({
       },
     },
     {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Создано в" />
+      ),
+      cell: ({ row }) => {
+        const date = 
+          row.getValue("createdAt")
+            ? formatDate(row.getValue("createdAt"), { month: "numeric", hour: "numeric", minute: "numeric" })
+            : null;
+        return (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {date}
+          </span>
+        </div>
+      )},
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Изменено в" />
+      ),
+      cell: ({ row }) => {
+        const date = 
+          row.getValue("updatedAt")
+            ? formatDate(row.getValue("updatedAt"), { month: "numeric", hour: "numeric", minute: "numeric" })
+            : null;
+        return (
+        <div className="flex space-x-2">
+          <span className="max-w-[31.25rem] truncate font-medium">
+            {date}
+          </span>
+        </div>
+      )},
+    },
+    {
       id: "actions",
       cell: function Cell({ row }) {
         return (

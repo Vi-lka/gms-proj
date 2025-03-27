@@ -85,6 +85,13 @@
       "when": 1743057285457,
       "tag": "0011_narrow_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1743072118739,
+      "tag": "0012_adorable_white_queen",
+      "breakpoints": true
     }
   ]
 }

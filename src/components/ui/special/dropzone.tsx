@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Button } from '../button';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 import { PopoverClose } from '@radix-ui/react-popover';
+import { MAX_FILE_SIZE } from '~/lib/static/max-file-size';
 
 type DropzoneCommonProps = {
   accept: Accept;
@@ -34,7 +35,7 @@ type DropzoneProps = DropzoneCommonProps & (DropzoneWithFileProps | DropzoneWith
 
 export default function Dropzone({
   accept,
-  maxSize,
+  maxSize = MAX_FILE_SIZE,
   defaultValue,
   isImage,
   disabled,

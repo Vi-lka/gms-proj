@@ -5,7 +5,7 @@ import "server-only"
 import { type GetFilesSchema } from "~/lib/validations/files";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
-import { and, count, eq, getTableColumns, ilike, isNotNull, isNull, or, type SQL } from "drizzle-orm";
+import { and, count, eq, getTableColumns, ilike, isNotNull, isNull, lte, or, type SQL } from "drizzle-orm";
 import { fieldsMaps, type FileDBWithUrl, files, users } from "../db/schema";
 import { db } from "../db";
 import { getOrderBy } from "../db/utils";
@@ -60,6 +60,9 @@ export async function getFiles(
           formatConditions.push(ilike(files.originalName, `%.${format}`))
         })
         whereConditions.push(or(...formatConditions))
+      }
+      if (input.maxSize !== null) {
+        whereConditions.push(lte(files.size, input.maxSize))
       }
 
       const orderBy = getOrderBy({

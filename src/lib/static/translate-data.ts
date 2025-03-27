@@ -10,6 +10,8 @@ const data = {
   fieldMap: "Карта месторождения",
   polygon: "Полигон",
   file: "Файл",
+  profitability: "Рентабельная добыча",
+  mapData: "Карта России",
   fileUrl: "Файл URL",
   svgUrl: "SVG URL",
   selected: "Выбрано",

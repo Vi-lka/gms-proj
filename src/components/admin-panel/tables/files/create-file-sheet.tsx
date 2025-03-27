@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
 import UploadFileCard from '~/components/ui/special/upload-file-card'
+import { MAX_SVG_SIZE } from '~/lib/static/max-file-size'
 import { createPresignedUrls } from '~/server/s3-bucket/actions'
 import type { FileT } from '~/server/s3-bucket/types'
 import { handleUpload } from '~/server/s3-bucket/utils'
@@ -79,6 +80,7 @@ export default function CreateFileSheet({
           <UploadFileCard
             imageFile={imageFile}
             isPending={isPending}
+            maxSize={MAX_SVG_SIZE}
             setImageFile={setImageFile}
             handleSave={onSave}
           />

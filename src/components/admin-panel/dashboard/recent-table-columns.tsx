@@ -1,5 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowRight, Boxes, Building2, Database, Ellipsis, Folder, LandPlot, MapIcon, MapPin, Pickaxe, Triangle } from "lucide-react";
+import { AlignEndHorizontal, ArrowRight, Boxes, Building2, Database, Ellipsis, Folder, LandPlot, MapIcon, MapPin, MapPlus, Pickaxe, Triangle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Button } from "~/components/ui/button";
@@ -210,6 +210,12 @@ function TypeIcon({ type }: { type: RecentItem["type"] }) {
       return <Database className="size-4 flex-none" />;
     case "file":
       return <Folder className="size-4 flex-none" />;
+    case "profitability":
+      return <AlignEndHorizontal className="size-4 flex-none" />;
+    case "mapData":
+      return <MapPlus className="size-4 flex-none" />;
+    case "user":
+      return <Users className="size-4 flex-none" />;
     default:
       return null;
   }

@@ -50,6 +50,12 @@ export default function RecentTable({
         return router.push(`/dashboard/fmaps/${id}`);
       case "file":
         return router.push(`/dashboard/files?fileName=${id}`);
+      case "profitability":
+        return router.push(`/dashboard/profitability`);
+      case "mapData":
+        return router.push(`/dashboard/svg-maps`);
+      case "user":
+        return router.push(`/dashboard/users?name=${id}`);
     
       default:
         return;

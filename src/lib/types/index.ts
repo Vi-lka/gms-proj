@@ -85,7 +85,7 @@ export type ApproxEnumT = z.infer<typeof approxEnumSchema>
 export type RecentItem = {
   id: string;
   title: string | undefined;
-  type: "mapItem" | "cluster" | "company" | "field" | "licensedArea" | "areaData" | "fieldMap" | "polygon" | "file";
+  type: "mapItem" | "cluster" | "company" | "field" | "licensedArea" | "areaData" | "fieldMap" | "polygon" | "file" | "profitability" | "mapData" | "user";
   createUserId: string | null;
   updateUserId: string | null;
   createUserName: string | null;
