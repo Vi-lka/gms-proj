@@ -76,9 +76,11 @@ async function Content({
   
   const validFilters = getValidFilters(dataSearch.filters)
 
+  const fieldsIds = fieldMaps.map((fieldMap) => fieldMap.fieldId)
+
   const areasData = await getAreasData({
     ...dataSearch,
-    fieldsIds: fieldMaps.map((fieldMap) => fieldMap.fieldId),
+    fieldsIds,
     filters: validFilters,
   }, "areaName")
 
@@ -89,7 +91,13 @@ async function Content({
       </div>
       <div className="mt-6 bg-secondary rounded-2xl">
         <div className="flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/10">
-          <LicensedAreaDataTable areaData={areasData} className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" />
+          <LicensedAreaDataTable 
+            areaData={areasData} 
+            type="fields"
+            fieldsIds={fieldsIds} 
+            searchParams={search}
+            className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" 
+          />
         </div>
       </div>
     </>

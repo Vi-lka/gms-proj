@@ -86,7 +86,13 @@ async function Content({
       </div>
       <div className="mt-6 bg-secondary rounded-2xl">
         <div className="flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/10">
-          <LicensedAreaDataTable areaData={areaData} className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" />
+          <LicensedAreaDataTable 
+            areaData={areaData} 
+            type="licensedArea" 
+            licensedAreaId={licensedAreaId} 
+            searchParams={search}
+            className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]"
+          />
         </div>
       </div>
     </>

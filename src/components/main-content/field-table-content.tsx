@@ -27,6 +27,11 @@ export default async function FieldTableContent({
   }, "areaName")
 
   return (
-    <LicensedAreaDataTable areaData={result} />
+    <LicensedAreaDataTable 
+      areaData={result} 
+      type='field' 
+      fieldId={fieldId} 
+      searchParams={search}
+    />
   )
 }

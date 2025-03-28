@@ -1,3 +1,4 @@
+import { SessionProvider } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import type React from 'react'
 import { restrictUser } from '~/lib/utils'
@@ -13,8 +14,10 @@ export default async function MainTemplate({
   if (restrictUser(session.user.role, 'content')) redirect('/')
 
   return (
-    <div className='flex flex-col flex-grow' style={{userSelect: session.user.role === "guest" ? "none" : "auto"}}>
-      {children}
-    </div>
+    <SessionProvider session={session}>
+      <div className='flex flex-col flex-grow' style={{userSelect: session.user.role === "guest" ? "none" : "auto"}}>
+        {children}
+      </div>
+    </SessionProvider>
   )
 }

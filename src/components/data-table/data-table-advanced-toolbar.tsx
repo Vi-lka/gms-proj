@@ -57,6 +57,8 @@ interface DataTableAdvancedToolbarProps<TData>
    */
   shallow?: boolean
 
+  childrenAppend?: React.ReactNode
+
   prepend?: React.ReactNode
 
   append?: React.ReactNode
@@ -75,6 +77,7 @@ export function DataTableAdvancedToolbar<TData>({
   shallow = true,
   disabled,
   isPending,
+  childrenAppend,
   children,
   prepend,
   append,
@@ -119,6 +122,7 @@ export function DataTableAdvancedToolbar<TData>({
               disabled={disabled}
             />
             <DataTableViewOptions table={table} />
+            {childrenAppend}
           </div>
         </div>
         <ScrollBar orientation="horizontal" className="z-50" />

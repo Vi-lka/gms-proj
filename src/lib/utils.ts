@@ -3,6 +3,9 @@ import { twMerge } from "tailwind-merge"
 import { type UserRestrictions, type UserRole, type ApproxEnumT, type RelevanceKeys, type MaxValue } from "./types"
 import translateData from "./static/translate-data"
 import { type Accept } from "react-dropzone"
+import * as XLSX from 'xlsx';
+import { type AreaDataExtend } from "~/server/db/schema"
+import { ELEMENTS } from "./static/elements"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -327,4 +330,73 @@ export function getAcceptText(accept: Accept) {
   })
 
   return textArr.join(", ")
+}
+
+export const downloadExcel = (
+  data: Record<string, {name: string, data: unknown[]}>, 
+  fileName: string
+) => {
+  const workbook = XLSX.utils.book_new();
+
+  Object.values(data).forEach(value => {
+    const worksheet = XLSX.utils.json_to_sheet(value.data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, value.name);
+  })
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, `${fileName}.xlsx`);
+};
+
+export const convertDataForExport = (data: AreaDataExtend[]) => {
+
+  const getValue = (value: string | number | null) => {
+    if (value === null) return null
+    if (typeof value === "number") return value
+    return `${value}`
+  }
+
+  const objectsToExport: Record<string, string | number | null>[] = data.map(item => {
+    const samplingDate = item.samplingDate ? formatDate(item.samplingDate) : "";
+    const analysisDate = item.analysisDate ? formatDate(item.analysisDate) : "";
+
+    // Convert elements array to a single object using reduce
+    const elements: Record<string, string | number | null> = Object.keys(ELEMENTS).reduce((acc, element) => {
+      const elementKey = element as keyof typeof ELEMENTS;
+      const value = formatApproxNumber(item[elementKey], item[`${elementKey}Approx`]);
+      return {
+          ...acc,
+          [idToSentenceCase(elementKey)]: getValue(value)
+      };
+    }, {});
+
+    return {
+        [idToSentenceCase("areaName")]: getValue(item.areaName),
+        [idToSentenceCase("fieldName")]: getValue(item.fieldName),
+        [idToSentenceCase("companyName")]: getValue(item.companyName),
+        [idToSentenceCase("bush")]: getValue(item.bush),
+        [idToSentenceCase("hole")]: getValue(item.hole),
+        [idToSentenceCase("plast")]: getValue(item.plast),
+        [idToSentenceCase("horizon")]: getValue(item.horizon),
+        [idToSentenceCase("retinue")]: getValue(item.retinue),
+        [idToSentenceCase("occurrenceInterval")]: getValue(item.occurrenceInterval),
+        [idToSentenceCase("samplingDate")]: samplingDate,
+        [idToSentenceCase("analysisDate")]: analysisDate,
+        [idToSentenceCase("protocol")]: getValue(item.protocol),
+        [idToSentenceCase("protocolUrl")]: getValue(item.protocolUrl),
+        [idToSentenceCase("sampleCode")]: getValue(item.sampleCode),
+        [idToSentenceCase("pHydrogen")]: getValue(item.pHydrogen),
+        [idToSentenceCase("density")]: getValue(item.density),
+        [idToSentenceCase("mineralization")]: getValue(item.mineralization),
+        ...elements,
+        [idToSentenceCase("rigidity")]: getValue(item.rigidity),
+        [idToSentenceCase("alkalinity")]: getValue(item.alkalinity),
+        [idToSentenceCase("electricalConductivity")]: getValue(item.electricalConductivity),
+        [idToSentenceCase("suspendedSolids")]: getValue(item.suspendedSolids),
+        [idToSentenceCase("dryResidue")]: getValue(item.dryResidue),
+        [idToSentenceCase("analysisPlace")]: getValue(item.analysisPlace),
+        [idToSentenceCase("note")]: getValue(item.note),
+    }
+  })
+
+  return objectsToExport
 }

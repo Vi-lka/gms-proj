@@ -12,14 +12,42 @@ import { getAdvancedFilterFields } from './licensed-area-data-table-advanced-fil
 import { DataTableAdvancedToolbar } from '~/components/data-table/data-table-advanced-toolbar';
 import DataTableSearchInput from '~/components/data-table/data-table-search-input';
 import { Separator } from '~/components/ui/separator';
+import DownloadLicensedAreaDataTable from './download-licensed-area-data-table';
+import { type GetAreasDataSchema } from '~/lib/validations/areas-data';
+import { Download } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+
+type ConditionalProps =
+  | {
+      type: "licensedArea",
+      licensedAreaId: string,
+    }
+  | {
+      type: "field",
+      fieldId: string,
+    }
+  | {
+      type: "fields",
+      fieldsIds: string[],
+    };
+
+type LicensedAreaDataTableProps = {
+  areaData: Awaited<ReturnType<typeof getAreasData>>
+  searchParams: GetAreasDataSchema
+  className?: string
+} & ConditionalProps
 
 export default function LicensedAreaDataTable({
   areaData,
-  className
-}: {
-  areaData: Awaited<ReturnType<typeof getAreasData>>,
-  className?: string
-}) {
+  searchParams,
+  className,
+  ...props
+}: LicensedAreaDataTableProps) {
+  const session = useSession();
+
+  const userRole = session.data?.user.role
+  const showDowloadButton = !(!userRole || userRole === "guest" || userRole === "unknown")
+
   const { data, pageCount, error } = areaData;
 
   React.useEffect(() => {
@@ -82,6 +110,18 @@ export default function LicensedAreaDataTable({
             />
             <Separator className='w-0.5 h-8' />
           </>
+        }
+        childrenAppend={
+          showDowloadButton && (
+            <DownloadLicensedAreaDataTable 
+              searchParams={searchParams} 
+              disabled={isPending}
+              className='p-2 h-fit'
+              {...props}
+            >
+              <Download size={16} />
+            </DownloadLicensedAreaDataTable>
+          )
         }
       />
     </DataTable>

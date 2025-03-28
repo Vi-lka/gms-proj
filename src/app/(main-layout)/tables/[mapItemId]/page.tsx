@@ -40,9 +40,11 @@ export default async function MapItemTablePage({
   
   const validFilters = getValidFilters(dataSearch.filters)
 
+  const fieldsIds = fieldMaps.map((fieldMap) => fieldMap.fieldId)
+
   const areasData = await getAreasData({
     ...dataSearch,
-    fieldsIds: fieldMaps.map((fieldMap) => fieldMap.fieldId),
+    fieldsIds,
     filters: validFilters,
   }, "areaName")
   
@@ -83,7 +85,12 @@ export default async function MapItemTablePage({
       </div>
       <div className="mt-6 flex flex-col flex-grow">
         <div className="flex flex-col flex-grow p-8 rounded-xl dark:bg-background/50 shadow-inner border border-foreground/10">
-          <LicensedAreaDataTable areaData={areasData} />
+          <LicensedAreaDataTable 
+            areaData={areasData} 
+            type="fields" 
+            fieldsIds={fieldsIds} 
+            searchParams={search}
+          />
         </div>
       </div>
     </ContentLayout>
