@@ -39,13 +39,12 @@ export default function SearchFilter() {
         </TooltipHelp>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent className='flex items-center gap-2 p-2 md:max-w-96 max-w-64 z-10' alignOffset={-10} sideOffset={4}>
-        <div className='flex flex-col'>
+        <div className='flex flex-col relative'>
           <InputIcon
             value={searchValue ?? ""}
             onChange={(event) => {
               setSearchValue(event.target.value)
             }}
-            type='search' 
             icon={isPending ? Loader : SearchIcon}
             iconProps={{ 
               behavior: 'prepend',
@@ -53,6 +52,17 @@ export default function SearchFilter() {
             }} 
             placeholder='Поиск...'
           />
+          {(searchValue && searchValue.length > 0) && (
+            <Button
+              variant="ghost"
+              className='absolute right-0 top-1/2 -translate-y-1/2 w-fit h-fit p-3 text-muted-foreground z-10'
+              onClick={() => {
+                setSearchValue("")
+              }}
+            >
+              <XIcon size={14} />
+            </Button>
+          )}
         </div>
         <Button 
           variant="ghost"

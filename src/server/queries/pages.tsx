@@ -629,7 +629,7 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
 
       const titleMapItem = mapItem.cluster?.name ?? mapItem.companiesToMapItems[0].company.name
     
-      const areaData = await getAreasData(input, "areaName")
+      const areaData = await getAreasData(input)
 
       const names = {
         fieldName: licensedArea.field.name,

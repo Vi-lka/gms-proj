@@ -213,6 +213,7 @@ export type ElementsWithApproxSchema = z.infer<typeof elementsWithApproxSchema>
 
 export const createAreasDataSchema = elementsWithApproxSchema.extend({
   areaId: z.string().min(1, "Выберите Лицензионный участок"),
+  name: z.string().min(1, "Выберите Лицензионный участок"),
   bush: z.string().nullable(),
   hole: z.string().nullable(),
   plast: z.string().nullable(),

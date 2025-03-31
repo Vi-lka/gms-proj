@@ -6,7 +6,7 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: table for all data
+// TODO: fix auth error "Code has expired"
 // TODO: bug tracker
 // TODO: customers styles (waiting...)
 
@@ -17,8 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+  children
+}: Readonly<{ 
+  children: React.ReactNode
+}>) {
 
   return (
     <html 

@@ -24,7 +24,7 @@ export default async function FieldTableContent({
     ...dataSearch,
     fieldId,
     filters: validFilters,
-  }, "areaName")
+  })
 
   return (
     <LicensedAreaDataTable 

@@ -16,8 +16,7 @@ import { type GetAllQueryParams } from "~/lib/types";
 import { alias } from "drizzle-orm/pg-core";
 
 export async function getAreasData(
-  input: GetAreasDataSchema,
-  searchKey: "id" | "areaName"
+  input: GetAreasDataSchema
 ) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {
@@ -33,38 +32,33 @@ export async function getAreasData(
       const whereConditions: (SQL | undefined)[] = [];
       const whereSearchConditions: (SQL | undefined)[] = [];
 
-      let searchInput: string | null = null
-
-      if (searchKey === "id" && input.id) searchInput = input.id
-      if (searchKey === "areaName" && input.areaName) searchInput = input.areaName
-
-      if (searchInput) {
+      if (input.search) {
         whereSearchConditions.push(or(
-          ilike(areasData.id, `%${searchInput}%`),
-          ilike(areasData.bush, `%${searchInput}%`),
-          ilike(areasData.hole, `%${searchInput}%`),
-          ilike(areasData.plast, `%${searchInput}%`),
-          ilike(areasData.horizon, `%${searchInput}%`),
-          ilike(areasData.retinue, `%${searchInput}%`),
-          ilike(areasData.protocol, `%${searchInput}%`),
-          ilike(areasData.sampleCode, `%${searchInput}%`),
-          ilike(areasData.analysisPlace, `%${searchInput}%`),
-          ilike(licensedAreas.id, `%${searchInput}%`),
-          ilike(licensedAreas.name, `%${searchInput}%`),
-          ilike(fields.id, `%${searchInput}%`),
-          ilike(fields.name, `%${searchInput}%`),
-          ilike(companies.id, `%${searchInput}%`),
-          ilike(companies.name, `%${searchInput}%`),
-          ilike(users.id, `%${searchInput}%`),
-          ilike(users.name, `%${searchInput}%`),
-          ilike(usersUpdated.id, `%${searchInput}%`),
-          ilike(usersUpdated.name, `%${searchInput}%`),
+          ilike(areasData.id, `%${input.search}%`),
+          ilike(areasData.bush, `%${input.search}%`),
+          ilike(areasData.hole, `%${input.search}%`),
+          ilike(areasData.plast, `%${input.search}%`),
+          ilike(areasData.horizon, `%${input.search}%`),
+          ilike(areasData.retinue, `%${input.search}%`),
+          ilike(areasData.protocol, `%${input.search}%`),
+          ilike(areasData.sampleCode, `%${input.search}%`),
+          ilike(areasData.analysisPlace, `%${input.search}%`),
+          ilike(licensedAreas.id, `%${input.search}%`),
+          ilike(licensedAreas.name, `%${input.search}%`),
+          ilike(fields.id, `%${input.search}%`),
+          ilike(fields.name, `%${input.search}%`),
+          ilike(companies.id, `%${input.search}%`),
+          ilike(companies.name, `%${input.search}%`),
+          ilike(users.id, `%${input.search}%`),
+          ilike(users.name, `%${input.search}%`),
+          ilike(usersUpdated.id, `%${input.search}%`),
+          ilike(usersUpdated.name, `%${input.search}%`),
         ));
       }
       if (input.areaId) {
         whereConditions.push(eq(licensedAreas.id, input.areaId));
       }
-      if (searchKey === "id" && input.areaName) {
+      if (input.areaName) {
         const areasInputs = input.areaName.split(',');
         whereConditions.push(or(
           ilike(licensedAreas.name, `%${input.areaName}%`),

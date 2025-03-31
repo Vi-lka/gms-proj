@@ -143,7 +143,9 @@ export const searchAreasData = {
   sort: getSortingStateParser<AreaDataExtend>().withDefault([
     { id: "companyName", desc: false }
   ]),
+  search: parseAsString.withDefault(""),
   id: parseAsString.withDefault(""),
+  name: parseAsString.withDefault(""),
   areaName: parseAsString.withDefault(""),
   areaId: parseAsString.withDefault(""),
   fieldId: parseAsString.withDefault(""),

@@ -73,6 +73,7 @@ export const areasData = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
+    name: varchar("name", { length: 255 }).notNull(),
     areaId: varchar("area_id", { length: 255 })
       .references(() => licensedAreas.id, {onDelete: 'cascade'}).notNull(),
     bush: text("bush"),

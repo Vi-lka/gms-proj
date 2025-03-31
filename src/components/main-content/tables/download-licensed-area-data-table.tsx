@@ -20,6 +20,9 @@ type ConditionalProps =
   | {
       type: "fields",
       fieldsIds: string[],
+    }
+  | {
+      type: "all",
     };
 
 type DownloadLicensedAreaDataTableProps = {
@@ -47,7 +50,7 @@ export default function DownloadLicensedAreaDataTable({
         areaId: props.type === "licensedArea" ? props.licensedAreaId : "",
         fieldId: props.type === "field" ? props.fieldId : "",
         fieldsIds: props.type === "fields" ? props.fieldsIds : null,
-      }, "areaName")
+      })
 
       const { data, error } = areaData;
 
@@ -77,9 +80,9 @@ export default function DownloadLicensedAreaDataTable({
         const companyName = data[0]?.companyName ?? "Компания"
         fileName += " " + `(${companyName})`
 
-        const uniqueFields = data.map((field) => ({
-          id: field.fieldId,
-          name: field.fieldName
+        const uniqueFields = data.map((item) => ({
+          id: item.fieldId,
+          name: item.fieldName
         })).filter((value, index, array) => 
           index === array.findIndex((t) => t.id === value.id)
         );
@@ -91,6 +94,25 @@ export default function DownloadLicensedAreaDataTable({
           dataToDownload[key] = {
             name,
             data: convertDataForExport(thisFieldData)
+          }
+        })
+      }
+
+      if (props.type === "all") {
+        const uniqueCompanies = data.map((item) => ({
+          id: item.companyId,
+          name: item.companyName
+        })).filter((value, index, array) => 
+          index === array.findIndex((t) => t.id === value.id)
+        );
+
+        uniqueCompanies.forEach((company) => {
+          const key = company.id
+          const name = company.name
+          const thisCompanyData = data.filter((item) => item.companyId === company.id)
+          dataToDownload[key] = {
+            name,
+            data: convertDataForExport(thisCompanyData)
           }
         })
       }

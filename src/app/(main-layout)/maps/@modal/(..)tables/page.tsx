@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton"
 import LicensedAreaDataTable from "~/components/main-content/tables/licensed-area-data-table"
@@ -8,19 +7,18 @@ import { getValidFilters } from "~/lib/data-table-func"
 import { type SearchParams } from "~/lib/types"
 import { searchAreasDataCache } from "~/lib/validations/search-params"
 import { auth } from "~/server/auth"
-import { getAreasData } from "~/server/queries/area-data"
-import { getMapItemPage } from "~/server/queries/pages"
+import { getAreasData, getCompanyAreasDataCounts, getFieldAreasDataCounts, getLicensedAreaDataCounts } from "~/server/queries/area-data"
+import { getAllCompanies } from "~/server/queries/companies"
+import { getAllFields } from "~/server/queries/fields"
+import { getAllLicensedAreas } from "~/server/queries/licensed-areas"
 
 export default async function MapItemTableModalPage({
-  params,
   searchParams
 }: {
-  params: Promise<{ mapItemId: string }>,
   searchParams: Promise<SearchParams>
 }) {
   const session = await auth()
 
-  const mapItemId = (await params).mapItemId
   return (
     <InterseptingModal 
       modal={false} 
@@ -28,7 +26,7 @@ export default async function MapItemTableModalPage({
       className="h-[calc(100vh-60px)]"
       userSelect={session?.user.role === "guest" ? "none" : "auto"}
     >
-      <Suspense key={mapItemId} fallback={
+      <Suspense fallback={
         <>
           <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
             <Skeleton className='w-1/2 h-5' />
@@ -45,58 +43,51 @@ export default async function MapItemTableModalPage({
           </div>
         </>
       }>
-        <Content mapItemId={mapItemId} searchParams={searchParams} />
+        <Content searchParams={searchParams} />
       </Suspense>
     </InterseptingModal>
   )
 }
 
 async function Content({
-  mapItemId,
   searchParams,
 }: {
-  mapItemId: string
   searchParams: Promise<SearchParams>
 }) {
-  const result = await getMapItemPage(mapItemId, false)
-  
-  // handle errors by next.js error or not found pages
-  if (result.error !== null) {
-    if (result.error === "Not Found") notFound();
-    else throw new Error(result.error);
-  };
-
-  const { title, fieldMaps } = result.data
-
   const searchParamsRes = await searchParams
   const search = searchAreasDataCache.parse(searchParamsRes)
   
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {fieldsIds: unused, ...dataSearch} = search
-  
-  const validFilters = getValidFilters(dataSearch.filters)
-
-  const fieldsIds = fieldMaps.map((fieldMap) => fieldMap.fieldId)
+  const validFilters = getValidFilters(search.filters)
 
   const areasData = await getAreasData({
-    ...dataSearch,
-    fieldsIds,
+    ...search,
     filters: validFilters,
   })
+  const companyCounts = await getCompanyAreasDataCounts()
+  const fieldCounts = await getFieldAreasDataCounts()
+  const licensedAreaCounts = await getLicensedAreaDataCounts()
+  const companies = await getAllCompanies()
+  const fields = await getAllFields()
+  const licensedAreas = await getAllLicensedAreas()
 
   return (
     <>
       <div className='flex gap-0.5 justify-center items-center text-center line-clamp-1'>
-        <p className="w-1/2 line-clamp-1">{title}</p>
+        <p className="w-1/2 line-clamp-1">Все данные</p>
       </div>
       <div className="mt-6 bg-secondary rounded-2xl">
         <div className="flex flex-col flex-grow sm:p-8 p-4 rounded-2xl dark:bg-background/50 shadow-inner border border-foreground/10">
           <LicensedAreaDataTable 
+            type="all"
+            enableFilters
             areaData={areasData} 
-            type="fields"
-            fieldsIds={fieldsIds} 
+            companyCounts={companyCounts}
+            fieldCounts={fieldCounts}
+            licensedAreaCounts={licensedAreaCounts}
+            companies={companies}
+            fields={fields}
+            licensedAreas={licensedAreas}
             searchParams={search}
-            className="sm:max-h-[calc(100vh-420px)] max-h-[calc(100vh-490px)]" 
           />
         </div>
       </div>

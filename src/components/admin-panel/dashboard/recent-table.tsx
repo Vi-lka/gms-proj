@@ -43,7 +43,7 @@ export default function RecentTable({
       case "licensedArea":
         return router.push(`/dashboard/licensed-areas?name=${id}`);
       case "areaData":
-        return router.push(`/dashboard/areas-data?id=${id}`);
+        return router.push(`/dashboard/areas-data?search=${id}`);
       case "fieldMap":
         return router.push(`/dashboard/fmaps?name=${id}`);
       case "polygon":

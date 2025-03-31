@@ -15,11 +15,11 @@ import { type getAllCompanies } from '~/server/queries/companies'
 import { type getAllFields } from '~/server/queries/fields'
 import { type getAllLicensedAreas } from '~/server/queries/licensed-areas'
 import { getAdvancedFilterFields } from './areas-data-table-advanced-filter-fields'
-import DataTableSearchInput from '~/components/data-table/data-table-search-input'
 import { Separator } from '~/components/ui/separator'
 import { DataTableAdvancedToolbar } from '~/components/data-table/data-table-advanced-toolbar'
 import { DataTableFacetedFilter } from '~/components/data-table/data-table-faceted-filter'
 import { idToSentenceCase } from '~/lib/utils'
+import SearchInput from '~/components/ui/special/search-input'
 
 interface AreasDataTableProps {
   promises: Promise<
@@ -83,13 +83,7 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
     [setRowAction]
   )
 
-  let filterFields: DataTableFilterField<AreaDataExtend>[] = [
-    {
-      id: "id",
-      label: "Название",
-      placeholder: "Поиск...",
-    }
-  ]
+  let filterFields: DataTableFilterField<AreaDataExtend>[] = []
   if (errorCompanies === null) {
     filterFields = [
       ...filterFields,
@@ -133,7 +127,7 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
     ]
   }
 
-  const facetedFilterFields = filterFields.slice(1);
+  const facetedFilterFields = filterFields
 
   const advancedFilterFields = React.useMemo(
     () => getAdvancedFilterFields({ disabled: isPending }),
@@ -170,11 +164,11 @@ export default function AreasDataTable({ promises }: AreasDataTableProps) {
           draggableList
           prepend={
             <>
-              <DataTableSearchInput
-                key="id"
-                table={table}
-                columnId="id"
+              <SearchInput
+                key="search"
                 placeholder="Поиск..."
+                isPending={isPending}
+                startTransition={startTransition}  
               />
               <Separator className='w-0.5 h-8' />
             </>

@@ -29,7 +29,7 @@ export default function LicensedAreaSelect<TData extends FieldValues>({
   label?: React.ReactNode,
   placeholder?: string,
   onOpenChange?: (open: boolean) => void,
-  onSelect?: ((value: string) => void),
+  onSelect?: ((item: {value: string, label: string} | null) => void),
   searchParams?: LicensedAreasSearchParamsT,
   className?: string,
 }) {
@@ -42,7 +42,7 @@ export default function LicensedAreaSelect<TData extends FieldValues>({
     })
   );
 
-  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
+  if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full max-w-72'/>
   if (error) {
     toast.error(error.message)
     return null;
@@ -92,7 +92,7 @@ export default function LicensedAreaSelect<TData extends FieldValues>({
                         {shouldDirty: true, shouldTouch: true, shouldValidate: true}
                       )
                       setOpen(false)
-                      if (onSelect) onSelect(item.value === field.value ? "" : item.value)
+                      if (onSelect) onSelect(item.value === field.value ? null : item)
                     }}
                   >
                     <div className='flex flex-col'>

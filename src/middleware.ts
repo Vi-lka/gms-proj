@@ -1,13 +1,21 @@
-// import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
  
 export default function middleware(
-  // request: NextRequest
+  request: NextRequest
 ) {
-  // const session = request.auth
-  
-  // if (session?.user && (session.user.role !== "admin") && request.nextUrl.pathname.startsWith('/dashboard')) {
-    // return NextResponse.redirect(new URL('/', request.url))
-  // }
+  const url = new URL(request.url);
+  const origin = url.origin;
+  const pathname = url.pathname;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-url', request.url);
+  requestHeaders.set('x-origin', origin);
+  requestHeaders.set('x-pathname', pathname);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    }
+});
 }
 
 export const config = {

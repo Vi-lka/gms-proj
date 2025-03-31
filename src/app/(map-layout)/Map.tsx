@@ -11,6 +11,7 @@ import MapItemsFilters from '~/components/map/filters/map-items-filters'
 import MapItemDrawer from '~/components/map/map-item-info/map-item-drawer'
 import { type getProfitability } from '~/server/queries/profitability'
 import { toast } from 'sonner'
+import MapOpenTable from '~/components/map/map-open-table';
 
 const MapStage = dynamic(() => import('~/components/map/map-stage'), {
   ssr: false,
@@ -70,7 +71,12 @@ export default function Map({ promises }: MapProps) {
         <MapItemDrawer />
         <MapStage
           mapData={mapData}
-          actions={<MapItemsFilters />}
+          actions={
+            <>
+              <MapItemsFilters />
+              <MapOpenTable />
+            </>
+          }
           className='w-full'
         >
           <MapItems data={data} profitability={profitability} />

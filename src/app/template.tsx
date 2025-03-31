@@ -15,9 +15,7 @@ export default async function MainTemplate({
 
   return (
     <SessionProvider session={session}>
-      <div className='flex flex-col flex-grow' style={{userSelect: session.user.role === "guest" ? "none" : "auto"}}>
-        {children}
-      </div>
+      {children}
     </SessionProvider>
   )
 }

@@ -25,7 +25,7 @@ export default async function AreasDataPage(props: PageProps) {
   const validFilters = getValidFilters(search.filters)
 
   const promises = Promise.all([
-    getAreasData({ ...search, filters: validFilters }, "id"),
+    getAreasData({ ...search, filters: validFilters }),
     getCompanyAreasDataCounts(),
     getFieldAreasDataCounts(),
     getLicensedAreaDataCounts(),

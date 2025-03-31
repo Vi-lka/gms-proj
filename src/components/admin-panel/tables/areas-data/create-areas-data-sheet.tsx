@@ -82,6 +82,13 @@ export default function CreateAreasDataSheet({
                       {shouldDirty: true, shouldTouch: true, shouldValidate: true}
                     )
                   }}
+                  onSelect={(item) => {
+                    if (item !== null) form.setValue(
+                      'name', 
+                      item.label, 
+                      {shouldDirty: true, shouldTouch: true, shouldValidate: true}
+                    )
+                  }}
                   className='w-72'
                 />
                 <InputField
