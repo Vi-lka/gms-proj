@@ -91,7 +91,7 @@ export async function getMapItems(
                 )
             )
           ) : undefined,
-          (input?.comapniesIds && input.comapniesIds.length > 0) ? (
+          (input?.companiesIds && input.companiesIds.length > 0) ? (
             inArray(
               mapItems.id,
               db
@@ -100,7 +100,7 @@ export async function getMapItems(
                 .where(
                   inArray(
                     companiesToMapItems.companyId,
-                    input.comapniesIds
+                    input.companiesIds
                   ),
                 )
             )

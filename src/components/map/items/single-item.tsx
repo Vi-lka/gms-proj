@@ -14,7 +14,7 @@ import { Separator } from '~/components/ui/separator'
 import useOutsideClick from '~/hooks/use-outside-click'
 import { Badge } from '~/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
-import { useElementsSearch, useMapItemsSearch } from '../filters/hooks'
+import { useMapItemsSearch } from '../filters/hooks'
 
 export default function SingleItem({
   data,
@@ -34,9 +34,7 @@ export default function SingleItem({
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
   const ref = useOutsideClick(100, handleClickOutside);
-
-  const [elementsSearch] = useElementsSearch()
-  const [{elements: elementsComparison}] = useMapItemsSearch()
+  const [{elements: elementsComparison, elementsView}] = useMapItemsSearch()
 
   const { width, height, x, y } = data
 
@@ -92,7 +90,7 @@ export default function SingleItem({
                 {data.maxElements.filtered.map((value, index) => {
 
                   const inSearch = 
-                  elementsSearch?.some(element => element === value.key)
+                  elementsView?.some(element => element === value.key)
                   ??
                   elementsComparison?.some(item => item.element === value.key)
 

@@ -4,7 +4,7 @@ import { Button } from '~/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '~/components/ui/dropdown-menu'
 import { cn, idToSentenceCase } from '~/lib/utils'
-import { useElementsSearch } from './hooks'
+import { useMapItemsSearch } from './hooks'
 import { ELEMENTS } from '~/lib/static/elements'
 import TooltipHelp from '~/components/ui/special/tooltip-help'
 
@@ -13,24 +13,36 @@ export default function ElementsViewFilter() {
 
   const [isPending, startTransition] = React.useTransition()
 
-  const [elementsSearch, setElementsSearch] = useElementsSearch()
+  const [{elementsView}, setSearchFilter] = useMapItemsSearch()
 
   const onSelect = (element: ELEMENTS) => {
     startTransition(async () => {
-      await setElementsSearch(old => {
-        if (!old) return [element]
-        if (old.includes(element)) {
-          if (old.length === 1) return null
-          return old.filter(item => item !== element)
+      await setSearchFilter(old => {
+        if (!old.elementsView) return {
+          ...old,
+          elementsView: [element]
         }
-        return [...old, element]
+        if (old.elementsView.includes(element)) {
+          if (old.elementsView.length === 1) return null
+          return {
+            ...old,
+            elementsView: old.elementsView.filter(item => item !== element)
+          }
+        }
+        return {
+          ...old,
+          elementsView: [...old.elementsView, element]
+        }
       })
     })
   }
 
   const onClear = () => {
     if (!isPending) startTransition(async () => {
-      await setElementsSearch(null)
+      await setSearchFilter((old) =>({
+        ...old,
+        elementsView: null
+      }))
     })
   }
 
@@ -64,7 +76,7 @@ export default function ElementsViewFilter() {
               // This is because props (like disabled) or conditional rendering for this button 
               // somehow breaks DropdownMenuSub closing on hovering other sub menus.
               // So we just hide it with css.
-              (!elementsSearch || elementsSearch.length === 0) && 'hidden',
+              (!elementsView || elementsView.length === 0) && 'hidden',
               isPending && 'cursor-default pointer-events-none'
             )}
             onClick={onClear}
@@ -86,7 +98,7 @@ export default function ElementsViewFilter() {
                   <Check
                     className={cn(
                       "ml-auto size-4 shrink-0",
-                      elementsSearch?.includes(element) ? "opacity-100" : "opacity-0"
+                      elementsView?.includes(element) ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

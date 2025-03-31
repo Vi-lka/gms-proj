@@ -81,9 +81,10 @@ export type ElementsSearchSchema = z.infer<typeof elementsSearchSchema>;
 
 export const searchParamsMapItems = {
   search: parseAsString,
-  comapniesIds: parseAsArrayOf(parseAsString),
+  companiesIds: parseAsArrayOf(parseAsString),
   // eslint-disable-next-line @typescript-eslint/unbound-method
   elements: parseAsArrayOf(parseAsJson(elementsSearchSchema.parse)),
+  elementsView: parseAsArrayOf(parseAsStringEnum<ELEMENTS>(Object.values(ELEMENTS)))
 }
 export const loadSearchParamsMapItems = createLoader(searchParamsMapItems)
 export const searchParamsMapItemsCache = createSearchParamsCache(searchParamsMapItems)

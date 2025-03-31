@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '~/components/ui/button'
-import { useElementsSearch, useMapItemsSearch } from './hooks'
+import { useMapItemsSearch } from './hooks'
 import { Loader, XIcon } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { useSearchParams } from 'next/navigation'
@@ -14,18 +14,17 @@ export default function ClearFiltersButton({
   className?: string
 }) {
   const searchParams = useSearchParams()
-  const [, setElementsSearch] = useElementsSearch()
   const [, setMapItemsSearch] = useMapItemsSearch()
 
   const [isPending, startTransition] = React.useTransition()
 
   const onClear = async () => {
     startTransition(async () => {
-      await setElementsSearch(null)
       await setMapItemsSearch({
         search: null,
         elements: null,
-        comapniesIds: null
+        companiesIds: null,
+        elementsView: null
       })
     })
   }

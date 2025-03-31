@@ -4,17 +4,23 @@ import { Layer } from 'react-konva';
 import { mapContainerDimensions, selectedItemAtom, stageAtom } from '~/lib/atoms/main';
 import getIntersections from '~/lib/intersections/get-intersections';
 import valueFromWindowWidth from '~/lib/intersections/valueFromWindowWidth';
-import { type MapItemT } from '~/lib/types'
 import GroupItem from './items/group-item';
 import SingleItem from './items/single-item';
 import { cn } from '~/lib/utils';
 import { useRouter } from 'next/navigation';
+import { type getMapItems } from '~/server/queries/map';
+import { type getProfitability } from '~/server/queries/profitability';
+import { useMapItems } from './filters/hooks';
 
 export default function MapItems({
-  items
+  data,
+  profitability
 }: {
-  items: MapItemT[]
+  data: Awaited<ReturnType<typeof getMapItems>>['data'], 
+  profitability: Awaited<ReturnType<typeof getProfitability>>['data']
 }) {
+  const items = useMapItems(data, profitability)
+
   const router = useRouter();
 
   const stage = useAtomValue(stageAtom);

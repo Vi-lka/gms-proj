@@ -1,17 +1,12 @@
 "use client"
 
 import React from 'react'
-import { DEFAULT_ITEM_SIZE } from '~/lib/intersections/get-intersections'
-import { type MaxValue, type MapItemT } from '~/lib/types'
 import { type getMapItems } from '~/server/queries/map'
 import { type getMap } from '~/server/queries/map-svg'
 import dynamic from 'next/dynamic';
 import useElementDimensions from '~/hooks/use-ellement-dimensions'
 import { useSetAtom } from 'jotai'
 import { mapContainerDimensions } from '~/lib/atoms/main'
-import { useElementsSearch, useMapItemsSearch } from '~/components/map/filters/hooks'
-import { type Profitability, type AreaData } from '~/server/db/schema'
-import { extractKeys, findMaxValuesByRelevance } from '~/lib/utils'
 import { type getProfitability } from '~/server/queries/profitability'
 import { toast } from 'sonner'
 
@@ -73,85 +68,6 @@ export default function Map({ promises }: MapProps) {
     }
   }, [profitabilityError])
 
-  const [elementsSearch] = useElementsSearch()
-  
-  const [{elements: elementsComparison}] = useMapItemsSearch()
-  
-  const getMaxValuesByRelevance = React.useCallback(
-    (areasData: AreaData[]) => {
-      if (!profitability[0]) return {
-        original: [],
-        filtered: []
-      };
-
-      const filteredAreasData = !!elementsSearch && elementsSearch.length > 0
-        ? extractKeys(areasData, elementsSearch)
-        : areasData
-
-      const original = findMaxValuesByRelevance(areasData, profitability[0])
-      const filtered = findMaxValuesByRelevance(filteredAreasData, profitability[0])
-
-      return {
-        original,
-        filtered,
-      }
-    },
-    [elementsSearch, profitability]
-  )
-
-  const getFirstFiveMaxValues = React.useCallback(
-    (maxValues: {
-      original: MaxValue<Profitability>[],
-      filtered: MaxValue<Profitability>[],
-    }) => {
-      const original = maxValues.original.splice(0, 5).sort((a, b) => b.weightedValue - a.weightedValue)
-      const firstFiveMaxValues = maxValues.filtered.slice(0, 5);
-
-      if (elementsComparison && elementsComparison.length > 0) {
-        elementsComparison.forEach((comparison, searchIndx) => {
-          const index = maxValues.filtered.findIndex(item => item.key === comparison.element)
-          if (index > 5 && !!maxValues.filtered[index]) {
-            firstFiveMaxValues.splice(4 - searchIndx, 1, maxValues.filtered[index])
-          }
-        })
-
-        firstFiveMaxValues.sort((a, b) => b.weightedValue - a.weightedValue);
-      }
-
-      return {
-        original,
-        filtered: firstFiveMaxValues
-      }
-    },
-    [elementsComparison]
-  )
-
-  const itemsData: MapItemT[] = React.useMemo(
-    () => data.map((item) => {
-
-      const maxValues = getMaxValuesByRelevance(item.areasData)
-
-      const firstFiveMaxValues = getFirstFiveMaxValues(maxValues);
-
-      return {
-        ...item,
-        companies: item.companiesToMapItems.map(ctmi => {
-          const companyFields = item.fields.filter(field => field.companyId === ctmi.companyId)
-          return {
-            ...ctmi.company,
-            fields: companyFields
-          }
-        }).sort((a, b) => a.name.localeCompare(b.name)),
-        maxElements: firstFiveMaxValues,
-        x: item.xPos,
-        y: item.yPos,
-        width: DEFAULT_ITEM_SIZE.width,
-        height: DEFAULT_ITEM_SIZE.height,
-      }
-    }),
-    [data, getFirstFiveMaxValues, getMaxValuesByRelevance]
-  );
-
   return (
     <div className='w-full h-full flex flex-col gap-2 flex-grow'>
       <MapToolbarAdmin />
@@ -161,7 +77,7 @@ export default function Map({ promises }: MapProps) {
           actions={<MapItemsActionsAdmin />}
           className='w-full'
         >
-          <MapItemsAdmin items={itemsData} />
+          <MapItemsAdmin data={data} profitability={profitability} />
         </MapStage>
       </div>
     </div>

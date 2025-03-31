@@ -13,7 +13,7 @@ import type {
 import { cn } from '~/lib/utils';
 import { Layer, Stage } from 'react-konva';
 import { type MapDataExtend } from '~/server/db/schema';
-import MapMainImage from './map-main-image';
+import { MapMainImage } from './map-main-image';
 
 export default function MapStage({
   mapData,

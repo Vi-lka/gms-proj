@@ -8,7 +8,6 @@ import SignInForm from "~/components/auth/sign-in";
 import { restrictUser } from "~/lib/utils";
 import { Ban } from "lucide-react";
 import Navbar from "~/components/main-content/navbar";
-import { searchParamsMapItemsCache } from "~/lib/validations/search-params";
 import DefaultLoading from "~/components/loadings/default";
 import { getProfitability } from "~/server/queries/profitability";
 
@@ -24,12 +23,10 @@ export default async function HomePage(props: {
   const providers = Object.values(providerMap)
 
   if (!session?.user) return <SignInForm providers={providers} callbackUrl={searchParams.callbackUrl} />
-
-  const search = searchParamsMapItemsCache.parse(searchParams)
   
   if (!restrictUser(session.user.role, "content")) {
     const promises = Promise.all([
-      getMapItems(search),
+      getMapItems(),
       getMap(),
       getProfitability()
     ])
@@ -38,9 +35,7 @@ export default async function HomePage(props: {
       <main className="min-h-screen flex flex-col overflow-hidden">
         <Navbar className="absolute bg-background/60" />
         <div className="flex flex-col flex-grow">
-          <React.Suspense
-            fallback={<DefaultLoading />}
-          >
+          <React.Suspense fallback={<DefaultLoading />}>
             <Map promises={promises} />
           </React.Suspense>
         </div>

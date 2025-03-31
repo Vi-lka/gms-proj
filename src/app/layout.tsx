@@ -6,7 +6,7 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: export tables (and printing?)
+// TODO: table for all data
 // TODO: bug tracker
 // TODO: customers styles (waiting...)
 

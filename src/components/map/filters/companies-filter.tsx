@@ -17,18 +17,18 @@ export default function CompaniesFilter() {
 
   const [isPending, startTransition] = React.useTransition()
 
-  const [{comapniesIds}, setSearchFilter] = useMapItemsSearch()
+  const [{companiesIds}, setSearchFilter] = useMapItemsSearch()
 
   const onSelect = (companyId: string) => {
     startTransition(async () => {
       await setSearchFilter((old) => {
-        if (!old.comapniesIds) return {
+        if (!old.companiesIds) return {
           ...old,
-          comapniesIds: [companyId]
+          companiesIds: [companyId]
         }
         return {
           ...old,
-          comapniesIds: old.comapniesIds?.includes(companyId) ? old.comapniesIds.filter(item => item !== companyId) : [...old.comapniesIds, companyId]
+          companiesIds: old.companiesIds?.includes(companyId) ? old.companiesIds.filter(item => item !== companyId) : [...old.companiesIds, companyId]
         }
       })
     })
@@ -38,7 +38,7 @@ export default function CompaniesFilter() {
     if (!isPending) startTransition(async () => {
       await setSearchFilter((old) => ({
         ...old,
-        comapniesIds: null,
+        companiesIds: null,
       }))
     })
   }
@@ -91,7 +91,7 @@ export default function CompaniesFilter() {
               // This is because props (like disabled) or conditional rendering for this button 
               // somehow breaks DropdownMenuSub closing on hovering other sub menus.
               // So we just hide it with css.
-              (!comapniesIds || comapniesIds.length === 0) && 'hidden',
+              (!companiesIds || companiesIds.length === 0) && 'hidden',
               isPending && 'cursor-default pointer-events-none'
             )}
             onClick={onClear}
@@ -114,7 +114,7 @@ export default function CompaniesFilter() {
                   <Check
                     className={cn(
                       "ml-auto size-4 shrink-0",
-                      comapniesIds?.includes(company.value) ? "opacity-100" : "opacity-0"
+                      companiesIds?.includes(company.value) ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

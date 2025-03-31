@@ -6,13 +6,16 @@ import { Image as KonvaImage } from 'react-konva';
 import { useImage } from 'react-konva-utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { mainImageAtom, mapContainerDimensions } from '~/lib/atoms/main';
+import { toast } from 'sonner';
 
-export default function MapMainImage({
+export const MapMainImage = React.memo(function MapMainImage({
   data
 }: {
   data: MapDataExtend | null,
 }) {
-  const [image] = useImage(data?.svgUrl ?? '/images/Russia-Map.svg');
+  const imageUrl = React.useMemo(() => data?.svgUrl ?? '/images/Russia-Map.svg', [data?.svgUrl])
+
+  const [image, status] = useImage(imageUrl);
 
   const { width: windowW, height: windowH } = useAtomValue(mapContainerDimensions);
 
@@ -67,7 +70,11 @@ export default function MapMainImage({
     }
   }, [windowW, windowH, image, setMainImage]);
 
+  React.useEffect(() => {
+    if (status === "failed") toast.error("Не удалось загрузить изображение")
+  }, [status])
+
   return (
     <KonvaImage x={pos.x} y={pos.y} image={image} />
   )
-}
+})
