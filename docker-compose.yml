@@ -111,7 +111,6 @@ volumes:
   gms-proj-data:
   minio_storage:
   gms_next_cache:
-    external: true
 
 networks:
   gms-proj-net:
