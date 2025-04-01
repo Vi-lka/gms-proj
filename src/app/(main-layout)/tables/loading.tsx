@@ -5,7 +5,7 @@ import { ContentLayout } from '~/components/main-content/content-layout'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '~/components/ui/breadcrumb'
 import { Skeleton } from '~/components/ui/skeleton'
 
-export default function LoadingMapItemTablePage() {
+export default function LoadingMainTablePage() {
   return (
     <ContentLayout container={false}>
       <Breadcrumb>

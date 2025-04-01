@@ -20,7 +20,7 @@ export default function MapOpenTable() {
                   "backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary bg-background/60"
                 )}
               >
-                <Table2 className='aspect-square opacity-85'/>
+                <Table2 className='aspect-square opacity-90'/>
               </Button>
             </TooltipTrigger>
           </Link>

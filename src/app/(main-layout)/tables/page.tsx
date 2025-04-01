@@ -14,7 +14,7 @@ import { getAllCompanies } from '~/server/queries/companies'
 import { getAllFields } from '~/server/queries/fields'
 import { getAllLicensedAreas } from '~/server/queries/licensed-areas'
 
-export default async function TablesPage({
+export default async function MainTablePage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>

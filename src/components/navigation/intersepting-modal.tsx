@@ -8,13 +8,17 @@ import { cn } from '~/lib/utils'
 
 export default function InterseptingModal({
   title,
+  open = true,
+  onOpenChange,
   children,
   modal = false,
   backUrl,
   className,
   userSelect = "auto"
 }: {
-  title: React.ReactNode
+  title: React.ReactNode,
+  open?: boolean,
+  onOpenChange?: (open: boolean) => void
   children: React.ReactNode
   modal?: boolean
   backUrl?: string
@@ -23,13 +27,14 @@ export default function InterseptingModal({
 }) {
   const router = useRouter()
 
-  const handleOpenChange = () => {
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange?.(open)
     if (backUrl) router.push(backUrl)
     else router.back()
   }
 
   return (
-    <Drawer modal={modal} open={true} onOpenChange={handleOpenChange}>
+    <Drawer modal={modal} open={open} onOpenChange={handleOpenChange}>
       <DrawerContent 
         className={cn('w-full flex flex-col flex-grow', className)}
         style={{ userSelect }}
