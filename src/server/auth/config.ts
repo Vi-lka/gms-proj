@@ -5,6 +5,7 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import { type Provider } from "next-auth/providers";
 import Yandex from "next-auth/providers/yandex";
+import Google from "next-auth/providers/google";
 import { env } from "~/env";
 import { type UserRole } from "~/lib/types";
 
@@ -31,6 +32,12 @@ const providers: Provider[] = [
       return { ...profile, name: profile.real_name, email: profile.default_email, role: (profile as any).role ?? 'unknown' }
     }
   }),
+  Google({
+    profile(profile) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+      return { ...profile, id: profile.sub, emailVerified: profile.email_verified, role: profile.role ?? 'unknown' }
+    }
+  }),
 ]
 
 export const providerMap = providers.map((provider) => {
@@ -52,9 +59,10 @@ export const authConfig = {
   secret: env.AUTH_SECRET,
   providers,
   trustHost: true,
-  // pages: {
-    // signIn: "/sign-in"
-  // },
+  pages: {
+    error: "/auth-error",
+    signIn: "/sign-in",
+  },
   callbacks: {
     // async jwt({ token, user }) {
     //   if (user) {

@@ -14,6 +14,7 @@ export const defaultValuesElements: ElementEntry[] = Object.values(ELEMENTS).map
 const elementsObj: ElementsWithApproxSchema = Object.assign({}, ...defaultValuesElements);
 
 const defaultValues: CreateAreasDataSchema = {
+    name: "",
     areaId: "",
     bush: "",
     hole: "",

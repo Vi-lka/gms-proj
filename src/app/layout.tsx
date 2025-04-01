@@ -6,7 +6,6 @@ import Providers from "~/components/providers/Providers";
 import { env } from "~/env";
 import { ReactScan } from "~/components/react-scan";
 
-// TODO: fix auth error "Code has expired"
 // TODO: bug tracker
 // TODO: customers styles (waiting...)
 

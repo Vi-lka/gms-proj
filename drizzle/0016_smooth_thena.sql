@@ -1,0 +1,1 @@
+ALTER TABLE "gms_proj_areas_data" ALTER COLUMN "name" DROP NOT NULL;

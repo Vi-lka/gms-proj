@@ -6,6 +6,7 @@ import { IconByName, Icons } from '~/components/icons';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import revalidateTag from '~/server/actions/revalidateTag';
+import AuthErrorCard from './auth-error-card';
 
 interface SignInFormProps extends React.HTMLAttributes<HTMLDivElement> {
   providers: {
@@ -60,6 +61,7 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
             Выберите предпочитаемый метод
           </p>
         </div>
+        <AuthErrorCard />
         <div className={cn("grid gap-6", className)} {...otherProps}>
           {props.providers.map((provider) => (
             <Button 
@@ -72,7 +74,7 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
               {isLoading ? (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <IconByName name={provider.id} className="mr-2 h-4 w-4" />
+                <IconByName name={provider.id} className="text-foreground stroke-foreground mr-2 h-4 w-4" />
               )}{" "}
               {provider.name}
             </Button>
