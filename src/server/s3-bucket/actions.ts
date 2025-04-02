@@ -11,6 +11,7 @@ import { env } from "~/env"
 import { db } from "../db"
 import { files } from "../db/schema"
 import { eq, inArray } from "drizzle-orm"
+import * as Sentry from "@sentry/nextjs";
 
 /**
  * Gets presigned urls for uploading files to S3
@@ -23,6 +24,7 @@ export const createPresignedUrls = async (files: FileT[]) => {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createPresignedUrls, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -67,6 +69,8 @@ export const createPresignedUrls = async (files: FileT[]) => {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -85,6 +89,7 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: saveFileInfoInDB, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -113,6 +118,8 @@ export const saveFileInfoInDB = async (presignedUrls: PresignedUrlT[]) => {
       throw new Error("Файлы не найдены", { cause: saveFilesInfo })
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -126,6 +133,7 @@ export async function deleteFile(id: string) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteFile, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -161,6 +169,8 @@ export async function deleteFile(id: string) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -174,6 +184,7 @@ export async function deleteFiles(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteFiles, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -209,6 +220,8 @@ export async function deleteFiles(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

@@ -13,6 +13,7 @@ import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
 import { alias } from "drizzle-orm/pg-core";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getFields(
   input: GetFieldsSchema,
@@ -111,6 +112,7 @@ export async function getFields(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -153,6 +155,7 @@ export async function getCompanyFieldsCounts(id?: string) {
         )
       return data
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return {} as Record<Field["companyId"], number>
     }
@@ -184,6 +187,7 @@ export async function getAllFields(params?: GetAllQueryParams) {
 
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], error: getErrorMessage(err) }
     }
@@ -194,8 +198,9 @@ export async function getAllFields(params?: GetAllQueryParams) {
   // I`am not sure if 'serializeWhere' will work with any 'where', so use keys just in case
   try {
     whereKey = serializeWhere(params?.where)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     if (params) whereKey = params.keys.join(',')
   }
 

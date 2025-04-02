@@ -13,6 +13,7 @@ import { Loader } from 'lucide-react'
 import CompanySelect from '../inputs/company-select'
 import { createMapItem } from '~/server/actions/mapItems'
 import FieldsSelect from '../inputs/fields-select'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 export default function CreateMapItemForm({
   mapItem,
@@ -44,8 +45,7 @@ export default function CreateMapItemForm({
       })
 
       if (error) {
-        console.error(error)
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

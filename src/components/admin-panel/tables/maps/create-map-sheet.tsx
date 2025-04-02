@@ -12,6 +12,7 @@ import { handleUpload } from '~/server/s3-bucket/utils'
 import SelectFileDrawer from './select-file-drawer'
 import Image from 'next/image'
 import { MAX_SVG_SIZE } from '~/lib/static/max-file-size'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 type CreateMapSheetProps = React.ComponentPropsWithRef<typeof Sheet>
 
@@ -44,7 +45,7 @@ export default function CreateMapSheet({
         const presignedUrls = await createPresignedUrls([fileInfo])
 
         if (presignedUrls.error || !presignedUrls.data) {
-          toast.error(presignedUrls.error)
+          errorToast(presignedUrls.error, {id: "data-error"})
           return;
         }
       
@@ -52,11 +53,11 @@ export default function CreateMapSheet({
         const uploadedFiles = await handleUpload([imageFile], presignedUrls.data)
 
         if (uploadedFiles.error) {
-          toast.error(uploadedFiles.error)
+          errorToast(uploadedFiles.error, {id: "data-error"})
           return;
         }
         if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
-          toast.error("Файлы не найдены")
+          errorToast("Файлы не найдены", {id: "data-error"})
           return;
         }
 
@@ -66,7 +67,7 @@ export default function CreateMapSheet({
       const { error } = await createMap(fileId)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return;
       }
   

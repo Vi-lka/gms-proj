@@ -3,6 +3,7 @@
 import * as Minio from 'minio'
 import type internal from 'stream'
 import { env } from '~/env.js'
+import * as Sentry from "@sentry/nextjs";
  
 // Create a new Minio client with the S3 endpoint, access key, and secret key
 const s3Client = new Minio.Client({
@@ -29,8 +30,9 @@ export async function createBucketIfNotExists(bucketName: string) {
 export async function checkFileExistsInBucket({ bucketName, fileName }: { bucketName: string; fileName: string }) {
   try {
     await s3Client.statObject(bucketName, fileName)
-  } catch (error: unknown) {
-    console.log(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     return false
   }
   return true
@@ -125,8 +127,9 @@ export async function deleteFileFromBucket({
 }) {
   try {
     await s3Client.removeObject(bucketName, fileName)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     return false
   }
   return true
@@ -147,8 +150,9 @@ export async function deleteFilesFromBucket({
 }) {
   try {
     await s3Client.removeObjects(bucketName, filesNames)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     return false
   }
   return true

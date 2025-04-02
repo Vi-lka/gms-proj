@@ -20,6 +20,7 @@ import NumberApproxField from '~/components/forms/inputs/simple/number-approx-fi
 import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Loader } from 'lucide-react'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 interface UpdateAreasDataSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -49,7 +50,7 @@ export default function UpdateAreasDataSheet({
       const { data, error } = await updateAreasData(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

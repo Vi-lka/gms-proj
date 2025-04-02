@@ -6,6 +6,7 @@ import React from 'react'
 import { toast } from 'sonner';
 import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider'
 import { Button } from '~/components/ui/button';
+import { errorToast } from '~/components/ui/special/error-toast';
 import { createFieldMap } from '~/server/actions/fields-maps';
 import { createPresignedUrls } from '~/server/s3-bucket/actions';
 import { type FileT } from '~/server/s3-bucket/types';
@@ -44,7 +45,7 @@ export default function SaveButton() {
         const presignedUrls = await createPresignedUrls([fileInfo])
 
         if (presignedUrls.error || !presignedUrls.data) {
-          toast.error(presignedUrls.error)
+          errorToast(presignedUrls.error, {id: "data-error"})
           return;
         }
       
@@ -52,11 +53,11 @@ export default function SaveButton() {
         const uploadedFiles = await handleUpload([imageFile], presignedUrls.data)
 
         if (uploadedFiles.error) {
-          toast.error(uploadedFiles.error)
+          errorToast(uploadedFiles.error, {id: "data-error"})
           return;
         }
         if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
-          toast.error("Файлы не найдены")
+          errorToast("Файлы не найдены", {id: "data-error"})
           return;
         }
 
@@ -66,7 +67,7 @@ export default function SaveButton() {
         fileOriginalName = selectedImage.originalName
         fileId = selectedImage.id
       } else {
-        toast.error("Нет Файла")
+        errorToast("Нет Файла", {id: "data-error"})
         return
       };
 
@@ -86,7 +87,7 @@ export default function SaveButton() {
       })
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return;
       }
 

@@ -19,6 +19,7 @@ import NumberApproxField from '~/components/forms/inputs/simple/number-approx-fi
 import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Separator } from '~/components/ui/separator'
 import { createAreasData } from '~/server/actions/areas-data'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 type CreateAreasDataSheetProps = React.ComponentPropsWithRef<typeof Sheet>
 
@@ -38,7 +39,7 @@ export default function CreateAreasDataSheet({
       const { error } = await createAreasData(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

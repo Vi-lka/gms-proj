@@ -16,6 +16,7 @@ import type {
 } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
 import { restrictUser } from "~/lib/utils";
+import * as Sentry from "@sentry/nextjs";
 
 type CreateMapItemT = {
   xPos: number,
@@ -33,6 +34,7 @@ export async function createMapItem(input: CreateMapItemT) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createMapItem, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -79,7 +81,8 @@ export async function createMapItem(input: CreateMapItemT) {
 
     return result
   } catch (err) {
-    console.log(err)
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -93,6 +96,7 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createMapItemCluster, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -153,6 +157,8 @@ export async function createMapItemCluster(input: CreateMapItemClusterT) {
 
     return result
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -169,6 +175,7 @@ export async function companyToCluster(
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: companyToCluster, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -263,6 +270,8 @@ export async function companyToCluster(
 
     return result
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -279,6 +288,7 @@ export async function updateMapItemCompany(
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateMapItemCompany, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -341,6 +351,8 @@ export async function updateMapItemCompany(
       error: null,
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -357,6 +369,7 @@ export async function updateMapItemCluster(
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateMapItemCluster, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -443,6 +456,8 @@ export async function updateMapItemCluster(
       error: null,
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -464,6 +479,7 @@ export async function moveMapItem({
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: moveMapItem, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -487,7 +503,8 @@ export async function moveMapItem({
       error: null,
     }
   } catch (err) {
-    console.log(err)
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -503,6 +520,7 @@ export async function deleteMapItem(
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteMapItem, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -546,7 +564,8 @@ export async function deleteMapItem(
       error: null,
     }
   } catch (err) {
-    console.log(err)
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

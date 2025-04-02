@@ -12,6 +12,7 @@ import CompaniesTableToolbarActions from './companies-table-toolbar-actions';
 import DeleteCompaniesDialog from './delete-companies-dialog';
 import UpdateCompanySheet from './update-company-sheet';
 import { toast } from 'sonner';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 interface CompaniesTableProps {
   promises: Promise<
@@ -25,7 +26,7 @@ export default function CompaniesTable({ promises }: CompaniesTableProps) {
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

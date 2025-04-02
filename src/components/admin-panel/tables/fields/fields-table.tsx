@@ -14,6 +14,7 @@ import DeleteFieldsDialog from './delete-fields-dialog';
 import { toast } from 'sonner';
 import { type getAllCompanies } from '~/server/queries/companies';
 import { idToSentenceCase } from '~/lib/utils';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 interface FieldsTableProps {
   promises: Promise<
@@ -33,14 +34,14 @@ export default function FieldsTable({ promises }: FieldsTableProps) {
   ] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
 
   React.useEffect(() => {
-    if (errorCompanies !== null) toast.error(errorCompanies, { id: "companies-data-error", duration: 5000, dismissible: true })
+    if (errorCompanies !== null) errorToast(errorCompanies, {id: "companies-data-error"})
     return () => { 
       if (errorCompanies !== null) toast.dismiss("companies-data-error")
     }

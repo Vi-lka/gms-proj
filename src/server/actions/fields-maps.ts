@@ -10,6 +10,7 @@ import { eq, inArray } from "drizzle-orm";
 import { type UpdateFieldMapSchema, type CreateFieldMapSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
 import { type DefaultEditDataT } from "~/components/poly-annotation/types";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createFieldMap(input: CreateFieldMapSchema) {
   noStore()
@@ -17,15 +18,16 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createFieldMap, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
     }
   }
 
-  const { polygons, fileName, ...rest } = input
-
   try {
+    const { polygons, fileName, ...rest } = input
+
     const fieldMap = await db
       .insert(fieldsMaps)
       .values({
@@ -52,6 +54,8 @@ export async function createFieldMap(input: CreateFieldMapSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -65,6 +69,7 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateFieldMap, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -142,6 +147,8 @@ export async function updateFieldMap(input: UpdateFieldMapSchema, oldData: Defau
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -155,6 +162,7 @@ export async function deleteFieldsMaps(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteFieldsMaps, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -174,6 +182,8 @@ export async function deleteFieldsMaps(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

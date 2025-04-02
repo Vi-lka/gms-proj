@@ -124,3 +124,98 @@
 .rdp-vhidden {
   @apply hidden;
 }
+
+/* SENTRY (GLITCHTIP) REPORT DIALOG */
+@media (min-width: 480px) {
+  .sentry-error-embed {
+    max-height: 90% !important;
+  }
+}
+@media (min-width: 640px) {
+  .sentry-error-embed {
+    padding: 2.5rem /* 40px */ !important;
+    border-radius: 1rem !important;
+  }
+  .sentry-error-embed .form-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 640px) {
+  .sentry-error-embed {
+    padding: 1.5rem /* 24px */ !important;
+  }
+}
+.sentry-error-embed * {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+.sentry-error-embed {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+  background-color: hsl(var(--muted)) !important;
+  border-color: transparent !important;
+  color: hsl(var(--foreground)) !important;
+}
+.sentry-error-embed header {
+  border-bottom-color: hsl(var(--muted-foreground)) !important;
+}
+.sentry-error-embed h2 {
+  color: hsl(var(--foreground)) !important;
+}
+.sentry-error-embed header p {
+  color: hsl(var(--muted-foreground)) !important;
+}
+.sentry-error-embed .message-error {
+  border-radius: 0.75rem !important;
+  border-color: hsl(var(--destructive) / 0.5) !important;
+  color: hsl(var(--destructive)) !important;
+  background-color: hsl(var(--muted)) !important;
+  margin-bottom: 16px !important;
+}
+.sentry-error-embed .form-field label {
+  text-transform: none !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+.sentry-error-embed .form-field input, .sentry-error-embed .form-field textarea {
+  border-radius: 0.75rem !important;
+  border-color: hsl(var(--muted-foreground)) !important;
+  background-color: transparent !important;
+}
+.sentry-error-embed .form-field input::placeholder, 
+.sentry-error-embed .form-field textarea::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+}
+.sentry-error-embed .form-submit .btn {
+  border-radius: 0.75rem !important;
+  background: hsl(var(--primary)) !important;
+  border-color: hsl(var(--muted-foreground)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  transition-property: all !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+.sentry-error-embed .form-submit .btn:hover {
+  background: hsl(var(--primary) / 0.1) !important;
+  color: hsl(var(--primary)) !important;
+}
+.sentry-error-embed .form-submit .close {
+  color: hsl(var(--muted-foreground)) !important;
+  transition-property: all !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+.sentry-error-embed .form-submit .close:hover {
+  color: hsl(var(--primary)) !important;
+}
+.sentry-error-embed .form-submit .powered-by {
+  display: none !important;
+}
+.sentry-error-embed .message-success {
+  border-radius: 0.75rem !important;
+  border-color: hsl(var(--muted-foreground)) !important;
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(var(--muted)) !important;
+}

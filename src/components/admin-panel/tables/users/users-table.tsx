@@ -13,6 +13,7 @@ import { DataTableSortList } from '~/components/data-table/data-table-sort-list'
 import { toast } from 'sonner'
 import DeleteUsersDialog from './delete-users-dialog'
 import UpdateUserSheet from './update-user-sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 interface UsersTableProps {
   promises: Promise<
@@ -29,7 +30,7 @@ export default function UsersTable({ promises }: UsersTableProps) {
   console.log(data)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

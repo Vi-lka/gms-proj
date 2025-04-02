@@ -12,6 +12,7 @@ import { DataTableToolbar } from "~/components/data-table/data-table-toolbar";
 import { DataTableSortList } from "~/components/data-table/data-table-sort-list";
 import { toast } from "sonner";
 import DeleteSessionsDialog from "./delete-sessions-dialog";
+import { errorToast } from "~/components/ui/special/error-toast";
 
 interface SessionsTableProps {
   promises: Promise<
@@ -26,7 +27,7 @@ export default function SessionsTable({ promises }: SessionsTableProps) {
   const [{ data, pageCount, error }, roleCounts] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

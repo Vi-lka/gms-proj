@@ -1,5 +1,7 @@
 "use server"
 
+import "server-only"
+
 import { restrictUser } from "~/lib/utils";
 import { auth } from "../auth";
 import { db } from "../db";
@@ -7,6 +9,7 @@ import { createPresignedUrlToDownload } from "./s3-file-management";
 import { env } from "~/env";
 import { getErrorMessage } from "~/lib/handle-error";
 import { unstable_cache } from "~/lib/unstable-cache";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getPresignedUrl(id: string) {
   const session = await auth();
@@ -27,11 +30,11 @@ export async function getPresignedUrl(id: string) {
 
       return { name: file.fileName, error: null }
     } catch (err) {
-      console.log(err)
-      const error = getErrorMessage(err)
+      Sentry.captureException(err);
+      console.error(err)
       return {
         name: null,
-        error
+        error: getErrorMessage(err)
       };
     }
   }
@@ -59,11 +62,11 @@ export async function getPresignedUrl(id: string) {
         }
       }
     } catch (err) {
-      console.log(err)
-      const error = getErrorMessage(err)
+      Sentry.captureException(err);
+      console.error(err)
       return {
         data: null,
-        error
+        error: getErrorMessage(err)
       };
     }
   }

@@ -15,6 +15,7 @@ import DeleteLicensedAreasDialog from './delete-licensed-areas-dialog'
 import UpdateLicensedAreaSheet from './update-licensed-area-sheet'
 import { toast } from 'sonner'
 import { idToSentenceCase } from '~/lib/utils'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 interface LicensedAreasTableProps {
   promises: Promise<
@@ -38,21 +39,21 @@ export default function LicensedAreasTable({ promises }: LicensedAreasTableProps
   ] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
 
   React.useEffect(() => {
-    if (errorCompanies !== null) toast.error(errorCompanies, { id: "companies-data-error", duration: 5000, dismissible: true })
+    if (errorCompanies !== null) errorToast(errorCompanies, {id: "companies-data-error"})
     return () => { 
       if (errorCompanies !== null) toast.dismiss("companies-data-error")
     }
   }, [errorCompanies])
 
   React.useEffect(() => {
-    if (errorFields !== null) toast.error(errorFields, { id: "fields-data-error", duration: 5000, dismissible: true })
+    if (errorFields !== null) errorToast(errorFields, {id: "fields-data-error"})
     return () => { 
       if (errorFields !== null) toast.dismiss("fields-data-error")
     }

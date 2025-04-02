@@ -4,6 +4,7 @@ import { env } from '~/env';
 import { db } from '~/server/db';
 import { and, eq, lte } from "drizzle-orm";
 import { users } from '~/server/db/schema';
+import * as Sentry from "@sentry/nextjs";
 
 const logger = createLogger({
   level: 'info',
@@ -17,6 +18,7 @@ export async function GET(request: Request) {
   // Protected route
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
+    Sentry.captureException(new Error("Unauthorized: authorization header is missing or incorrect (check-guest-roles)"));
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -48,6 +50,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: 'Guest roles checked successfully' });
   } catch (error) {
     logger.error('Error checking guest roles', { error });
+    Sentry.captureException(error);
+    console.error(error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

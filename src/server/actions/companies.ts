@@ -9,6 +9,7 @@ import { companies, companiesToMapItems, mapItems } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { restrictUser } from "~/lib/utils";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createCompany(input: CreateCompanySchema) {
   noStore()
@@ -16,6 +17,7 @@ export async function createCompany(input: CreateCompanySchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createCompany, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -39,6 +41,8 @@ export async function createCompany(input: CreateCompanySchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -52,6 +56,7 @@ export async function updateCompany(input: UpdateCompanySchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateCompany, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -77,6 +82,8 @@ export async function updateCompany(input: UpdateCompanySchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -90,6 +97,7 @@ export async function deleteCompanies(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteCompanies, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -127,6 +135,8 @@ export async function deleteCompanies(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

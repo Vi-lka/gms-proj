@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { deleteCompanies } from '~/server/actions/companies'
 import { type Company } from '~/server/db/schema'
 
@@ -27,7 +28,7 @@ export default function DeleteCompaniesFialog({
       const { error } = await deleteCompanies(companies.map((company) => company.id))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

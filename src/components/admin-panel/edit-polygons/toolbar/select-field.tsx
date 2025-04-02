@@ -1,12 +1,12 @@
 "use client"
 
 import React from 'react'
-import { toast } from 'sonner';
 import useSWR from 'swr';
 import { defaultInitState } from '~/components/poly-annotation/store';
 import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider';
 import { Skeleton } from '~/components/ui/skeleton';
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
+import { errorToast } from '~/components/ui/special/error-toast';
 import { type FieldsSearchParamsT, getApiRoute } from '~/lib/validations/api-routes';
 import { type FieldExtend } from '~/server/db/schema';
 
@@ -43,7 +43,7 @@ export default function SelectField({
 
   if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {
-    toast.error(error.message)
+    errorToast(error.message, {id: "data-error"})
     return null;
   }
   if (!data) return null

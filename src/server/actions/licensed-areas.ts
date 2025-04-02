@@ -9,6 +9,7 @@ import { eq, inArray } from "drizzle-orm";
 import { type UpdateLicensedAreaSchema, type CreateLicensedAreaSchema } from "~/lib/validations/forms";
 import { takeFirstOrThrow } from "../db/utils";
 import { restrictUser } from "~/lib/utils";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createLicensedArea(input: CreateLicensedAreaSchema) {
   noStore()
@@ -16,6 +17,7 @@ export async function createLicensedArea(input: CreateLicensedAreaSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createLicensedArea, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -39,6 +41,8 @@ export async function createLicensedArea(input: CreateLicensedAreaSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -52,6 +56,7 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateLicensedArea, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -78,6 +83,8 @@ export async function updateLicensedArea(input: UpdateLicensedAreaSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -91,6 +98,7 @@ export async function deleteLicensedAreas(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteLicensedAreas, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -109,6 +117,8 @@ export async function deleteLicensedAreas(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

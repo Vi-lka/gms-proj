@@ -7,6 +7,7 @@ import { deleteFields } from '~/server/actions/fields'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { Button } from '~/components/ui/button'
 import { Loader, Trash } from 'lucide-react'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 interface DeleteFieldsDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
   fields: Row<FieldExtend>["original"][]
@@ -27,7 +28,7 @@ export default function DeleteFieldsDialog({
       const { error } = await deleteFields(fields.map((field) => field.id))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

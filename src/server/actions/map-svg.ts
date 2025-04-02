@@ -10,6 +10,7 @@ import { mapData } from "../db/schema";
 import { db } from "../db";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq } from "drizzle-orm";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createMap(fileId: string) {
   noStore()
@@ -17,6 +18,7 @@ export async function createMap(fileId: string) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createMap, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -41,6 +43,8 @@ export async function createMap(fileId: string) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -54,6 +58,7 @@ export async function updateMap(id: string, fileId: string) {
     const session = await auth();
     if (!session || restrictUser(session?.user.role, 'admin-panel')) {
       const err = new Error("No access")
+      Sentry.captureException(new Error(`No access: updateMap, userId: ${session?.user.id}`));
       return {
         data: null,
         error: getErrorMessage(err)
@@ -79,6 +84,8 @@ export async function updateMap(id: string, fileId: string) {
         error: null
       }
     } catch (err) {
+      Sentry.captureException(err);
+      console.error(err);  
       return {
         data: null,
         error: getErrorMessage(err),

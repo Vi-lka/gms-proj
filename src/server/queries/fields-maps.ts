@@ -14,6 +14,7 @@ import { getPresignedUrl } from "../s3-bucket/queries";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
 import { alias } from "drizzle-orm/pg-core";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getFieldsMaps(
   input: GetFieldsMapsSchema,
@@ -132,6 +133,7 @@ export async function getFieldsMaps(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -196,6 +198,7 @@ export async function getFieldMap(
         error: null
       }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return {
         data: null,
@@ -266,6 +269,7 @@ export async function getFieldMapsCounts() {
         )
       return data
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return {} as Record<FieldMap["fieldId"], number>
     }
@@ -310,6 +314,7 @@ export async function getCompanyFieldsMapsCounts() {
         );
       return data;
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err);
       return {} as Record<Field["companyId"], number>;
     }
@@ -341,6 +346,7 @@ export async function getAllFieldsMaps(params?: GetAllQueryParams) {
 
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], error: getErrorMessage(err) }
     }
@@ -351,8 +357,9 @@ export async function getAllFieldsMaps(params?: GetAllQueryParams) {
   // I`am not sure if 'serializeWhere' will work with any 'where', so use keys just in case
   try {
     whereKey = serializeWhere(params?.where)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     if (params) whereKey = params.keys.join(',')
   }
 

@@ -13,6 +13,7 @@ import { Button } from '~/components/ui/button'
 import { Loader } from 'lucide-react'
 import NumberField from '~/components/forms/inputs/simple/number-field'
 import { idToSentenceCase } from '~/lib/utils'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 interface UpdateProfitabilitySheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -42,7 +43,7 @@ export default function UpdateProfitabilitySheet({
       const { data, error } = await updateProfitability(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

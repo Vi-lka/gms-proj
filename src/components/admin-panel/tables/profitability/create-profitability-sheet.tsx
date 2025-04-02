@@ -12,6 +12,7 @@ import { Form } from '~/components/ui/form'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import NumberField from '~/components/forms/inputs/simple/number-field'
 import { idToSentenceCase } from '~/lib/utils'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 type CreateProfitabilitySheetProps = React.ComponentPropsWithRef<typeof Sheet>
 
@@ -31,7 +32,7 @@ export default function CreateProfitabilitySheet({
       const { error } = await createProfitability(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

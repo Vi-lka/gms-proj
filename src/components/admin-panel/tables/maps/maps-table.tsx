@@ -12,6 +12,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar';
 import OpenImageDialog from './open-image-dialog';
 import MapsTableToolbarActions from './maps-table-toolbar-actions';
 import UpdateMapSheet from './update-map-sheet';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 interface MapsTableProps {
   promises: Promise<
@@ -25,7 +26,7 @@ export default function MapsTable({ promises }: MapsTableProps) {
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

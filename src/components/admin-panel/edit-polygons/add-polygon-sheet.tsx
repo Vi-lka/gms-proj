@@ -1,5 +1,4 @@
 import React from 'react'
-import { toast } from 'sonner'
 import useSWR from 'swr'
 import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider'
 import { Button } from '~/components/ui/button'
@@ -7,6 +6,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { Skeleton } from '~/components/ui/skeleton'
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { getApiRoute, type LicensedAreasSearchParamsT } from '~/lib/validations/api-routes'
 import { type LicensedAreaExtend } from '~/server/db/schema'
 
@@ -33,7 +33,7 @@ export default function AddPolygonSheet({ searchParams, ...props }: AddPolygonSh
   );
 
   if (error) {
-    toast.error(error.message)
+    errorToast(error.message, {id: "data-error"})
     return null;
   }
   if (!data || !polygons[activePolygonIndex]) return null

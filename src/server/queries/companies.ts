@@ -1,6 +1,7 @@
 "use server"
 
 import "server-only"
+
 import { type GetCompaniesSchema } from "~/lib/validations/companies"
 import { auth } from "../auth";
 import { and, count, eq, getTableColumns, ilike, or, type SQL } from "drizzle-orm";
@@ -12,6 +13,7 @@ import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
 import { type GetAllQueryParams } from "~/lib/types";
 import { alias } from "drizzle-orm/pg-core";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getCompanies(
   input: GetCompaniesSchema,
@@ -91,6 +93,7 @@ export async function getCompanies(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -122,6 +125,7 @@ export async function getAllCompanies(params?: GetAllQueryParams) {
 
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], error: getErrorMessage(err) }
     }
@@ -132,8 +136,9 @@ export async function getAllCompanies(params?: GetAllQueryParams) {
   // I`am not sure if 'serializeWhere' will work with any 'where', so use keys just in case
   try {
     whereKey = serializeWhere(params?.where)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     if (params) whereKey = params.keys.join(',')
   }
 
@@ -160,6 +165,7 @@ export async function getAllCompaniesToMapItems(params?: GetAllQueryParams) {
 
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], error: getErrorMessage(err) }
     }
@@ -170,8 +176,9 @@ export async function getAllCompaniesToMapItems(params?: GetAllQueryParams) {
   // I`am not sure if 'serializeWhere' will work with any 'where', so use keys just in case
   try {
     whereKey = serializeWhere(params?.where)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    Sentry.captureException(err);
+    console.error(err)
     if (params) whereKey = params.keys.join(',')
   }
 

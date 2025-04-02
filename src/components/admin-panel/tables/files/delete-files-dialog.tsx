@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { type FileDBWithUrl } from '~/server/db/schema'
 import { deleteFiles } from '~/server/s3-bucket/actions'
 
@@ -27,7 +28,7 @@ export default function DeleteFilesFialog({
       const { error } = await deleteFiles(files.map((file) => file.id))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

@@ -34,13 +34,6 @@ export default function DeletePolygonDialog({ saveToBackEnd, onSubmit, ...props 
     
     if (saveToBackEnd) {
       startTransition(async () => {
-        // const { error } = await deleteMapItem(item)
-
-        // if (error) {
-        //   toast.error(error)
-        //   return
-        // }
-
         onSubmit?.()
         toast.success("Полигон удален!")
       })

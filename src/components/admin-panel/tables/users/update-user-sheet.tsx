@@ -8,6 +8,7 @@ import SelectField from '~/components/forms/inputs/simple/select-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { idToSentenceCase } from '~/lib/utils'
 import { updateUserSchema, type UpdateUserSchema } from '~/lib/validations/forms'
 import { updateUser } from '~/server/actions/users'
@@ -50,7 +51,7 @@ export default function UpdateUserSheet({
       const { data, error } = await updateUser({id: user.id, ...input})
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

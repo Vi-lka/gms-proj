@@ -8,6 +8,7 @@ import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { updateCompanySchema, type UpdateCompanySchema } from '~/lib/validations/forms'
 import { updateCompany } from '~/server/actions/companies'
 import { type Company } from '~/server/db/schema'
@@ -48,7 +49,7 @@ export default function UpdateCompanySheet({
       const { data, error } = await updateCompany(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

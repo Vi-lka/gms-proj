@@ -13,6 +13,7 @@ import { getPresignedUrl } from "../s3-bucket/queries";
 import { getErrorMessage } from "~/lib/handle-error";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { alias } from "drizzle-orm/pg-core";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getFiles(
   input: GetFilesSchema,
@@ -117,6 +118,7 @@ export async function getFiles(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }

@@ -9,6 +9,7 @@ import { db } from "../db";
 import { profitability } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq } from "drizzle-orm";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createProfitability(input: CreateProfitabilitySchema) {
   noStore()
@@ -16,6 +17,7 @@ export async function createProfitability(input: CreateProfitabilitySchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createProfitability, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -39,6 +41,8 @@ export async function createProfitability(input: CreateProfitabilitySchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -52,14 +56,16 @@ export async function updateProfitability(input: UpdateProfitabilitySchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateProfitability, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
     }
   }
 
-  const {id: profitabilityId, ...otherData} = input
   try {
+    const {id: profitabilityId, ...otherData} = input
+
     const result = await db
       .update(profitability)
       .set({
@@ -77,6 +83,8 @@ export async function updateProfitability(input: UpdateProfitabilitySchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

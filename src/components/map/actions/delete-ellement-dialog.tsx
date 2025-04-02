@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { type MapItemT } from '~/lib/types'
 import { deleteMapItem } from '~/server/actions/mapItems'
 
@@ -21,7 +22,7 @@ export default function DeleteEllementDialog({ item, onFormSubmit, ...props }: D
       const { error } = await deleteMapItem(item)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

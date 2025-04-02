@@ -11,6 +11,7 @@ import { DataTableToolbar } from '~/components/data-table/data-table-toolbar';
 import ProfitabilityTableToolbarActions from './profitability-table-toolbar-actions';
 import UpdateProfitabilitySheet from './update-profitability-sheet';
 import { toast } from 'sonner';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 interface ProfitabilityTableProps {
   promises: Promise<
@@ -24,7 +25,7 @@ export default function ProfitabilityTable({ promises }: ProfitabilityTableProps
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

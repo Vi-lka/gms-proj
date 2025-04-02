@@ -98,3 +98,7 @@ export type GetAllQueryParams = {
   where: SQL<unknown>,
   keys: string[]
 }
+
+export interface ErrorWithEventId extends Error {
+  eventId: string
+}

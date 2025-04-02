@@ -15,6 +15,7 @@ import { searchParamsFiles } from '~/lib/validations/search-params'
 import useSWR from 'swr'
 import { getApiRoute } from '~/lib/validations/api-routes'
 import { MAX_FILE_SIZE } from '~/lib/static/max-file-size'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 export default function SelectFileTable({
   handleOnSelect,
@@ -45,13 +46,13 @@ export default function SelectFileTable({
   );
 
   React.useEffect(() => {
-    if (error && error.message.length > 0) toast.error(error.message, { id: "data-error", duration: 5000, dismissible: true })
+    if (error && error.message.length > 0) errorToast(error.message, {id: "data-error"})
     return () => { 
       if (error && error.message.length > 0) toast.dismiss("data-error")
     }
   }, [error])
   React.useEffect(() => {
-    if (result && result.error !== null) toast.error(result.error, { id: "data-error", duration: 5000, dismissible: true })
+    if (result && result.error !== null) errorToast(result.error, {id: "data-error"})
     return () => { 
       if (result && result.error !== null) toast.dismiss("data-error")
     }

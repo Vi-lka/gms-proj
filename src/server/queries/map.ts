@@ -11,6 +11,7 @@ import { and, ilike, inArray, or } from "drizzle-orm";
 import { areasData, clusters, companies, companiesToMapItems, fields, licensedAreas, mapItems } from "../db/schema";
 import { compareElements } from "../db/utils";
 import { getErrorMessage } from "~/lib/handle-error";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getMapItems(
   input?: GetMapItemsSchema,
@@ -193,6 +194,7 @@ export async function getMapItems(
 
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], error: getErrorMessage(err) }
     }
@@ -239,9 +241,10 @@ export async function getMapItem(id: string) {
       if (!data) return { data: null, error: "Not Found" }
 
       return { data, error: null }
-    } catch (error) {
-      console.error(error)
-      return { data: null, error: getErrorMessage(error) }
+    } catch (err) {
+      Sentry.captureException(err);
+      console.error(err)
+      return { data: null, error: getErrorMessage(err) }
     }
   }
 

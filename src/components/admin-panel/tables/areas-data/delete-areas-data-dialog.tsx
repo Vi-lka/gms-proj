@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { deleteAreasData } from '~/server/actions/areas-data'
 import { type AreaDataExtend } from '~/server/db/schema'
 
@@ -27,7 +28,7 @@ export default function DeleteAreasDataDialog({
       const { error } = await deleteAreasData(areasData.map((item) => item.id))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

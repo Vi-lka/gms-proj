@@ -12,6 +12,7 @@ import { DataTableToolbar } from "~/components/data-table/data-table-toolbar";
 import FilesTableToolbarActions from "./files-table-toolbar-actions";
 import DeleteFilesDialog from "./delete-files-dialog";
 import OpenImageDialog from "./open-image-dialog";
+import { errorToast } from "~/components/ui/special/error-toast";
 
 interface FilesTableProps {
   promises: Promise<
@@ -25,7 +26,7 @@ export default function FilesTable({ promises }: FilesTableProps) {
   const [{ data, pageCount, error }] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

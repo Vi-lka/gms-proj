@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { deleteSessions } from '~/server/actions/users'
 import { type SessionExtend } from '~/server/db/schema'
 
@@ -27,7 +28,7 @@ export default function DeleteSessionsDialog({
       const { error } = await deleteSessions(sessions.map((session) => session.userId))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

@@ -53,13 +53,6 @@ export default function MovePolygonPortal({
 
     if (saveToBackEnd) {
       startTransition(async () => {
-        // const { error } = await deleteMapItem(item)
-
-        // if (error) {
-        //   toast.error(error)
-        //   return
-        // }
-
         onSubmit?.()
         toast.success("Полигон перемещен!")
       })

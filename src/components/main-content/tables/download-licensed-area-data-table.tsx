@@ -1,8 +1,8 @@
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { Loader } from 'lucide-react'
 import React from 'react'
-import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { Tooltip, TooltipContent, TooltipProvider } from '~/components/ui/tooltip'
 import { cn, convertDataForExport, downloadExcel } from '~/lib/utils'
 import { type GetAreasDataSchema } from '~/lib/validations/areas-data'
@@ -55,7 +55,7 @@ export default function DownloadLicensedAreaDataTable({
       const { data, error } = areaData;
 
       if (error !== null) {
-        toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+        errorToast(error, {id: "data-error"})
         return;
       }
 

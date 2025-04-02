@@ -9,6 +9,7 @@ import { areasData } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq, inArray } from "drizzle-orm";
 import { restrictUser } from "~/lib/utils";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createAreasData(input: CreateAreasDataSchema) {
   noStore()
@@ -16,18 +17,19 @@ export async function createAreasData(input: CreateAreasDataSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createAreasData, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
     }
   }
 
-  const {analysisDate, samplingDate, ...otherData} = input
-
-  const analysisDateGMT = analysisDate ? new Date(analysisDate) : null
-  const samplingDateGMT = samplingDate ? new Date(samplingDate) : null
-
   try {
+    const {analysisDate, samplingDate, ...otherData} = input
+
+    const analysisDateGMT = analysisDate ? new Date(analysisDate) : null
+    const samplingDateGMT = samplingDate ? new Date(samplingDate) : null
+
     await db
       .insert(areasData)
       .values({
@@ -46,6 +48,8 @@ export async function createAreasData(input: CreateAreasDataSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -59,18 +63,19 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateAreasData, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
     }
   }
 
-  const {id: areaDataId, analysisDate, samplingDate, ...otherData} = input
-  
-  const analysisDateGMT = analysisDate ? new Date(analysisDate) : null
-  const samplingDateGMT = samplingDate ? new Date(samplingDate) : null
-
   try {
+    const {id: areaDataId, analysisDate, samplingDate, ...otherData} = input
+  
+    const analysisDateGMT = analysisDate ? new Date(analysisDate) : null
+    const samplingDateGMT = samplingDate ? new Date(samplingDate) : null
+
     const result = await db
       .update(areasData)
       .set({
@@ -90,6 +95,8 @@ export async function updateAreasData(input: UpdateAreasDataSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -103,6 +110,7 @@ export async function deleteAreasData(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteAreasData, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -121,6 +129,8 @@ export async function deleteAreasData(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

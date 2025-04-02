@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button';
 import { Kbd } from '~/components/ui/kbd';
 import { Portal } from '~/components/ui/portal';
 import { Separator } from '~/components/ui/separator';
+import { errorToast } from '~/components/ui/special/error-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos';
 import { mapContainerDimensions, stageAtom, stageRefAtom } from '~/lib/atoms/main';
@@ -124,7 +125,7 @@ export default function MoveEllementPortal({
       })
     
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
     

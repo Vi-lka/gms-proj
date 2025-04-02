@@ -9,6 +9,7 @@ import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { updateFieldSchema, type UpdateFieldSchema } from '~/lib/validations/forms'
 import { updateField } from '~/server/actions/fields'
 import { type FieldExtend } from '~/server/db/schema'
@@ -51,7 +52,7 @@ export default function UpdateFieldSheet({
       const { data, error } = await updateField(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

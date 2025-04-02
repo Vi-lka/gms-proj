@@ -13,6 +13,7 @@ import { type GetMapsSchema } from "~/lib/validations/map-svg";
 import { alias } from "drizzle-orm/pg-core";
 import { eq, and, type SQL, count, getTableColumns } from "drizzle-orm";
 import { getRelationOrderBy } from "../db/utils";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getMaps(
   input: GetMapsSchema,
@@ -76,6 +77,7 @@ export async function getMaps(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -134,6 +136,7 @@ export async function getMap() {
       // const pageCount = Math.ceil(total / input.perPage)
       return { data, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: null, error: getErrorMessage(err) }
     }
@@ -149,7 +152,7 @@ export async function getMap() {
     if (result.error === "Not Found") return {
       data: null, 
       error: null
-}
+  }
     return {
       data: null,
       error: result.error

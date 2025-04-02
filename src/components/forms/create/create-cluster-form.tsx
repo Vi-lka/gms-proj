@@ -11,6 +11,7 @@ import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { SheetClose, SheetFooter } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { useRevertStageEllementPos } from '~/hooks/use-stage-ellement-pos'
 import { createMapItemClusterSchema, type MapItemSchema, type CreateMapItemClusterSchema } from '~/lib/validations/forms'
 import { createMapItemCluster } from '~/server/actions/mapItems'
@@ -47,7 +48,7 @@ export default function CreateClusterForm({
       })
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

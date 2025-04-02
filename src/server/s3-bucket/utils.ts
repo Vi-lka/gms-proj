@@ -4,6 +4,7 @@ import { getErrorMessage } from "~/lib/handle-error"
 import { saveFileInfoInDB } from "./actions"
 import type { PresignedUrlT } from "./types"
 import { env } from "~/env"
+import * as Sentry from "@sentry/nextjs";
 
 /**
  * Uploads file to S3 directly using presigned url
@@ -57,6 +58,8 @@ export const handleUpload = async (files: File[], presignedUrls: PresignedUrlT[]
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

@@ -9,6 +9,7 @@ import { fields } from "../db/schema";
 import { takeFirstOrThrow } from "../db/utils";
 import { eq, inArray } from "drizzle-orm";
 import { restrictUser } from "~/lib/utils";
+import * as Sentry from "@sentry/nextjs";
 
 export async function createField(input: CreateFieldSchema) {
   noStore()
@@ -16,6 +17,7 @@ export async function createField(input: CreateFieldSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: createField, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -39,6 +41,8 @@ export async function createField(input: CreateFieldSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -52,6 +56,7 @@ export async function updateField(input: UpdateFieldSchema) {
   const session = await auth();
   if (!session || restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateField, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -78,6 +83,8 @@ export async function updateField(input: UpdateFieldSchema) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -91,6 +98,7 @@ export async function deleteFields(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteFields, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -109,6 +117,8 @@ export async function deleteFields(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

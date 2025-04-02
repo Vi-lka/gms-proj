@@ -5,6 +5,7 @@ import React from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import UploadFileCard from '~/components/ui/special/upload-file-card'
 import { MAX_SVG_SIZE } from '~/lib/static/max-file-size'
 import { createPresignedUrls } from '~/server/s3-bucket/actions'
@@ -35,7 +36,7 @@ export default function CreateFileSheet({
       const presignedUrls = await createPresignedUrls([fileInfo])
 
       if (presignedUrls.error || !presignedUrls.data) {
-        toast.error(presignedUrls.error)
+        errorToast(presignedUrls.error, {id: "data-error"})
         return;
       }
   
@@ -43,11 +44,11 @@ export default function CreateFileSheet({
       const uploadedFiles = await handleUpload([imageFile], presignedUrls.data)
 
       if (uploadedFiles.error) {
-        toast.error(uploadedFiles.error)
+        errorToast(uploadedFiles.error, {id: "data-error"})
         return;
       }
       if (uploadedFiles.data === null || uploadedFiles.data.length === 0 || uploadedFiles.data[0] === undefined) {
-        toast.error("Файлы не найдены")
+        errorToast("Файлы не найдены", {id: "data-error"})
         return;
       }
   

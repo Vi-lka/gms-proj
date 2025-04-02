@@ -1,11 +1,10 @@
 "use client"
 
 import React from 'react'
-
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import { Button } from '~/components/ui/button'
-import Link from 'next/link'
 
 export default function Error({
   error,
@@ -16,6 +15,7 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
+    Sentry.captureException(error);
     console.error(error)
   }, [error])
 
@@ -30,12 +30,32 @@ export default function Error({
           {error.message}
         </p>
         <div className="flex justify-center space-x-4">
-          <Button onClick={() => reset()} variant="outline">
+          <Button variant="outline" onClick={() => reset()}>
             Попробовать снова
           </Button>
-          <Link href="/" passHref>
-            <Button>Вернуться на главную</Button>
-          </Link>
+          <Button onClick={() => {
+            const eventId = Sentry.lastEventId();
+            Sentry.showReportDialog({ 
+              eventId,
+              lang: "ru",
+              // user: {
+              //   name: "Dmitry",
+              //   email: "mymail@example.com"
+              // },
+              title: "Похоже, у нас возникли проблемы.",
+              subtitle: "Наша команда была уведомлена.",
+              subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
+              labelName: "Имя",
+              labelEmail: "Email",
+              labelComments: "Что произошло?",
+              labelClose: "Закрыть",
+              labelSubmit: "Отправить",
+              errorFormEntry: "Некоторые поля не валидны.",
+              successMessage: "Ваш отзыв отправлен. Спасибо!",
+            });
+          }}>
+            Сообщить об ошибке
+          </Button>
         </div>
       </div>
     </div>

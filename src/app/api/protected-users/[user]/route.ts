@@ -4,6 +4,7 @@ import { env } from "~/env"
 import { db } from "~/server/db"
 import { roleEnum, users } from "~/server/db/schema"
 import { takeFirstOrThrow } from "~/server/db/utils"
+import * as Sentry from "@sentry/nextjs";
 
 export async function PUT(
   request: NextRequest,
@@ -12,6 +13,7 @@ export async function PUT(
   const headerKey = request.headers.get("Control-Key")
   
   if (headerKey !== env.CONTROL_KEY) {
+    Sentry.captureException(new Error("Unauthorized: Control-Key header is missing or incorrect (protected-users/[user])"));
     return new Response("Unauthorized", { status: 401 })
   }
 
@@ -36,6 +38,8 @@ export async function PUT(
     
     return Response.json({ data }) 
   } catch (error) {
+    Sentry.captureException(error);
+    console.error(error);
     return Response.json({ message: 'Internal Server Error', error: error }, { status: 500 })
   }
 

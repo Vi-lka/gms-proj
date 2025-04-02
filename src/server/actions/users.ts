@@ -9,6 +9,7 @@ import { getErrorMessage } from "~/lib/handle-error"
 import { auth } from "../auth"
 import { restrictUser } from "~/lib/utils"
 import { type UpdateUserSchema } from "~/lib/validations/forms"
+import * as Sentry from "@sentry/nextjs";
 
 export async function updateUser(input: UpdateUserSchema & { id: string }) {
   noStore();
@@ -16,15 +17,16 @@ export async function updateUser(input: UpdateUserSchema & { id: string }) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel-users')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: updateUser, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
     }
   }
   
-  const guestUntilGMT = input.role === "guest" ? new Date(input.guestUntil) : null
-
   try {
+    const guestUntilGMT = input.role === "guest" ? new Date(input.guestUntil) : null
+
     const data = await db
       .update(users)
       .set({
@@ -45,6 +47,8 @@ export async function updateUser(input: UpdateUserSchema & { id: string }) {
       error: null,
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -58,6 +62,7 @@ export async function deleteUsers(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel-users')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteUsers, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -77,6 +82,8 @@ export async function deleteUsers(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),
@@ -90,6 +97,7 @@ export async function deleteSessions(ids: string[]) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'admin-panel-users')) {
     const err = new Error("No access")
+    Sentry.captureException(new Error(`No access: deleteSessions, userId: ${session?.user.id}`));
     return {
       data: null,
       error: getErrorMessage(err)
@@ -109,6 +117,8 @@ export async function deleteSessions(ids: string[]) {
       error: null
     }
   } catch (err) {
+    Sentry.captureException(err);
+    console.error(err);
     return {
       data: null,
       error: getErrorMessage(err),

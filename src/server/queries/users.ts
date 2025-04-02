@@ -21,6 +21,7 @@ import { auth } from "../auth";
 import { getOrderBy, getRelationOrderBy } from "../db/utils";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getUsers(
   input: GetUsersSchema,
@@ -74,6 +75,7 @@ export async function getUsers(
       const pageCount = Math.ceil(total / input.perPage)
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -115,6 +117,7 @@ export async function getUserRolesCounts() {
         )
       return data
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return {} as Record<User["role"], number>
     }
@@ -208,6 +211,7 @@ export async function getSessions(
 
       return { data, pageCount, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }
@@ -267,6 +271,7 @@ export async function getSessionRolesCounts() {
         )
       return data
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return {} as Record<User["role"], number>
     }

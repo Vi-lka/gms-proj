@@ -5,21 +5,23 @@ import { searchLicensedAreasApiLoader } from "~/lib/validations/search-params";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { type LicensedAreaExtend, licensedAreas } from "~/server/db/schema";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
   if (restrictUser(session?.user.role, 'content')) {
     const error = new Error("No access")
-    return Response.json({ message: 'No access', error }, { status: 403 })
+    Sentry.captureException(new Error(`No access: GET (licensed-areas), userId: ${session?.user.id}`));
+    return Response.json({ message: 'No access',  error }, { status: 403 })
   }
 
-  const search = searchLicensedAreasApiLoader(request)
-
-  const where = and(
-    search.fieldId ? eq(licensedAreas.fieldId, search.fieldId) : undefined,
-  )
-
   try {
+    const search = searchLicensedAreasApiLoader(request)
+
+    const where = and(
+      search.fieldId ? eq(licensedAreas.fieldId, search.fieldId) : undefined,
+    )
+
     const data = await db.query.licensedAreas.findMany({
       where,
       with: {
@@ -45,6 +47,8 @@ export async function GET(request: NextRequest) {
     }))
     return Response.json(transformData)
   } catch (error) {
-    return Response.json({ message: 'Internal Server Error', error: error }, { status: 500 })
+    Sentry.captureException(error);
+    console.error(error);
+    return Response.json({ message: 'Internal Server Error', error }, { status: 500 })
   }
 }

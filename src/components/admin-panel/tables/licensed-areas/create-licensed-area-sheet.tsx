@@ -9,6 +9,7 @@ import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { createLicensedAreaSchema, type CreateLicensedAreaSchema } from '~/lib/validations/forms'
 import { createLicensedArea } from '~/server/actions/licensed-areas'
 
@@ -34,7 +35,7 @@ export default function CreateLicensedAreaSheet({
       const { error } = await createLicensedArea(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

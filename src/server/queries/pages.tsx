@@ -1,6 +1,7 @@
 "use server"
 
 import "server-only"
+
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
 import { getErrorMessage } from "~/lib/handle-error";
@@ -15,6 +16,7 @@ import { unstable_cache } from "~/lib/unstable-cache";
 import { type RecentItem } from "~/lib/types";
 import { type GetRecentSchema } from "~/lib/validations/pages";
 import { orderData, paginate } from "../db/utils";
+import * as Sentry from "@sentry/nextjs";
 
 // Counts of entities
 export async function getCounts() {
@@ -106,9 +108,10 @@ export async function getCounts() {
         data,
         error: null
       }
-    } catch (error) {
-      console.error(error)
-      return { data: null, error: getErrorMessage(error) }
+    } catch (err) {
+      Sentry.captureException(err);
+      console.error(err)
+      return { data: null, error: getErrorMessage(err) }
     }
   }
 
@@ -486,9 +489,10 @@ export async function getRecent(currentDate: string, input: GetRecentSchema) {
         data,
         error: null
       }
-    } catch (error) {
-      console.error(error)
-      return { data: [], error: getErrorMessage(error) }
+    } catch (err) {
+      Sentry.captureException(err);
+      console.error(err)
+      return { data: [], error: getErrorMessage(err) }
     }
   }
 
@@ -572,9 +576,10 @@ export async function getMapItemPage(id: string, fetchImages = true) {
         data: { title, fieldMaps },
         error: null
       }
-    } catch (error) {
-      console.error(error)
-      return { data: null, error: getErrorMessage(error) }
+    } catch (err) {
+      Sentry.captureException(err);
+      console.error(err)
+      return { data: null, error: getErrorMessage(err) }
     }
   }
 
@@ -647,9 +652,10 @@ export async function getLicensedAreaPage(input: GetAreasDataSchema) {
         },
         error: null
       }
-    } catch (error) {
-      console.error(error)
-      return { data: null, error: getErrorMessage(error) }
+    } catch (err) {
+      Sentry.captureException(err);
+      console.error(err)
+      return { data: null, error: getErrorMessage(err) }
     }
   }
 

@@ -10,6 +10,7 @@ import { Loader } from 'lucide-react'
 import { updateMapItemCompany } from '~/server/actions/mapItems'
 import CompanySelect from '../inputs/company-select'
 import FieldsSelect from '../inputs/fields-select'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 export default function UpdateCompanyMapItemForm({
   company,
@@ -31,7 +32,7 @@ export default function UpdateCompanyMapItemForm({
       const { data, error } = await updateMapItemCompany(input, company)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

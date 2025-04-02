@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Credenza, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from '~/components/ui/credenza'
 import { type Dialog } from '~/components/ui/dialog'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { deleteFieldsMaps } from '~/server/actions/fields-maps'
 import { type FieldMapWithUrl } from '~/server/db/schema'
 
@@ -27,7 +28,7 @@ export default function DeleteFieldsMapsDialog({
       const { error } = await deleteFieldsMaps(fieldsMaps.map((fieldMap) => fieldMap.id))
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

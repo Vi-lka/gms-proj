@@ -1,6 +1,7 @@
 "use server"
 
 import "server-only"
+
 import { type GetProfitabilitySchema } from "~/lib/validations/profitability";
 import { auth } from "../auth";
 import { restrictUser } from "~/lib/utils";
@@ -9,6 +10,7 @@ import { profitability } from "../db/schema";
 import { db } from "../db";
 import { unstable_cache } from "~/lib/unstable-cache";
 import { getErrorMessage } from "~/lib/handle-error";
+import * as Sentry from "@sentry/nextjs";
 
 export async function getProfitability(
   input?: GetProfitabilitySchema,
@@ -47,6 +49,7 @@ export async function getProfitability(
 
       return { data: [transformData], pageCount: 1, error: null }
     } catch (err) {
+      Sentry.captureException(err);
       console.error(err)
       return { data: [], pageCount: 0, error: getErrorMessage(err) }
     }

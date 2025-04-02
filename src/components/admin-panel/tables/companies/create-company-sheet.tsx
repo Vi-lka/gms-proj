@@ -8,6 +8,7 @@ import TextareaField from '~/components/forms/inputs/simple/textarea-field'
 import { Button } from '~/components/ui/button'
 import { Form } from '~/components/ui/form'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { createCompanySchema, type CreateCompanySchema } from '~/lib/validations/forms'
 import { createCompany } from '~/server/actions/companies'
 
@@ -32,7 +33,7 @@ export default function CreateCompanySheet({
       const { error } = await createCompany(input)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

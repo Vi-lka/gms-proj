@@ -11,6 +11,7 @@ import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
 import { Loader } from 'lucide-react'
 import { companyToCluster } from '~/server/actions/mapItems'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 export default function CompanyToClusterForm({
   company,
@@ -37,7 +38,7 @@ export default function CompanyToClusterForm({
       const { error } = await companyToCluster(input, company)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 

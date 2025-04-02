@@ -10,6 +10,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '~/components/ui/sheet'
 import { Skeleton } from '~/components/ui/skeleton'
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { getApiRoute, type LicensedAreasSearchParamsT } from '~/lib/validations/api-routes'
 import { type LicensedAreaExtend } from '~/server/db/schema'
 
@@ -56,7 +57,7 @@ export default function UpdatePolygonSheet({ saveToBackEnd, searchParams, onSubm
   );
 
   if (error) {
-    toast.error(error.message)
+    errorToast(error.message, {id: "data-error"})
     return null;
   }
   if (!data || editPolygonIndex === null) return null;
@@ -95,13 +96,6 @@ export default function UpdatePolygonSheet({ saveToBackEnd, searchParams, onSubm
     
     if (saveToBackEnd) {
       startTransition(async () => {
-        // const { data, error } = await updateMapItemCompany(input, company)
-  
-        // if (error) {
-          // toast.error(error)
-          // return
-        // }
-        
         onSubmit?.()
         toast.success("Полигон изменен!")
       })

@@ -11,6 +11,7 @@ import { SheetClose, SheetFooter } from '~/components/ui/sheet'
 import { Button } from '~/components/ui/button'
 import { Loader } from 'lucide-react'
 import { updateMapItemCluster } from '~/server/actions/mapItems'
+import { errorToast } from '~/components/ui/special/error-toast'
 
 export default function UpdateClusterForm({
   cluster,
@@ -32,7 +33,7 @@ export default function UpdateClusterForm({
       const { data, error } = await updateMapItemCluster(input, cluster.companiesInput)
 
       if (error) {
-        toast.error(error)
+        errorToast(error, {id: "data-error"})
         return
       }
 
