@@ -31,6 +31,8 @@ export default async function HomePage(props: {
       getProfitability()
     ])
 
+    throw new Error("Test")
+
     return (
       <main className="min-h-screen flex flex-col overflow-hidden">
         <Navbar className="absolute bg-background/60" />

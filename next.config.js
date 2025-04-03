@@ -92,7 +92,7 @@ const sentryConfig = withSentryConfig(nextConfig, {
 
   org: env.SENTRY_ORG,
   project: env.SENTRY_PROJECT,
-  sentryUrl: "https://app.glitchtip.com/",
+  sentryUrl: env.SENTRY_URL,
 
   // Suppresses source map uploading logs during build
   silent: true,
