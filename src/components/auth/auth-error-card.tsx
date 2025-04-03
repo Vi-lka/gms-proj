@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, SkipBack } from 'lucide-react'
 import * as Sentry from "@sentry/nextjs";
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
@@ -39,7 +39,14 @@ export default function AuthErrorCard() {
   if (!error) return null;
   
   return (
-    <div className="p-8 bg-background rounded-lg shadow-md max-w-md w-full">
+    <div className="relative p-8 bg-background rounded-lg shadow-md max-w-md w-full">
+      <Button 
+        variant="ghost" 
+        className='absolute top-2 left-2 text-muted-foreground aspect-square w-fit h-fit p-2' 
+        onClick={() => router.back()}
+      >
+        <SkipBack size={18} />
+      </Button>
       <div className="flex items-center justify-center text-destructive mb-4">
         <AlertCircle size={48} />
       </div>

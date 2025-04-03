@@ -1,6 +1,6 @@
 import { isRedirectError } from "next/dist/client/components/redirect-error"
-import { toast } from "sonner"
 import { z } from "zod"
+import { errorToast } from "~/components/ui/special/error-toast"
 
 export function getErrorMessage(err: unknown) {
   const unknownError = "Что-то пошло не так, повторите попытку позже."
@@ -21,5 +21,5 @@ export function getErrorMessage(err: unknown) {
 
 export function showErrorToast(err: unknown) {
   const errorMessage = getErrorMessage(err)
-  return toast.error(errorMessage)
+  return errorToast(errorMessage)
 }

@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react'
 import { type Path, type FieldValues, type UseFormReturn, type PathValue } from 'react-hook-form'
-import { toast } from 'sonner'
 import useSWR from 'swr'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
 import { Skeleton } from '~/components/ui/skeleton'
 import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxTrigger } from '~/components/ui/special/combobox'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { cn } from '~/lib/utils'
 import { type ClustersSearchParamsT, getApiRoute } from '~/lib/validations/api-routes'
 import { type Cluster } from '~/server/db/schema'
@@ -44,7 +44,7 @@ export default function ClusterSelect<TData extends FieldValues>({
 
   if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-9 w-full'/>
   if (error) {
-    toast.error(error.message)
+    errorToast(error.message)
     return null;
   }
   if (!data) return null

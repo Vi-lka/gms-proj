@@ -9,6 +9,7 @@ import { useSetAtom } from 'jotai'
 import { mapContainerDimensions } from '~/lib/atoms/main'
 import { type getProfitability } from '~/server/queries/profitability'
 import { toast } from 'sonner'
+import { errorToast } from '~/components/ui/special/error-toast';
 
 const MapStage = dynamic(() => import('~/components/map/map-stage'), {
   ssr: false,
@@ -48,21 +49,21 @@ export default function Map({ promises }: MapProps) {
   ] = React.use(promises)
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, { id: "data-error" })
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }
   }, [error])
 
   React.useEffect(() => {
-    if (mapDataError !== null) toast.error(mapDataError, { id: "map-data-error", duration: 5000, dismissible: true })
+    if (mapDataError !== null) errorToast(mapDataError, { id: "map-data-error" })
     return () => { 
       if (mapDataError !== null) toast.dismiss("map-data-error")
     }
   }, [mapDataError])
 
   React.useEffect(() => {
-    if (profitabilityError !== null) toast.error(profitabilityError, { id: "profitability-error", duration: 5000, dismissible: true })
+    if (profitabilityError !== null) errorToast(profitabilityError, { id: "profitability-error" })
     return () => { 
       if (profitabilityError !== null) toast.dismiss("profitability-error")
     }

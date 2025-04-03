@@ -7,6 +7,8 @@ import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import revalidateTag from '~/server/actions/revalidateTag';
 import AuthErrorCard from './auth-error-card';
+import { AuthError } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 interface SignInFormProps extends React.HTMLAttributes<HTMLDivElement> {
   providers: {
@@ -27,21 +29,13 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
     try {
       await signIn(
         provider,
-        { redirectTo: callbackUrl ?? "" }
+        { redirectTo: callbackUrl }
       )
     } catch (error) {
-      // Signin can fail for a number of reasons, such as the user
-      // not existing, or the user not having the correct role.
-      // In some cases, you may want to redirect to a custom error
-      if (error) {
-        // return redirect(`${SIGNIN_ERROR_URL}?error=${error.type}`)
-        console.error(error)
+      console.log(error)
+      if (error instanceof AuthError) {
+        return redirect(`/auth-error?error=${error.type}`)
       }
-
-      // Otherwise if a redirects happens Next.js can handle it
-      // so you can just re-thrown the error and let Next.js handle it.
-      // Docs:
-      // https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
       throw error
     } finally {
       setIsLoading(false)

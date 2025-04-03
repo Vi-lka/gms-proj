@@ -12,6 +12,7 @@ export const env = createEnv({
         ? z.string()
         : z.string().optional(),
     AUTH_URL: z.string(),
+    // AUTH_REDIRECT_PROXY_URL: z.string(),
     AUTH_YANDEX_ID: z.string(),
     AUTH_YANDEX_SECRET: z.string(),
     AUTH_GOOGLE_ID: z.string(),
@@ -64,6 +65,7 @@ export const env = createEnv({
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL: process.env.AUTH_URL,
+    // AUTH_REDIRECT_PROXY_URL: process.env.AUTH_REDIRECT_PROXY_URL,
     AUTH_YANDEX_ID: process.env.AUTH_YANDEX_ID,
     AUTH_YANDEX_SECRET: process.env.AUTH_YANDEX_SECRET,
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,

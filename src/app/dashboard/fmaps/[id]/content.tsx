@@ -1,10 +1,10 @@
 "use client"
 
 import React from 'react'
-import { toast } from 'sonner'
 import EditPolygons from '~/components/admin-panel/edit-polygons/edit-polygons'
 import { usePolyStore, useTemporalStore } from '~/components/poly-annotation/store/poly-store-provider'
 import { type DefaultEditDataT } from '~/components/poly-annotation/types'
+import { errorToast } from '~/components/ui/special/error-toast'
 import { splitIntoPairs } from '~/lib/utils'
 import { type getFieldMapWithImage } from '~/server/queries/fields-maps'
 
@@ -29,7 +29,7 @@ export default function Content({ promises }: EditFieldMapContentProps) {
 
   React.useEffect(() => {
     if (result.error !== null) {
-      toast.error(result.error)
+      errorToast(result.error)
       return;
     }
 

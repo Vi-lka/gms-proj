@@ -27,12 +27,16 @@ declare module "next-auth" {
 
 const providers: Provider[] = [
   Yandex({
+    clientId: env.AUTH_YANDEX_ID,
+    clientSecret: env.AUTH_YANDEX_SECRET,
     profile(profile) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       return { ...profile, name: profile.real_name, email: profile.default_email, role: (profile as any).role ?? 'unknown' }
     }
   }),
   Google({
+    clientId: env.AUTH_GOOGLE_ID,
+    clientSecret: env.AUTH_GOOGLE_SECRET,
     profile(profile) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       return { ...profile, id: profile.sub, emailVerified: profile.email_verified, role: profile.role ?? 'unknown' }
@@ -57,12 +61,17 @@ export const providerMap = providers.map((provider) => {
  */
 export const authConfig = {
   secret: env.AUTH_SECRET,
-  providers,
+  // redirectProxyUrl: env.AUTH_REDIRECT_PROXY_URL,
   trustHost: true,
+  providers,
   pages: {
     error: "/auth-error",
     signIn: "/sign-in",
   },
+  experimental: {
+    enableWebAuthn: true,
+  },
+  debug: env.NODE_ENV !== "production" ? true : false,
   callbacks: {
     // async jwt({ token, user }) {
     //   if (user) {

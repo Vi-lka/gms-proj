@@ -10,6 +10,7 @@ import { DataTable } from '~/components/data-table/data-table';
 import { DataTableToolbar } from '~/components/data-table/data-table-toolbar';
 import { DataTableSortList } from '~/components/data-table/data-table-sort-list';
 import { useRouter } from 'next/navigation';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 export default function RecentTable({
   result,
@@ -21,7 +22,7 @@ export default function RecentTable({
   const { data, pageCount, error } = result;
 
   React.useEffect(() => {
-    if (error !== null) toast.error(error, { id: "data-error", duration: 5000, dismissible: true })
+    if (error !== null) errorToast(error, { id: "data-error" })
     return () => { 
       if (error !== null) toast.dismiss("data-error")
     }

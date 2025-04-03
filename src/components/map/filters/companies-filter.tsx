@@ -4,13 +4,13 @@ import { getApiRoute } from '~/lib/validations/api-routes';
 import { type Company } from '~/server/db/schema';
 import { useMapItemsSearch } from './hooks';
 import { Skeleton } from '~/components/ui/skeleton';
-import { toast } from 'sonner';
 import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '~/components/ui/dropdown-menu';
 import { Check, Loader, XIcon } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command';
 import { cn } from '~/lib/utils';
 import TooltipHelp from '~/components/ui/special/tooltip-help';
+import { errorToast } from '~/components/ui/special/error-toast';
 
 export default function CompaniesFilter() {
   const [open, setOpen] = React.useState(false)
@@ -52,7 +52,7 @@ export default function CompaniesFilter() {
 
   if (isLoading) return <Skeleton className='rounded-xl border-border shadow-sm h-8 w-full'/>
   if (error) {
-    toast.error(error.message)
+    errorToast(error.message)
     return null;
   }
   if (!data) return null

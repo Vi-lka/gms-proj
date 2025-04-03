@@ -34,8 +34,8 @@ COPY src ./src
 COPY public ./public
 COPY next.config.js .
 # COPY sentry.client.config.ts .
-# COPY sentry.server.config.ts .
-# COPY sentry.edge.config.ts .
+COPY sentry.server.config.ts .
+COPY sentry.edge.config.ts .
 COPY tsconfig.json .
 COPY tailwind.config.ts postcss.config.js ./
 
@@ -51,6 +51,8 @@ ARG AUTH_SECRET
 ENV AUTH_SECRET=${AUTH_SECRET}
 ARG AUTH_URL
 ENV AUTH_URL=${AUTH_URL}
+# ARG AUTH_REDIRECT_PROXY_URL
+# ENV AUTH_REDIRECT_PROXY_URL=${AUTH_REDIRECT_PROXY_URL}
 
 ARG AUTH_YANDEX_ID
 ENV AUTH_YANDEX_ID=${AUTH_YANDEX_ID}
@@ -136,8 +138,8 @@ RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 
 COPY --from=builder /app/next.config.js .
 # COPY --from=builder /app/sentry.client.config.ts .
-# COPY --from=builder /app/sentry.server.config.ts .
-# COPY --from=builder /app/sentry.edge.config.ts .
+COPY --from=builder /app/sentry.server.config.ts .
+COPY --from=builder /app/sentry.edge.config.ts .
 COPY --from=builder /app/package.json .
 
 # Set the correct permission for prerender cache
@@ -162,6 +164,8 @@ ARG AUTH_SECRET
 ENV AUTH_SECRET=${AUTH_SECRET}
 ARG AUTH_URL
 ENV AUTH_URL=${AUTH_URL}
+# ARG AUTH_REDIRECT_PROXY_URL
+# ENV AUTH_REDIRECT_PROXY_URL=${AUTH_REDIRECT_PROXY_URL}
 
 ARG AUTH_YANDEX_ID
 ENV AUTH_YANDEX_ID=${AUTH_YANDEX_ID}
@@ -226,4 +230,5 @@ USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
 CMD ["node", "server.js"]
