@@ -57,6 +57,7 @@ export const env = createEnv({
     .default("true")
     .optional(),
     NEXT_PUBLIC_SENTRY_DSN: z.string(),
+    NEXT_PUBLIC_ENABLE_REPORTS: z.enum(["true", "false"])
   },
 
   /**
@@ -91,6 +92,7 @@ export const env = createEnv({
     NEXT_PUBLIC_S3_PATH: process.env.NEXT_PUBLIC_S3_PATH,
     NEXT_PUBLIC_IS_VERCEL: process.env.NEXT_PUBLIC_IS_VERCEL,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_ENABLE_REPORTS: process.env.NEXT_PUBLIC_ENABLE_REPORTS,
     SENTRY_URL: process.env.SENTRY_URL,
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_ORG: process.env.SENTRY_PROJECT,

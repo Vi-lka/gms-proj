@@ -2,6 +2,7 @@ import { toast, type ExternalToast } from "sonner";
 import { Button } from "../button";
 import * as Sentry from "@sentry/nextjs";
 import { Megaphone } from "lucide-react";
+import { env } from "~/env";
 
 export const errorToast = (
     message: React.ReactNode, 
@@ -16,28 +17,30 @@ export const errorToast = (
             content: "flex-1"
         },
         action: 
-            <Button 
-                onClick={() => {
-                    const eventId = Sentry.lastEventId();
-                    Sentry.showReportDialog({ 
-                        eventId,
-                        lang: "ru",
-                        user,
-                        title: "Похоже, у нас возникли проблемы.",
-                        subtitle: "Наша команда была уведомлена.",
-                        subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
-                        labelName: "Имя",
-                        labelEmail: "Email",
-                        labelComments: "Что произошло?",
-                        labelClose: "Закрыть",
-                        labelSubmit: "Отправить",
-                        errorFormEntry: "Некоторые поля не валидны.",
-                        successMessage: "Ваш отзыв отправлен. Спасибо!",
-                    });
-                }}
-                className="aspect-square w-fit h-fit p-2 flex-none"
-            >
-              <Megaphone size={18} />
-            </Button>
+            env.NEXT_PUBLIC_ENABLE_REPORTS === "true" ? (
+                <Button 
+                    onClick={() => {
+                        const eventId = Sentry.lastEventId();
+                        Sentry.showReportDialog({ 
+                            eventId,
+                            lang: "ru",
+                            user,
+                            title: "Похоже, у нас возникли проблемы.",
+                            subtitle: "Наша команда была уведомлена.",
+                            subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
+                            labelName: "Имя",
+                            labelEmail: "Email",
+                            labelComments: "Что произошло?",
+                            labelClose: "Закрыть",
+                            labelSubmit: "Отправить",
+                            errorFormEntry: "Некоторые поля не валидны.",
+                            successMessage: "Ваш отзыв отправлен. Спасибо!",
+                        });
+                    }}
+                    className="aspect-square w-fit h-fit p-2 flex-none"
+                >
+                  <Megaphone size={18} />
+                </Button>
+            ) : null
     })
 }

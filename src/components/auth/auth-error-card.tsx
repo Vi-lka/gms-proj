@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { Button } from '~/components/ui/button'
+import ReportErrorButton from '../ui/special/report-error-button';
 
 enum ErrorEnum {
   Configuration = "Configuration",
@@ -64,29 +65,7 @@ export default function AuthErrorCard() {
         <Button variant="outline" onClick={() => router.refresh()}>
           Перезагрузить
         </Button>
-        <Button onClick={() => {
-          const eventId = Sentry.lastEventId();
-          Sentry.showReportDialog({ 
-            eventId,
-            lang: "ru",
-            // user: {
-            //   name: "Dmitry",
-            //   email: "mymail@example.com"
-            // },
-            title: "Похоже, у нас возникли проблемы.",
-            subtitle: "Наша команда была уведомлена.",
-            subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
-            labelName: "Имя",
-            labelEmail: "Email",
-            labelComments: "Что произошло?",
-            labelClose: "Закрыть",
-            labelSubmit: "Отправить",
-            errorFormEntry: "Некоторые поля не валидны.",
-            successMessage: "Ваш отзыв отправлен. Спасибо!",
-          });
-        }}>
-          Сообщить об ошибке
-        </Button>
+        <ReportErrorButton />
       </div>
     </div>
   )

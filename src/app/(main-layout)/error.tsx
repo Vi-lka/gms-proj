@@ -7,6 +7,7 @@ import { AlertCircle, SkipBack } from "lucide-react"
 import { Button } from '~/components/ui/button'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react';
+import ReportErrorButton from '~/components/ui/special/report-error-button';
 
 export default function Error({
   error,
@@ -42,29 +43,10 @@ export default function Error({
           <Button onClick={() => reset()} variant="outline">
             Попробовать снова
           </Button>
-          <Button onClick={() => {
-            const eventId = Sentry.lastEventId();
-            Sentry.showReportDialog({ 
-              eventId,
-              lang: "ru",
-              user: {
-                name: session.data?.user.name ?? undefined,
-                email: session.data?.user.email ?? undefined
-              },
-              title: "Похоже, у нас возникли проблемы.",
-              subtitle: "Наша команда была уведомлена.",
-              subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
-              labelName: "Имя",
-              labelEmail: "Email",
-              labelComments: "Что произошло?",
-              labelClose: "Закрыть",
-              labelSubmit: "Отправить",
-              errorFormEntry: "Некоторые поля не валидны.",
-              successMessage: "Ваш отзыв отправлен. Спасибо!",
-            });
-          }}>
-            Сообщить об ошибке
-          </Button>
+          <ReportErrorButton user={{
+            name: session.data?.user.name ?? undefined,
+            email: session.data?.user.email ?? undefined
+          }}/>
         </div>
       </div>
     </div>

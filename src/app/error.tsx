@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import { Button } from '~/components/ui/button'
+import ReportErrorButton from '~/components/ui/special/report-error-button';
 
 export default function Error({
   error,
@@ -33,29 +34,7 @@ export default function Error({
           <Button variant="outline" onClick={() => reset()}>
             Попробовать снова
           </Button>
-          <Button onClick={() => {
-            const eventId = Sentry.lastEventId();
-            Sentry.showReportDialog({ 
-              eventId,
-              lang: "ru",
-              // user: {
-              //   name: "Dmitry",
-              //   email: "mymail@example.com"
-              // },
-              title: "Похоже, у нас возникли проблемы.",
-              subtitle: "Наша команда была уведомлена.",
-              subtitle2: "Если вы хотите помочь, расскажите нам, что произошло.",
-              labelName: "Имя",
-              labelEmail: "Email",
-              labelComments: "Что произошло?",
-              labelClose: "Закрыть",
-              labelSubmit: "Отправить",
-              errorFormEntry: "Некоторые поля не валидны.",
-              successMessage: "Ваш отзыв отправлен. Спасибо!",
-            });
-          }}>
-            Сообщить об ошибке
-          </Button>
+          <ReportErrorButton />
         </div>
       </div>
     </div>
