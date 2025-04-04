@@ -314,7 +314,7 @@ export function paginate<DataT>(data: DataT[], input: PaginationInput): Paginati
 }
 
 
-// TODO: I`am not sure if this will work with any 'where'
+// I`am not sure if this will work with any 'where'
 const buildQueryConfig: BuildQueryConfig = {
   casing: new CasingCache(),
   escapeName: (name) => `"${name}"`,
