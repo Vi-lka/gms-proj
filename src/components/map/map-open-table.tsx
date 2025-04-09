@@ -16,7 +16,7 @@ export default function MapOpenTable() {
               <Button
                 className={cn(
                   "fixed right-6 bottom-6 z-50 w-fit h-fit p-2.5 rounded-full aspect-square",
-                  "shadow border dark:border-none border-muted-foreground text-foreground hover:text-background",
+                  "shadow border dark:border-none border-muted-foreground text-foreground hover:text-primary-foreground",
                   "backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary bg-background/60"
                 )}
               >

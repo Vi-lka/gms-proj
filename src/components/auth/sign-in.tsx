@@ -63,12 +63,13 @@ export default function SignInForm({ className, ...props }: SignInFormProps) {
               variant="outline" 
               type="button" 
               disabled={isLoading} 
+              className='text-foreground stroke-foreground hover:bg-primary hover:text-primary-foreground hover:stroke-primary-foreground'
               onClick={() => onSubmit(provider.id)}
             >
               {isLoading ? (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <IconByName name={provider.id} className="text-foreground stroke-foreground mr-2 h-4 w-4" />
+                <IconByName name={provider.id} className="mr-2 h-4 w-4" />
               )}{" "}
               {provider.name}
             </Button>

@@ -71,7 +71,7 @@ export default function MovePolygonPortal({
         position: "bottom-center",
         action: {
           label: isPending 
-            ? <Loader className="mr-2 size-4 animate-spin"/>
+            ? <Loader className="size-4 animate-spin"/>
             : <Check className="size-4" />,
           onClick: onAccept,
         },

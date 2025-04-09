@@ -37,7 +37,7 @@ export default async function TabsServer(props: Props) {
       value={tab ?? defaultValue}
       className="w-full flex flex-col flex-grow"
     >
-      <TabsList className='w-full h-fit bg-primary/10 shadow-inner rounded-xl'>
+      <TabsList className='w-full h-fit bg-foreground/5 shadow-inner rounded-xl'>
         <ScrollArea type="always" className='w-full' classNameViewport='w-full max-h-20'>
           <div className='w-full flex flex-wrap sm:justify-around justify-center px-4 gap-x-4 gap-y-2'>
             {props.tabs.map((tab) => (

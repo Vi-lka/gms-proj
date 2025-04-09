@@ -138,7 +138,7 @@ export default function CompaniesInput<TData extends FieldValues>({
         : null
       }
       <Button 
-        className='w-full'
+        className='w-full bg-foreground text-background hover:text-primary-foreground'
         type="button"
         onClick={() => {
           setCompanies([

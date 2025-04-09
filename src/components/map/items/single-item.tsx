@@ -77,13 +77,13 @@ export default function SingleItem({
             buttonVariants({ 
               variant: "default", 
               size: "default", 
-              className: "absolute -translate-x-1/2 -translate-y-1/2 block p-0.5 w-fit h-fit aspect-square text-center rounded-full group hover:bg-accent duration-300"
+              className: "absolute -translate-x-1/2 -translate-y-1/2 block p-0.5 w-fit h-fit aspect-square text-center rounded-full group bg-foreground dark:bg-background text-background dark:text-foreground dark:hover:bg-accent hover:bg-foreground"
             }),
             className
           )}
           onClick={onClick}
         >
-          <CircleDot className='mx-auto !w-5 !h-5 group-hover:text-foreground' />
+          <CircleDot className='mx-auto !w-5 !h-5 group-hover:text-primary transition-all' />
           <div className='relative font-medium text-xs text-left cursor-pointer'>
             <div className='absolute top-[-54px] -left-0.5 flex gap-1 items-end mb-1 transition-all duration-300'>
               <TooltipProvider delayDuration={150}>
@@ -99,14 +99,14 @@ export default function SingleItem({
                       <TooltipTrigger asChild>
                         <Badge 
                           className={cn(
-                            'relative p-0 px-0.5 h-fit rounded-sm shadow transition-all duration-300',
+                            'relative p-0 px-0.5 h-fit rounded-sm shadow text-background transition-all duration-300',
                             (inSearch && selectedItem?.id !== data.id) && "transition-none outline-dashed outline-2 outline-yellow"
                           )}
                           style={{
                             fontSize: 12 - index*1.1,
                             lineHeight: 2,
                             borderColor: `hsl(var(--border) / ${1 - index*0.25})`,
-                            backgroundColor: `hsl(var(--primary) / ${1 - index*0.15})`,
+                            backgroundColor: `hsl(var(--foreground) / ${1 - index*0.15})`,
                           }}
                         >
                           {idToSentenceCase(value.key)}

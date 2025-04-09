@@ -52,7 +52,7 @@ export function DataTable<TData>({
       {...props}
     >
       {children}
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-md border shadow-md">
         <ScrollArea type="always" classNameViewport={cn("", scrollAreaClassName)} classNameBar="z-50">
           <Table inScrollArea>
             <TableHeader inScrollArea>

@@ -163,12 +163,12 @@ function ElementBadge({
       triggerAsChild
       trigger={
         <Badge 
-          className='relative p-0 px-0.5 h-fit min-h-3 rounded-sm shadow transition-all duration-300'
+          className='relative p-0 px-0.5 h-fit min-h-3 rounded-sm shadow text-background transition-all duration-300'
           style={{
             fontSize: 16 - index*1.25,
             height: coficience < 50 ? `calc(100%/${index+1})` : `${coficience}%`,
             borderColor: `hsl(var(--border) / ${1 - index*0.25})`,
-            backgroundColor: `hsl(var(--primary) / ${1 - index*0.15})`,
+            backgroundColor: `hsl(var(--foreground) / ${1 - index*0.15})`,
           }}
         >
           {idToSentenceCase(element.key)}

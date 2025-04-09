@@ -29,6 +29,7 @@ export default function TooltipMouse({
           alignOffset={x}
           sideOffset={-y + 10}
           hideWhenDetached
+          className='bg-foreground text-background'
         >
           <div>{description}</div>
         </TooltipContent>

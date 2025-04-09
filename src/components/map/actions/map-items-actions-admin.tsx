@@ -87,7 +87,7 @@ export default function MapItemsActionsAdmin() {
                     <TooltipTrigger asChild>
                       <Button
                         size="icon"
-                        className="size-8 hover:border mr-2"
+                        className="size-8 hover:border mr-2 bg-foreground text-background hover:text-primary-foreground"
                         onClick={() => setItemAction("update")}
                       >
                         <Edit className="size-4 shrink-0" />
@@ -105,7 +105,7 @@ export default function MapItemsActionsAdmin() {
                     <TooltipTrigger asChild>
                       <Button
                         size="icon"
-                        className="size-8 hover:border"
+                        className="size-8 hover:border bg-foreground text-background hover:text-primary-foreground"
                         onClick={() => setItemAction("move")}
                       >
                         <Move className="size-4 shrink-0" />
