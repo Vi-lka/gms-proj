@@ -5,7 +5,7 @@ import { Badge } from "~/components/ui/badge";
 import { Checkbox } from "~/components/ui/checkbox";
 import type { DataTableRowAction } from "~/lib/types";
 import { toast } from "sonner"
-import { formatDate } from "~/lib/utils";
+import { formatDate, idToSentenceCase } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
@@ -108,8 +108,8 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Роль" />
       ),
       cell: ({ row }) => (
-        <div className="flex w-[6.25rem] items-center">
-          <Badge variant="outline" className="capitalize">{row.getValue("role")}</Badge>
+        <div className="flex w-36 items-center">
+          <Badge variant="outline" className="capitalize">{idToSentenceCase(row.getValue("role"))}</Badge>
         </div>
       ),
       filterFn: (row, id, value) => {

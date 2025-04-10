@@ -4,7 +4,6 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
 
-// TODO: translate sessions roles to ru!!!
 // TODO: fix delete map item if else deleted!!
 // TODO: collisions map items!
 // TODO: fix zoom to group!

@@ -5,7 +5,7 @@ import type { DataTableFilterField, DataTableRowAction } from "~/lib/types";
 import type { getSessionRolesCounts, getSessions } from "~/server/queries/users";
 import { getColumns } from "./sessions-table-columns";
 import { type SessionExtend, users } from "~/server/db/schema";
-import { toSentenceCase } from "~/lib/utils";
+import { idToSentenceCase } from "~/lib/utils";
 import { useDataTable } from "~/hooks/use-data-table";
 import { DataTable } from "~/components/data-table/data-table";
 import { DataTableToolbar } from "~/components/data-table/data-table-toolbar";
@@ -52,7 +52,7 @@ export default function SessionsTable({ promises }: SessionsTableProps) {
       id: "role",
       label: "Роль",
       options: users.role.enumValues.map((role) => ({
-        label: toSentenceCase(role),
+        label: idToSentenceCase(role),
         value: role,
         count: roleCounts[role],
       }))
