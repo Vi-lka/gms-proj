@@ -4,6 +4,7 @@ import React from 'react'
 import { Button } from '../button';
 import * as Sentry from "@sentry/nextjs";
 import { env } from '~/env';
+import { cn } from '~/lib/utils';
 
 export default function ReportErrorButton({
   className,
@@ -19,7 +20,7 @@ export default function ReportErrorButton({
 
   return (
     <Button 
-      className={className}
+      className={cn("bg-foreground text-background", className)}
       onClick={() => {
         const eventId = Sentry.lastEventId();
         Sentry.showReportDialog({ 
