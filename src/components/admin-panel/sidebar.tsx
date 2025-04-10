@@ -6,8 +6,8 @@ import { Button } from "~/components/ui/button";
 import { useSidebar } from "~/hooks/use-sidebar";
 import { useStore } from "~/hooks/use-store";
 import { cn } from "~/lib/utils";
-import { PanelsTopLeft } from "lucide-react";
 import Link from "next/link";
+import { Icons } from "../icons";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebar, (x) => x);
@@ -36,23 +36,13 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link href="/" className="flex items-center gap-2">
-            <PanelsTopLeft className={cn(
-              "size-6 mr-1 transition-all duration-300",
+          <Link href="/" className="mb-2">
+            <Icons.rosneft className={cn(
+              "w-32 h-10 pb-1 dark:[&_.text]:fill-foreground [&_.text]:transition-all [&_.text]:duration-300 transition-all duration-300",
               !getOpenState()
-                ? "translate-x-7"
-                : "translate-x-0"
+                ? "translate-x-[33px] [&_.text]:opacity-0"
+                : "translate-x-0 [&_.text]:opacity-100"
             )}/>
-            <h1
-              className={cn(
-                "font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
-                !getOpenState()
-                  ? "translate-x-8 opacity-0"
-                  : "translate-x-0 opacity-100"
-              )}
-            >
-              Brand
-            </h1>
           </Link>
         </Button>
         <Menu isOpen={getOpenState()} />

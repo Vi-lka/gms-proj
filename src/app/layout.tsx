@@ -4,11 +4,11 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
 
-// TODO: customers logo!!!!
 // TODO: translate sessions roles to ru!!!
 // TODO: fix delete map item if else deleted!!
 // TODO: collisions map items!
 // TODO: fix zoom to group!
+// TODO: scroll in popups
 // TODO: change loading spinner
 
 export const metadata: Metadata = {
