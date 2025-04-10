@@ -14,7 +14,11 @@ export function useMapItemsSearch() {
   return useQueryStates(searchParamsMapItems)
 }
 
-export function useMapItems(data: Awaited<ReturnType<typeof getMapItems>>['data'], profitability: Awaited<ReturnType<typeof getProfitability>>['data']) {
+export function useMapItems(
+  data: Awaited<ReturnType<typeof getMapItems>>['data'], 
+  profitability: Awaited<ReturnType<typeof getProfitability>>['data'],
+  filterByElements = true
+) {
   const [{search, companiesIds, elements: elementsComparison, elementsView}] = useMapItemsSearch()
 
   const getMaxValuesByRelevance = React.useCallback(
@@ -115,8 +119,10 @@ export function useMapItems(data: Awaited<ReturnType<typeof getMapItems>>['data'
         width: DEFAULT_ITEM_SIZE.width,
         height: DEFAULT_ITEM_SIZE.height,
       }
-    }).filter((item) => item.maxElements.filtered.length !== 0),
-    [data, elementsComparison, getFirstFiveMaxValues, getMaxValuesByRelevance]
+    }).filter((item) => 
+      filterByElements ? item.maxElements.filtered.length !== 0 : true
+    ),
+    [data, elementsComparison, filterByElements, getFirstFiveMaxValues, getMaxValuesByRelevance]
   );
 
   function filterMapItems(

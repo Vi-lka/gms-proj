@@ -8,7 +8,7 @@ import Providers from "~/components/providers/Providers";
 // TODO: collisions map items!
 // TODO: fix zoom to group!
 // TODO: scroll in popups
-// TODO: change loading spinner
+// TODO: change loading spinner?
 
 export const metadata: Metadata = {
   title: "ГМС",

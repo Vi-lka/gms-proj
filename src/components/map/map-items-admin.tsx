@@ -19,7 +19,7 @@ export default function MapItemsAdmin({
   data: Awaited<ReturnType<typeof getMapItems>>['data'], 
   profitability: Awaited<ReturnType<typeof getProfitability>>['data']
 }) {
-  const items = useMapItems(data, profitability)
+  const items = useMapItems(data, profitability, false)
 
   const [activeId, setActiveId] = useQueryState("activeId", { defaultValue: "" });
   const stage = useAtomValue(stageAtom);
