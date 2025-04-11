@@ -30,9 +30,9 @@ export default function MapItems({
 
   const scaleForIntersections = valueFromWindowWidth({
     windowW,
-    w1024: 0.7*stage.scale,
-    w425: 0.4*stage.scale,
-    minw: 0.3*stage.scale,
+    w1024: 1.3*stage.scale,
+    w425: 1.1*stage.scale,
+    minw: 0.9*stage.scale,
   })
 
   const intersections = React.useMemo(

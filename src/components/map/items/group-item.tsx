@@ -26,7 +26,6 @@ export default function GroupItem({
 
   const { width: windowW } = useAtomValue(mapContainerDimensions);
 
-
   const MIN_SCALE = valueFromWindowWidth({
     windowW,
     w1024: 0.9,
@@ -35,14 +34,14 @@ export default function GroupItem({
   })
   const MAX_SCALE = valueFromWindowWidth({
     windowW,
-    w1024: 4,
-    w425: 15,
-    minw: 20,
+    w1024: 50,
+    w425: 40,
+    minw: 30,
   })
 
   const { width, height, x, y } = getGroupAverage(data.items)
 
-  const {size, pos} = useStageEllementPos(
+  const { pos } = useStageEllementPos(
     {width, height},
     {x, y}
   )
@@ -55,7 +54,12 @@ export default function GroupItem({
       const rectItem = box.item(0)
 
       if (rectItem) {
-        const scaleBy = Math.min(stageRef.width() / rectItem.width, stageRef.height() / rectItem.height) / 1.8;
+        const scaleBy = valueFromWindowWidth({
+          windowW,
+          w1024: Math.min(stageRef.width() / rectItem.width, stageRef.height() / rectItem.height) / 3,
+          w425: Math.min(stageRef.width() / rectItem.width, stageRef.height() / rectItem.height) / 3.8,
+          minw: Math.min(stageRef.width() / rectItem.width, stageRef.height() / rectItem.height) / 4.6
+        })
         const oldScale = stageRef.scaleX(); 
         const newScale =  oldScale * scaleBy 
 
@@ -133,14 +137,14 @@ export default function GroupItem({
   return (
     <Html
       groupProps={{
-        width: size.width,
-        height: size.height,
+        // width: size.width,
+        // height: size.height,
         x: pos.x,
         y: pos.y,
         scale: {x: scale, y: scale}
       }}
     >
-      <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
+      <div className='relative' style={{scale: ellementScale}}>
         <Button
           ref={ref}
           className={cn(

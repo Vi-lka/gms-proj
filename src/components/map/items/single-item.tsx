@@ -15,6 +15,7 @@ import useOutsideClick from '~/hooks/use-outside-click'
 import { Badge } from '~/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { useMapItemsSearch } from '../filters/hooks'
+import { ScrollArea } from '~/components/ui/scroll-area'
 
 export default function SingleItem({
   data,
@@ -38,7 +39,7 @@ export default function SingleItem({
 
   const { width, height, x, y } = data
 
-  const {size, pos} = useStageEllementPos(
+  const { pos } = useStageEllementPos(
     {width, height},
     {x, y}
   )
@@ -60,8 +61,8 @@ export default function SingleItem({
   return (
     <Html
       groupProps={{
-        width: size.width,
-        height: size.height,
+        // width: size.width,
+        // height: size.height,
         x: pos.x,
         y: pos.y,
         scale: {x: scale, y: scale}
@@ -70,7 +71,7 @@ export default function SingleItem({
         className: cn("hover:!z-[120]", htmlClassName)
       }}
     >
-      <div className='relative' style={{scale: size.width < 1 ? size.width : ellementScale}}>
+      <div className='relative' style={{scale: ellementScale}}>
         <div 
           ref={ref}
           className={cn(
@@ -121,24 +122,26 @@ export default function SingleItem({
               </TooltipProvider>
             </div>
             <div className={cn(
-              'absolute whitespace-pre top-[-21px] block w-max max-w-32 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
+              'absolute whitespace-pre top-[-21px] block w-36 max-w-36 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
               selectedItem?.id === data.id ? "left-7" : "left-6"
             )}>
               {data.cluster 
                 ? (
-                  <div className='flex flex-col gap-1'>
-                    <p className='text-foreground/70 text-[10px] line-clamp-2'>{data.cluster.name}</p>
-                    {data.companies.map((comp, indx) => (
-                      <div key={indx}>
-                        <span className='line-clamp-2'>
-                          {comp.name}
-                        </span>
-                        {indx < data.companies.length - 1 && (
-                          <Separator className='bg-foreground mt-0.5' />
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  <ScrollArea classNameViewport='max-h-24 h-24 pr-1' classNameBar='border-l-none w-1 p-[0.5px] bg-foreground/10 rounded-full'>
+                    <div className='flex flex-col gap-1'>
+                      <p className='text-foreground/70 text-[10px] line-clamp-2'>{data.cluster.name}</p>
+                      {data.companies.map((comp, indx) => (
+                        <div key={indx}>
+                          <span className='line-clamp-2'>
+                            {comp.name}
+                          </span>
+                          {indx < data.companies.length - 1 && (
+                            <Separator className='bg-foreground mt-0.5' />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 )
                 : (
                   <p className='line-clamp-2'>

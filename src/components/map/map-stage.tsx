@@ -57,9 +57,9 @@ export default function MapStage({
   })
   const MAX_SCALE = valueFromWindowWidth({
     windowW,
-    w1024: 4,
-    w425: 15,
-    minw: 20,
+    w1024: 50,
+    w425: 40,
+    minw: 30,
   })
 
   const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
@@ -269,7 +269,7 @@ export default function MapStage({
         onWheel={handleWheel}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className={cn("overflow-hidden relative", className)}
+        className={cn("overflow-hidden relative rounded-xl", className)}
       >
         <Layer id='main-image'>
           <MapMainImage data={mapData} />
