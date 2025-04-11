@@ -4,9 +4,6 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import Providers from "~/components/providers/Providers";
 
-// TODO: scroll in popups
-// TODO: change loading spinner?
-
 export const metadata: Metadata = {
   title: "ГМС",
   description: "",
