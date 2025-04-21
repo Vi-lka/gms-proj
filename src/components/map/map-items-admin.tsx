@@ -27,8 +27,6 @@ export default function MapItemsAdmin({
 
   const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
-  console.log(windowW)
-
   const scaleForIntersections = valueFromWindowWidth({
     windowW,
     w1024: 1.3*stage.scale,

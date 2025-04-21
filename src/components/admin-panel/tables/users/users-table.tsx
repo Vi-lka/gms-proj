@@ -27,8 +27,6 @@ interface UsersTableProps {
 export default function UsersTable({ promises }: UsersTableProps) {
   const [{ data, pageCount, error }, roleCounts] = React.use(promises)
 
-  console.log(data)
-
   React.useEffect(() => {
     if (error !== null) errorToast(error, {id: "data-error"})
     return () => { 
