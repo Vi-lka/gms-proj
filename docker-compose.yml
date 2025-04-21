@@ -75,7 +75,7 @@ services:
       context: .
       dockerfile: Dockerfile.cron
     environment:
-      - CRON_SECRET=${CRON_SECRET}
+      CRON_SECRET: ${CRON_SECRET}
     volumes:
       - ./cron.log:/var/log/cron.log
     depends_on:

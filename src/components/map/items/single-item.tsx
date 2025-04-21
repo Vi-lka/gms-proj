@@ -122,12 +122,12 @@ export default function SingleItem({
               </TooltipProvider>
             </div>
             <div className={cn(
-              'absolute whitespace-pre top-[-21px] block w-36 max-w-36 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
+              'absolute whitespace-pre top-[-21px] block w-max max-w-36 text-wrap break-words text-foreground bg-accent border shadow-md p-1 rounded-md transition-all duration-300',
               selectedItem?.id === data.id ? "left-7" : "left-6"
             )}>
               {data.cluster 
                 ? (
-                  <ScrollArea classNameViewport='max-h-24 h-24 pr-1' classNameBar='border-l-none w-1 p-[0.5px] bg-foreground/10 rounded-full'>
+                  <ScrollArea classNameViewport='max-h-24 pr-1' classNameBar='border-l-none w-1 p-[0.5px] bg-foreground/10 rounded-full'>
                     <div className='flex flex-col gap-1'>
                       <p className='text-foreground/70 text-[10px] line-clamp-2'>{data.cluster.name}</p>
                       {data.companies.map((comp, indx) => (
