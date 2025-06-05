@@ -1,0 +1,60 @@
+x-environment: &default-environment
+  DATABASE_URL: ${GLITCHTIP_DATABASE_URL}
+  SECRET_KEY: ${GLITCHTIP_SECRET_KEY} 
+  PORT: ${GLITCHTIP_PORT} 
+  EMAIL_URL: ${GLITCHTIP_EMAIL_URL} 
+  GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN} 
+  DEFAULT_FROM_EMAIL: ${GLITCHTIP_DEFAULT_FROM_EMAIL} 
+  CELERY_WORKER_AUTOSCALE: ${GLITCHTIP_CELERY_WORKER_AUTOSCALE} 
+  ENABLE_USER_REGISTRATION: false
+
+x-depends_on: &default-depends_on
+  - postgres
+  - redis
+
+services:
+  postgres:
+    image: postgres:17
+    platform: linux/amd64 #for platform error on Apple M1 chips
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${GLITCHTIP_DB_USER}
+      POSTGRES_PASSWORD: ${GLITCHTIP_DB_PASSWORD}
+      POSTGRES_DB: ${GLITCHTIP_DB_NAME}
+    ports:
+      - ${GLITCHTIP_DB_PORT}:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  redis:
+    image: valkey/valkey
+    restart: unless-stopped
+
+  web:
+    image: glitchtip/glitchtip
+    depends_on: *default-depends_on
+    ports:
+      - ${GLITCHTIP_PORT}:8000
+    environment: *default-environment
+    restart: unless-stopped
+    volumes:
+      - uploads:/code/uploads
+
+  worker:
+    image: glitchtip/glitchtip
+    command: ./bin/run-celery-with-beat.sh
+    depends_on: *default-depends_on
+    environment: *default-environment
+    restart: unless-stopped
+    volumes:
+      - uploads:/code/uploads
+      
+  migrate:
+    image: glitchtip/glitchtip
+    depends_on: *default-depends_on
+    command: ./bin/run-migrate.sh
+    environment: *default-environment
+
+volumes:
+  pg-data:
+  uploads:
